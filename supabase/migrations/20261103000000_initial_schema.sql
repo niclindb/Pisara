@@ -123,6 +123,7 @@ where t.id in (select id from shown);
 create table public.profiles (
   id                       uuid primary key references auth.users (id) on delete cascade,
   email                    text not null unique,
+  display_name             text check (display_name is null or length(trim(display_name)) between 1 and 50),  -- optional, e.g. for "Good morning, Nick"
   time_zone                text not null default 'UTC',  -- IANA name (A5)
   weekly_recap_day         int  not null default 0 check (weekly_recap_day between 0 and 6),  -- 0 = Sunday
   emails_enabled           boolean not null default true,
