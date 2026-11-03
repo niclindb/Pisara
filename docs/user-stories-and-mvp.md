@@ -1,6 +1,6 @@
 # Pisara: User Stories & MVP
 
-_Draft 3, November 3, 2026._
+_Draft 4, November 3, 2026. Updated after the design review: one daily run, interest levels 1–5, sub-topics, and review only for missed questions._
 
 **Pisara** is Finnish for "a drop," like a raindrop. Small lessons, drop by drop, add up to real knowledge. Say it PEE-sah-rah.
 
@@ -21,13 +21,14 @@ Pisara sends you a short lesson on a topic you care about, picked at random from
 ## 3. Key concepts
 
 - **Category:** a group of topics, such as Science or Languages.
-- **Topic:** one subject, such as Astronomy. Each topic has a **path**.
+- **Topic:** one subject, such as Astronomy. Each topic has a **path**. Topics can have **sub-topics** that go deeper, and those can have their own, to any depth (Astronomy → Stars → Black holes). Every topic in the tree, not just the deepest ones, has its own goal and path and can be picked.
+- **Prerequisite:** a topic's parent. Picking a sub-topic before finishing its parent shows a gentle note, never a block.
 - **Path:** an ordered list of lessons building toward a stated **goal**, for example "Understand the life cycle of a star." Lessons have a **level** (difficulty). Paths grow over time: authors publish lessons one at a time.
 - **Lesson:** a title, body text, estimated reading time, and 2–3 quiz questions.
 - **Inbox:** the learner's unread lessons, up to 3. The newest one is the "current lesson."
-- **Interest level:** how often a learner wants a topic. Off / Sometimes / Often / Lots, weighted 0 / 1 / 2 / 4.
+- **Interest level:** how often a learner wants a topic. Off, or a level from 1 to 5. The level is the weight, so a topic at 5 comes up 5× as often as one at 1.
 - **Freshness boost:** a topic's chance goes up 10% per day since it last came up, up to 2×.
-- **Review item:** a past quiz question, scheduled to come back. Wrong answers return sooner, right answers later and later.
+- **Review item:** a quiz question the learner missed, scheduled to come back. Wrong answers return sooner, right answers later and later.
 - **Milestone:** a moment worth congratulating, such as 10 lessons finished or a level reached in a topic.
 
 ## 4. User stories
@@ -41,15 +42,18 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 | A1 | As a learner, I want to sign up with just my email so I can start without creating a password. | Must |
 | A2 | As a learner, I want to browse categories and pick the topics I'm interested in so my lessons are about things I care about. | Must |
 | A3 | As a learner, I want to see each topic's goal and number of lessons before I pick it so I know what I'm signing up for. | Must |
+| A3a | As a learner, I want to see a topic's sub-topics and pick any of them, not just the deepest ones, so I can start at the level that suits me. | Must |
 | A4 | As a learner, I want to set an interest level for each topic so topics I care about more come up more often. | Must |
-| A5 | As a learner, I want to choose what time my lesson arrives so it fits my routine. | Must |
+| A5 | As a learner, I want my lesson to arrive at the same time every day so it becomes part of my routine. | Must |
 | A6 | As a learner, I want to get my first lesson right after signing up so I see what the app is like immediately. | Should |
 | A7 | As a learner, I want to sign in with Google or Apple so I don't have to wait for an email. | Later |
+| A8 | As a learner, I want to choose what time my lesson arrives so it fits my routine. | Later |
 
 **Acceptance criteria**
 - A1: Anyone can create an account. Entering an email sends a sign-in link that works once and expires after 15 minutes. No password anywhere.
-- A2/A4: The learner must turn on at least one topic before finishing setup. Every topic starts at "Off," and one tap sets it to "Sometimes."
-- A5: Times are stored in the learner's time zone, which is detected automatically and can be changed.
+- A2/A4: The learner must turn on at least one topic before finishing setup. Every topic starts at "Off," and one tap turns it on at level 3.
+- A3a: Picking a sub-topic whose parent the learner hasn't finished shows a note such as "This builds on Stars, which you haven't finished." The learner can carry on anyway.
+- A5: Lessons go out once a day for everyone, at 11:00 UTC. The learner's time zone is detected automatically (and can be changed) and decides what counts as "today" and their weekly recap day.
 - A7: Accounts are linked by email address, so adding a sign-in method later doesn't create duplicate accounts.
 
 ### B. Daily lesson
@@ -68,7 +72,7 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 **Acceptance criteria**
 - B1/B2: Chance of a topic = interest weight × freshness boost, divided by the total for all eligible topics. Topics set to Off, or with no unread published lessons left, are never picked.
 - B1: The same topic shouldn't come up more than 2 days in a row unless it's the only topic available.
-- B6: The inbox is the first thing the learner sees after signing in, with the current lesson at the top. It holds up to 3 unread lessons. When it's full, no new lessons are picked until one is read, and the daily email says "You have 3 lessons waiting" instead of sending a new one.
+- B6: The inbox is the first thing the learner sees after signing in, with the current lesson at the top. It holds up to 3 unread lessons. When it's full, no new lessons are picked until one is read, and no daily email is sent. Instead a "You have 3 lessons waiting" email goes out on the first day the inbox is full, once more a week later, and then never again. Reading a lesson resets this.
 - B3: Unsubscribing or pausing emails takes one click from the email.
 
 ### C. Quizzes and review
@@ -77,7 +81,7 @@ Three layers, each one short:
 
 | When | What | Length |
 |---|---|---|
-| After every lesson | Quiz on that lesson, plus 1 review question from an earlier lesson | 3–4 questions, about 1 minute |
+| After every lesson | Quiz on that lesson, plus up to 2 review questions from earlier lessons | 3–5 questions, about 1 minute |
 | Once a week | Recap quiz on the week's lessons, focused on what the learner missed | 5 questions, about 2 minutes |
 | Once a month | Month in review: what you learned, how you did, plus an optional recap quiz | About 3 minutes |
 
@@ -87,7 +91,7 @@ Three layers, each one short:
 | C2 | As a learner, I want to see the right answer and a one-line explanation after I submit so I learn from my mistakes. | Must |
 | C3 | As a learner, I want to move on to the next lesson in a topic even if I miss questions so I'm never stuck repeating a lesson. | Must |
 | C4 | As a learner, I want to re-read a past lesson whenever I choose, but never be forced to. | Should |
-| C5 | As a learner, I want one review question from a past lesson after each quiz so I remember what I've learned. | Must |
+| C5 | As a learner, I want up to 2 review questions from past lessons after each quiz so I remember what I've learned. | Must |
 | C6 | As a learner, I want questions I got wrong to come back sooner than ones I got right so review focuses on what I'm weak at. | Must |
 | C7 | As a learner, I want a short weekly recap quiz on the week's lessons so I can lock in what I learned. | Should |
 | C8 | As a learner, I want a monthly look back at what I learned, with an optional recap quiz, so I can see how far I've come. | Later |
@@ -96,7 +100,8 @@ Three layers, each one short:
 **Acceptance criteria**
 - C1: The quiz is optional. Skipping it still marks the lesson as read, but its questions don't enter review.
 - C3: Finishing a lesson always unlocks the next one in the path, whatever the score. Missed questions go into review (C6) instead of making the learner retake the lesson. If a learner misses most questions on a lesson, the end-of-quiz screen offers a link to re-read it.
-- C6: Review timing: wrong answer → 1 day. Right answers → 3, then 7, then 21, then 60 days. A wrong answer at any point resets to 1 day. The review question comes from a different topic than today's lesson when possible.
+- C5/C6: Only questions the learner missed go into review. Questions answered correctly the first time don't. This keeps the review queue small enough that up to 2 a day, plus the weekly recap, can keep up.
+- C6: Review timing: wrong answer → 1 day. Right answers → 3, then 7, then 21, then 60 days. A wrong answer at any point resets to 1 day. Review questions come from a different topic than today's lesson when possible.
 - C7: Sent on the learner's chosen day (default Sunday). Questions due for review are picked first, then questions from the week's lessons. Skipped if the learner read fewer than 2 lessons that week.
 
 ### D. Progress and celebrations
@@ -110,17 +115,22 @@ Three layers, each one short:
 | D5 | As a learner, I want to look back at lessons I've already finished. | Should |
 | D6 | As a learner, I want to pause lessons (for a vacation, say) without losing progress. | Should |
 | D7 | As a learner, I want to see an estimate of when I'll finish a topic at my current pace. | Later |
+| D8 | As a learner, I want to be offered a topic's sub-topics when I finish its path so I have a natural next step. | Must |
+| D9 | As a learner, I want to delete my account and all my data. | Must |
 
 **Acceptance criteria**
+- D1: Progress counts lessons the learner has read, not just received. A learner's level in a topic is the highest level of lesson they've read in it.
 - D2: Changes take effect from the next pick. Turning a topic off keeps its progress.
 - D3: Milestones: first lesson finished; 10, 25, 50, 100 and every 100 lessons after; each new level in a topic; reaching a topic's goal; a review question remembered after 21+ days. Shown once, on the screen after the quiz, and at most once a day. Never counts consecutive days, and never mentions missed days.
 - D4: Show the note when more than 8 topics are on. Never block the learner.
+- D8: When a learner reads the last published lesson in a topic that has sub-topics, the screen after the quiz and the progress page show "Go deeper" with those sub-topics.
+- D9: Deleting removes the profile and all learner data. It asks for confirmation first.
 
 ### E. Creating lessons (author)
 
 | ID | Story | Priority |
 |---|---|---|
-| E1 | As an author, I want to add categories to the list and add topics to each category, each topic with a goal. | Must |
+| E1 | As an author, I want to add categories, add topics to each category, and add sub-topics under any topic, each with a goal. | Must |
 | E2 | As an author, I want to write a path outline (an ordered list of lesson titles and key points) that I can add to over time. | Must |
 | E3 | As an author, I want AI to draft a lesson and its quiz questions from an outline entry so I don't write everything from scratch. | Later |
 | E4 | As an author, I want to write a lesson and its quiz questions as a draft and publish it when it's ready so only finished lessons reach learners. | Must |
@@ -135,6 +145,7 @@ Three layers, each one short:
 - E4/E5: Only lessons marked "Published" can be picked. A topic appears to learners once it has at least 3 published lessons.
 - E5: When a learner has read every published lesson in a topic, the topic stops being picked and shows "New lessons coming soon." When a new lesson is published, it becomes eligible again on the next pick.
 - E6: Reading time is estimated at about 200 words per minute and can be edited.
+- E7: An unpublished lesson stays in the inbox and history of learners who already got it, but is never picked again, and its questions leave review.
 
 ### F. Community (after the MVP)
 
@@ -157,12 +168,12 @@ The founder first, for 2 weeks. Then sign-up opens to anyone, with a first push 
 ### In
 - Web app that works well on phones
 - Open sign-up with email sign-in links (A1)
-- Topic picking, interest levels, delivery time (A2–A5)
-- Daily weighted random pick with freshness boost (B1–B2)
+- Topic picking with sub-topics, interest levels, one daily delivery (A2–A5, A3a)
+- Daily weighted random pick with freshness boost, run once a day for everyone (B1–B2)
 - Daily email, inbox, and lesson page with reading time (B3–B6)
 - Quiz after each lesson, with answers and explanations; no forced retakes (C1–C3)
-- One review question per day with spaced timing (C5–C6)
-- Progress page, topic settings, milestone celebrations (D1–D3)
+- Up to 2 review questions per day, missed questions only, with spaced timing (C5–C6)
+- Progress page, topic settings, milestone celebrations, "Go deeper" suggestions, account deletion (D1–D3, D8, D9)
 - Author tools: add categories and topics, outline paths, write lessons, publish one at a time (E1, E2, E4–E6)
 - Starts as an empty template. The author adds categories, topics, and lessons; there is no fixed starting list.
 
@@ -171,6 +182,8 @@ A6, B7, C4, C7, C9, D4, D5, D6, E7
 
 ### Out (not in the MVP)
 - Google, Apple, or other sign-in methods (A7)
+- Choosing your own delivery time (A8)
+- Prerequisites other than a topic's parent (for example, Algebra before Physics)
 - AI-drafted lessons (E3)
 - Typed-answer questions (multiple choice only)
 - Monthly recap (C8)
@@ -199,6 +212,10 @@ If week 3 opens collapse, fix delivery and lesson quality before adding anything
 - **AI:** not in the MVP. Authors write lessons themselves; AI drafting (E3) comes later.
 - **Lesson length:** no maximum. Every lesson shows its reading time.
 - **Quiz types:** multiple choice only for the MVP. It's simple to grade automatically. Typed answers can come later.
+- **Delivery:** one run a day for everyone at 11:00 UTC (placeholder until a final time is picked). Learners can't choose a time in the MVP.
+- **Interest levels:** Off, or 1–5 with the level as the weight.
+- **Sub-topics:** topics form a tree of any depth. Any topic can be picked. A topic's parent is its only prerequisite, and it's a warning, not a block.
+- **Review:** only missed questions enter review, up to 2 a day.
 
 ## 8. Open questions
 
