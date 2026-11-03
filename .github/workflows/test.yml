@@ -18,6 +18,9 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
 
   database:
     name: Database schema and access rules
@@ -38,8 +41,24 @@ jobs:
       PGDATABASE: pisara_test
     steps:
       - uses: actions/checkout@v4
-      - run: |
+      - name: Schema and access rules
+        run: |
           psql -v ON_ERROR_STOP=1 \
             -f supabase/tests/stub_supabase.sql \
             -f supabase/migrations/20261103000000_initial_schema.sql \
             -f supabase/tests/rls_test.sql
+      - name: Fresh database for the delivery job tests
+        run: |
+          createdb pisara_jobs
+          psql -v ON_ERROR_STOP=1 -d pisara_jobs \
+            -f supabase/tests/stub_supabase.sql \
+            -f supabase/migrations/20261103000000_initial_schema.sql
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Delivery job against Postgres
+        run: npm run test:db
+        env:
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/pisara_jobs
