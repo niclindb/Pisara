@@ -2,7 +2,8 @@
 -- Every check raises an exception on failure; success prints "all checks passed".
 \set ON_ERROR_STOP on
 grant usage on schema public to authenticated, service_role;
-grant all on all tables in schema public to authenticated, service_role;
+grant usage on schema public to anon;
+grant all on all tables in schema public to anon, authenticated, service_role;
 
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-00000000000a', 'author@example.com'),
@@ -21,6 +22,8 @@ insert into public.lessons (id, topic_id, position, title, status) values
   ('30000000-0000-0000-0000-000000000005', '20000000-0000-0000-0000-000000000001', 1, 'Old', 'unpublished');
 insert into public.questions (lesson_id, prompt, options, correct_index) values
   ('30000000-0000-0000-0000-000000000004', 'Q?', array['a','b'], 0);
+insert into public.questions (lesson_id, prompt, options, correct_index) values
+  ('30000000-0000-0000-0000-000000000001', 'Preview Q?', array['a','b'], 1);
 insert into public.deliveries (user_id, lesson_id, local_date) values
   ('00000000-0000-0000-0000-00000000000b', '30000000-0000-0000-0000-000000000005', '2026-11-03'),
   ('00000000-0000-0000-0000-00000000000c', '30000000-0000-0000-0000-000000000001', '2026-11-03');
@@ -53,6 +56,31 @@ begin
   select count(*) into n from public.visible_topics; if n <> 2 then raise exception 'visible: %', n; end if;
 end $$;
 
+-- As a signed-out visitor.
+set role anon;
+select set_config('request.jwt.claim.sub', '', false);
+do $$
+declare n int;
+begin
+  select count(*) into n from public.categories; if n <> 1 then raise exception 'visitor sees % categories', n; end if;
+  select count(*) into n from public.visible_topics; if n <> 2 then raise exception 'visitor sees % topics', n; end if;
+  select lesson_count into n from public.visible_topics where name = 'Stars';
+  if n <> 3 then raise exception 'lesson_count %', n; end if;
+  -- Only the first published lesson of each topic.
+  select count(*) into n from public.lessons; if n <> 1 then raise exception 'visitor sees % lessons', n; end if;
+  select count(*) into n from public.lessons where title = 'L1'; if n <> 1 then raise exception 'preview is not L1'; end if;
+  select count(*) into n from public.questions; if n <> 1 then raise exception 'visitor sees % questions', n; end if;
+  select count(*) into n from public.topics; if n <> 0 then raise exception 'visitor reads topics table'; end if;
+  select count(*) into n from public.profiles; if n <> 0 then raise exception 'visitor sees profiles'; end if;
+  select count(*) into n from public.deliveries; if n <> 0 then raise exception 'visitor sees deliveries'; end if;
+  begin
+    insert into public.categories (name) values ('Hacked');
+    raise exception 'visitor wrote content';
+  exception when insufficient_privilege then null;
+  end;
+end $$;
+reset role;
+
 -- As the learner.
 set role authenticated;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-00000000000b', false);
@@ -62,7 +90,7 @@ begin
   select count(*) into n from public.profiles; if n <> 1 then raise exception 'learner sees % profiles', n; end if;
   -- 3 published + the unpublished one in their inbox; not the draft.
   select count(*) into n from public.lessons; if n <> 4 then raise exception 'learner sees % lessons', n; end if;
-  select count(*) into n from public.questions; if n <> 0 then raise exception 'learner sees draft questions'; end if;
+  select count(*) into n from public.questions; if n <> 1 then raise exception 'learner sees % questions (draft leaked?)', n; end if;
   select count(*) into n from public.deliveries; if n <> 1 then raise exception 'learner sees % deliveries', n; end if;
   -- Can't promote themselves.
   begin

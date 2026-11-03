@@ -98,8 +98,10 @@ create table public.questions (
 create index questions_lesson_id_idx on public.questions (lesson_id);
 
 -- Learner-visible topics: at least 3 published lessons (E4), or a parent of
--- such a topic, so the tree has its headings.
-create view public.visible_topics with (security_invoker = true) as
+-- such a topic, so the tree has its headings. This is also what signed-out
+-- visitors browse, so it runs with the view owner's rights (it has to count
+-- lessons they can't read) and leaves out the author-only outline.
+create view public.visible_topics as
 with recursive ready as (
   select t.id
   from public.topics t
@@ -112,9 +114,25 @@ with recursive ready as (
   select t.parent_id from public.topics t join shown s on t.id = s.id
   where t.parent_id is not null
 )
-select t.*, (t.id in (select id from ready)) as pickable
+select
+  t.id, t.category_id, t.parent_id, t.position, t.name, t.goal, t.description,
+  (select count(*) from public.lessons l
+   where l.topic_id = t.id and l.status = 'published')::int as lesson_count,  -- A3
+  (t.id in (select id from ready)) as pickable
 from public.topics t
 where t.id in (select id from shown);
+
+-- Each topic's first published lesson is a free preview that anyone can read,
+-- quiz included, before signing up.
+create function public.is_preview_lesson(lesson_id uuid) returns boolean
+language sql stable security definer set search_path = '' as $$
+  select exists (
+    select 1 from public.lessons l
+    where l.id = lesson_id and l.status = 'published'
+      and l.position = (select min(l2.position) from public.lessons l2
+                        where l2.topic_id = l.topic_id and l2.status = 'published')
+  );
+$$;
 
 -- ---------------------------------------------------------------------------
 -- Learner data
@@ -272,9 +290,11 @@ alter table public.review_items  enable row level security;
 alter table public.weekly_recaps enable row level security;
 alter table public.milestones    enable row level security;
 
--- Content: signed-in users read; authors read drafts too and write.
-create policy "signed-in users read categories" on public.categories
-  for select to authenticated using (true);
+-- Content: everyone reads categories and visible_topics, and signed-out
+-- visitors can read one preview lesson per topic. Signed-in users read
+-- published content; authors read drafts too and write.
+create policy "everyone reads categories" on public.categories
+  for select to anon, authenticated using (true);
 create policy "authors write categories" on public.categories
   for all to authenticated using (public.is_author()) with check (public.is_author());
 
@@ -291,13 +311,15 @@ create policy "read published or delivered lessons" on public.lessons
     or exists (select 1 from public.deliveries d
                where d.lesson_id = lessons.id and d.user_id = auth.uid())
   );
+create policy "visitors read preview lessons" on public.lessons
+  for select to anon using (public.is_preview_lesson(id));
 create policy "authors write lessons" on public.lessons
   for all to authenticated using (public.is_author()) with check (public.is_author());
 
 -- Questions follow their lesson's visibility. Note: correct_index is readable;
 -- the lesson page should still grade on the server so answers are recorded.
 create policy "read questions of readable lessons" on public.questions
-  for select to authenticated using (
+  for select to anon, authenticated using (
     exists (select 1 from public.lessons l where l.id = questions.lesson_id)
   );
 create policy "authors write questions" on public.questions
@@ -340,3 +362,5 @@ create policy "insert own milestones" on public.milestones
   for insert to authenticated with check (user_id = auth.uid());
 create policy "update own milestones" on public.milestones
   for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+grant select on public.visible_topics to anon, authenticated;

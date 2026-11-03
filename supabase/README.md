@@ -8,10 +8,11 @@ The database is defined entirely in `migrations/`. Don't change tables or access
 |---|---|
 | `migrations/20261103000000_initial_schema.sql` | All tables, the topic tree, triggers, and access rules (row-level security) from `docs/design.md` sections 4 and 9 |
 | `tests/stub_supabase.sql` | A tiny stand-in for Supabase's `auth` schema and roles, so the migration can be tested on plain Postgres |
-| `tests/rls_test.sql` | Checks the access rules and constraints: learners see only their own data and published lessons, can't make themselves authors, can't write content; one daily lesson per day; no topic loops; deleting an account removes its data |
+| `tests/rls_test.sql` | Checks the access rules and constraints: visitors see only topics and preview lessons; learners see only their own data and published lessons, can't make themselves authors, can't write content; one daily lesson per day; no topic loops; deleting an account removes its data |
 
 ## How the pieces fit
 
+- **Signed-out visitors** can browse categories and topics (through `visible_topics`, with lesson counts) and read each topic's first published lesson as a free preview, quiz included. Nothing else.
 - **Sign-in** is Supabase Auth with email links. The first sign-in creates a row in `auth.users`, and a trigger creates the matching `profiles` row.
 - **Writes go through the Next.js server** using the signed-in user's session. The access rules are the safety net if anything slips through.
 - **The daily delivery job** runs on the server with the service role key, which skips the access rules. It's the only thing that creates deliveries and weekly recaps.

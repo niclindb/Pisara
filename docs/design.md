@@ -323,7 +323,7 @@ Emails link to the lesson page; lessons aren't included in full in the email, so
 
 ## 9. Security and privacy
 
-- **Database access rules (Supabase row-level security):** learners can read only published content and only their own learner data. Only authors can write content.
+- **Database access rules (Supabase row-level security):** signed-out visitors can browse categories and topics and read each topic's first published lesson as a free preview, so they can try Pisara before signing up. Learners can read only published content and only their own learner data. Only authors can write content.
 - **Author role** is set by hand in the database for the MVP.
 - **Job endpoint** requires a secret key stored in environment variables.
 - **Lesson Markdown is sanitized** when rendered, so no scripts can run.
