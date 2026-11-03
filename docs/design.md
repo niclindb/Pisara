@@ -1,6 +1,6 @@
 # Pisara: Design Doc
 
-_Draft 2, November 3, 2026. Updated after the design review (see section 13). Builds on [user-stories-and-mvp.md](user-stories-and-mvp.md); story IDs like B1 refer to that document._
+_Draft 1, November 3, 2026. Builds on [user-stories-and-mvp.md](user-stories-and-mvp.md); story IDs like B1 refer to that document._
 
 ## 1. Overview
 
@@ -28,6 +28,7 @@ flowchart LR
   W -->|read/write data| DB[(Supabase Postgres)]
   W -->|email sign-in links| AU[Supabase Auth]
   C[Daily scheduled job, Vercel Cron] -->|calls /api/jobs/deliver| W
+  C[Hourly scheduled job] -->|calls /api/jobs/deliver| W
   W -->|daily + weekly emails| E[Resend email]
   E --> L
 ```
