@@ -43,3 +43,13 @@ psql -v ON_ERROR_STOP=1 -d pisara_test \
 ```
 
 It prints `all checks passed` at the end, or stops at the first failed check.
+
+The delivery job tests (`npm run test:db`) need their own empty database with only the stub and the migration loaded:
+
+```sh
+createdb pisara_jobs
+psql -v ON_ERROR_STOP=1 -d pisara_jobs \
+  -f supabase/tests/stub_supabase.sql \
+  -f supabase/migrations/20261103000000_initial_schema.sql
+TEST_DATABASE_URL=postgres://localhost/pisara_jobs npm run test:db
+```
