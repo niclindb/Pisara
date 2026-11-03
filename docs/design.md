@@ -125,6 +125,7 @@ A topic is shown to learners when it has at least 3 published lessons (E4). A pa
 |---|---|---|
 | id | uuid | Same as the auth user id |
 | email | text | Unique. Accounts are keyed by email (A7). |
+| display_name | text | Optional, up to 50 characters. Used in greetings; never shown to other learners. |
 | time_zone | text | IANA name, e.g. "America/Chicago". Decides the learner's local date and recap day (A5). |
 | weekly_recap_day | int | 0–6, default Sunday (C7) |
 | emails_enabled | bool | One-click pause/unsubscribe (B3) |
@@ -322,11 +323,11 @@ Emails link to the lesson page; lessons aren't included in full in the email, so
 
 ## 9. Security and privacy
 
-- **Database access rules (Supabase row-level security):** learners can read only published content and only their own learner data. Only authors can write content.
+- **Database access rules (Supabase row-level security):** signed-out visitors can browse categories and topics and read each topic's first published lesson as a free preview, so they can try Pisara before signing up. Learners can read only published content and only their own learner data. Only authors can write content.
 - **Author role** is set by hand in the database for the MVP.
 - **Job endpoint** requires a secret key stored in environment variables.
 - **Lesson Markdown is sanitized** when rendered, so no scripts can run.
-- **Data collected:** email, time zone, settings, and learning activity. No names, no tracking pixels, no third-party analytics in the MVP.
+- **Data collected:** email, an optional display name, time zone, settings, and learning activity. No tracking pixels, no third-party analytics in the MVP.
 - **Delete account** removes the profile and all learner data (D9).
 
 ## 10. Measuring success
