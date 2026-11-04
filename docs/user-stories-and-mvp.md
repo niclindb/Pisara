@@ -56,7 +56,7 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 - A1: Anyone can create an account. Entering an email sends a sign-in link that works once and expires after 15 minutes. No password anywhere.
 - A2/A4: The learner must turn on at least one topic before finishing setup. Every topic starts at "Off," and one tap turns it on at level 3.
 - A3a: Picking a sub-topic whose parent the learner hasn't finished shows a note such as "This builds on Stars, which you haven't finished." The learner can carry on anyway.
-- A5: Lessons go out once a day for everyone, at 11:00 UTC. The learner's time zone is detected automatically (and can be changed) and decides what counts as "today" and their weekly recap day.
+- A5: Lessons go out once a day for everyone, at 8am Eastern (New York time, all year). The learner's time zone is detected automatically (and can be changed) and decides what counts as "today" and their weekly recap day.
 - A7: Accounts are linked by email address, so adding a sign-in method later doesn't create duplicate accounts.
 - A9: Signed-out visitors can browse categories and topics and read each visible topic's first published lesson, with its practice problems and quiz. Their answers aren't saved. The preview ends with a sign-up prompt.
 - A10: Up to 50 characters, set during onboarding or in settings. Never shown to other learners.
@@ -226,7 +226,7 @@ If week 3 opens collapse, fix delivery and lesson quality before adding anything
 - **AI:** not in the MVP. Authors write lessons themselves; AI drafting (E3) comes later.
 - **Lesson length:** no maximum. Every lesson shows its reading time.
 - **Quiz types:** multiple choice only for the MVP. It's simple to grade automatically. Typed answers can come later.
-- **Delivery:** one run a day for everyone at 11:00 UTC (placeholder until a final time is picked). Learners can't choose a time in the MVP.
+- **Delivery:** one run a day for everyone at 8am Eastern (decided Nov 4, 2026). Learners can't choose a time in the MVP.
 - **Interest levels:** Off, or 1–5 with the level as the weight.
 - **Sub-topics:** topics form a tree of any depth. Any topic can be picked. A topic's parent is its only prerequisite, and it's a warning, not a block.
 - **Review:** only missed questions enter review, up to 2 a day.
