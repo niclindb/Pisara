@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import type { ActionResult } from "@/app/author/actions";
 import { getExtraLesson } from "@/lib/jobs/extra";
 import { QuizError, submitQuiz, type QuizResult } from "@/lib/jobs/quiz";
+import { ChoiceError, setTopicInterest } from "@/lib/jobs/topics";
 import { milestoneMessage } from "@/lib/rules/milestones";
 import type { SubmittedAnswer } from "@/lib/rules/quiz";
 import { db } from "@/lib/server/db";
@@ -54,4 +55,17 @@ export async function submitQuizAction(
   }
   revalidatePath("/", "layout");
   return { ok: true, milestoneText, ...result };
+}
+
+/** Turns a topic on or off, or sets how often it comes up (A4). Returns the prerequisite note, if any. */
+export async function setTopicInterestAction(topicId: string, interest: number): Promise<ActionResult> {
+  const user = await requireLearner();
+  try {
+    const { note } = await setTopicInterest(db(), user.id, topicId, interest);
+    revalidatePath("/", "layout");
+    return { ok: true, message: note ?? (interest === 0 ? "Turned off. Your progress is kept." : "Saved.") };
+  } catch (err) {
+    if (err instanceof ChoiceError) return { ok: false, problems: err.problems };
+    throw err;
+  }
 }

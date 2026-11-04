@@ -10,7 +10,7 @@ export interface CurrentUser {
   id: string;
   email: string;
   role: "learner" | "author";
-  /** False until onboarding turns on at least one topic. */
+  /** False until onboarding turns on a topic. Stays true if they later turn every topic off. */
   onboarded: boolean;
 }
 
@@ -52,7 +52,7 @@ export async function currentUser(): Promise<CurrentUser | null> {
 async function loadUser(id: string): Promise<CurrentUser | null> {
   const [p] = await db()`
     select p.id, p.email, p.role,
-           exists (select 1 from public.user_topics ut where ut.user_id = p.id and ut.interest > 0) as onboarded
+           exists (select 1 from public.user_topics ut where ut.user_id = p.id) as onboarded
     from public.profiles p where p.id = ${id}`;
   return p ? { id: p.id, email: p.email, role: p.role, onboarded: p.onboarded } : null;
 }

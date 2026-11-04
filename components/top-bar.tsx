@@ -1,16 +1,34 @@
 import Link from "next/link";
 import type { CurrentUser } from "@/lib/server/auth";
-import { Wordmark } from "./ui";
+import { LinkButton, Wordmark } from "./ui";
+
+/** The learner's links, the same on every learner page and on Explore when signed in. */
+export function learnerLinks(user: CurrentUser) {
+  const links = [
+    { href: "/home", label: "Home" },
+    { href: "/topics", label: "My topics" },
+    { href: "/explore", label: "Explore" },
+    { href: "/progress", label: "Progress" },
+    { href: "/history", label: "History" },
+    { href: "/settings", label: "Settings" },
+  ];
+  if (user.role === "author") links.push({ href: "/author", label: "Author" });
+  return links;
+}
 
 /**
  * The top bar on signed-in pages. One set of links, no duplicates elsewhere on
  * the page. On a phone the links fold into a Menu that works without JavaScript.
  */
 export function TopBar({ user, links }: { user: CurrentUser | null; links: { href: string; label: string }[] }) {
-  const signOut = user && (
+  const signOut = user ? (
     <form action="/auth/sign-out" method="post">
       <button className="py-2 text-text-muted hover:underline">Sign out</button>
     </form>
+  ) : (
+    <LinkButton href="/sign-in" variant="secondary">
+      Sign in
+    </LinkButton>
   );
   return (
     <header className="relative border-b border-hairline bg-surface">

@@ -4,7 +4,9 @@ import { LessonArticle, LessonPageFrame, PracticeProblems } from "@/components/l
 import { openLessonPage } from "@/lib/jobs/learner";
 import { db } from "@/lib/server/db";
 import { requireLearner } from "../../guard";
-import { LessonQuiz } from "./lesson-quiz";
+import { LessonQuiz } from "@/components/lesson-quiz";
+import { LinkButton } from "@/components/ui";
+import { submitQuizAction } from "../../actions";
 
 export const metadata: Metadata = { title: "Lesson" };
 
@@ -32,7 +34,15 @@ export default async function LessonPage({ params }: { params: Promise<{ id: str
         body={lesson.body}
       />
       <PracticeProblems problems={lesson.problems} />
-      <LessonQuiz lessonId={lesson.id} quiz={lesson.quiz} />
+      <LessonQuiz
+        quiz={lesson.quiz}
+        grade={submitQuizAction.bind(null, lesson.id)}
+        next={
+          <LinkButton href="/home" variant="secondary">
+            Back to Home
+          </LinkButton>
+        }
+      />
     </LessonPageFrame>
   );
 }

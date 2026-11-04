@@ -2,7 +2,7 @@
 // (see supabase/README.md). Deletes all data in that database.
 
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
-import { gradePreviewQuiz, loadHistory, loadHome, loadProgress, openLessonPage } from "./learner";
+import { gradePreviewQuiz, loadHistory, loadHome, loadProgress, openLessonPage, previewLessonId } from "./learner";
 import { connect } from "./postgres-store";
 import { submitQuiz } from "./quiz";
 
@@ -91,6 +91,10 @@ describe.skipIf(!url)("learner pages on Postgres", () => {
     expect(graded.answers[0]).toMatchObject({ correct: false, correctIndex: 0, explanation: "Because." });
     expect(await sql`select * from public.answers`).toHaveLength(0);
     await expect(gradePreviewQuiz(sql, L(1, 2), [])).rejects.toThrow("isn't a preview");
+    expect(await previewLessonId(sql, STARS)).toBe(L(1, 1));
+    await sql`update public.lessons set status = 'unpublished' where id = ${L(1, 1)}`;
+    // Two published lessons left: learners can't pick Stars yet, so no preview either.
+    expect(await previewLessonId(sql, STARS)).toBeNull();
   });
 
   it("lists history newest first with quiz scores, a page at a time", async () => {

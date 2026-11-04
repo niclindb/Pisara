@@ -144,6 +144,15 @@ export async function openLessonPage(sql: Sql, userId: string | null, lessonId: 
   };
 }
 
+/** The free preview lesson of a topic learners can pick (A9): its first published lesson. */
+export async function previewLessonId(sql: Sql, topicId: string): Promise<string | null> {
+  const [r] = await sql`
+    select l.id from public.lessons l
+    join public.visible_topics v on v.id = l.topic_id and v.pickable
+    where l.topic_id = ${topicId} and public.is_preview_lesson(l.id)`;
+  return r?.id ?? null;
+}
+
 /** Grades a preview quiz for a visitor (A9). Nothing is saved. */
 export async function gradePreviewQuiz(
   sql: Sql,

@@ -5,7 +5,7 @@ import { Card, LinkButton } from "@/components/ui";
 import { loadHome, type HomeView, type LessonCard } from "@/lib/jobs/learner";
 import { loadTopicChoices } from "@/lib/jobs/topics";
 import { INBOX_LIMIT } from "@/lib/rules/constants";
-import { formatDate } from "@/lib/rules/dates";
+import { addDays, formatDate } from "@/lib/rules/dates";
 import { db } from "@/lib/server/db";
 import { extraLessonAction } from "../actions";
 import { requireLearner } from "../guard";
@@ -146,7 +146,7 @@ function Hero({ home, year }: { home: HomeView; year: number }) {
     headline = `Lessons are paused${name}.`;
     line = (
       <>
-        They start again on {formatDate(home.pausedUntil!, year)}. You can change that in{" "}
+        They start again on {formatDate(addDays(home.pausedUntil!, 1), year)}. You can change that in{" "}
         <Link href="/settings" className="font-medium text-hero-text underline underline-offset-4">
           Settings
         </Link>

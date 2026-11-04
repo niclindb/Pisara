@@ -23,15 +23,6 @@ export function OnboardingForm({ choices, zones }: { choices: TopicChoices; zone
     if (detected && zones.includes(detected)) setTimeZone(detected);
   }, [zones]);
 
-  const depth = (id: string | null): number => {
-    let d = 0;
-    let cur = choices.topics.find((t) => t.id === id);
-    while (cur?.parentId) {
-      d++;
-      cur = choices.topics.find((t) => t.id === cur!.parentId);
-    }
-    return d;
-  };
   const onCount = Object.values(interest).filter((v) => v > 0).length;
 
   const submit = (e: React.FormEvent) => {
@@ -75,7 +66,7 @@ export function OnboardingForm({ choices, zones }: { choices: TopicChoices; zone
                 </h3>
                 <ul className="divide-y divide-hairline rounded-card border border-hairline bg-surface">
                   {topics.map((t) => {
-                    const d = depth(t.id);
+                    const d = t.depth;
                     const on = (interest[t.id] ?? 0) > 0;
                     return (
                       <li key={t.id} className="px-5 py-4" style={{ paddingLeft: `${1.25 + d * 1.5}rem` }}>

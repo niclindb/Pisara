@@ -4,15 +4,27 @@
 // questions from earlier lessons (C5). Results show on the same page.
 
 import Link from "next/link";
-import { useRef, useState, useTransition } from "react";
-import { Button, ErrorList, LinkButton } from "@/components/ui";
+import { useRef, useState, useTransition, type ReactNode } from "react";
+import type { QuizOutcome } from "@/app/(learner)/actions";
 import type { QuizQuestionView, QuizView } from "@/lib/jobs/quiz";
-import type { GradedAnswer } from "@/lib/rules/quiz";
-import { submitQuizAction, type QuizOutcome } from "../../actions";
+import type { GradedAnswer, SubmittedAnswer } from "@/lib/rules/quiz";
+import { Button, ErrorList } from "./ui";
 
 type Done = Extract<QuizOutcome, { ok: true }>;
 
-export function LessonQuiz({ lessonId, quiz: fromServer }: { lessonId: string; quiz: QuizView | null }) {
+/**
+ * `grade` is a server action: the learner's quiz (saved, with review) or the
+ * free preview (nothing saved). `next` is what to offer once done or skipped.
+ */
+export function LessonQuiz({
+  quiz: fromServer,
+  grade,
+  next,
+}: {
+  quiz: QuizView | null;
+  grade: (answers: { lesson: SubmittedAnswer[]; review: SubmittedAnswer[] }) => Promise<QuizOutcome>;
+  next: ReactNode;
+}) {
   // Keep the questions as first shown: after grading, the page refreshes without the review questions.
   const [quiz] = useState(fromServer);
   const [chosen, setChosen] = useState<Record<string, number>>({});
@@ -27,9 +39,7 @@ export function LessonQuiz({ lessonId, quiz: fromServer }: { lessonId: string; q
     return (
       <section aria-label="What's next" className="mt-12 border-t border-hairline pt-6">
         {quiz?.completed && <p className="mb-4 text-text-muted">You've done this lesson's quiz.</p>}
-        <LinkButton href="/home" variant="secondary">
-          Back to Home
-        </LinkButton>
+        {next}
       </section>
     );
   }
@@ -42,7 +52,7 @@ export function LessonQuiz({ lessonId, quiz: fromServer }: { lessonId: string; q
   const submit = () =>
     start(async () => {
       const pick = (qs: QuizQuestionView[]) => qs.map((q) => ({ questionId: q.id, chosenIndex: chosen[q.id]! }));
-      const outcome = await submitQuizAction(lessonId, { lesson: pick(quiz.lessonQuestions), review: pick(quiz.reviewQuestions) });
+      const outcome = await grade({ lesson: pick(quiz.lessonQuestions), review: pick(quiz.reviewQuestions) });
       if (!outcome.ok) {
         setProblems(outcome.problems);
         return;
@@ -147,9 +157,7 @@ export function LessonQuiz({ lessonId, quiz: fromServer }: { lessonId: string; q
               </ul>
             </div>
           )}
-          <LinkButton href="/home" variant="secondary">
-            Back to Home
-          </LinkButton>
+          {next}
         </div>
       )}
     </section>
