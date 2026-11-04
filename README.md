@@ -13,7 +13,7 @@ The backend only. No pages yet: those wait for the design scheme.
 |---|---|
 | `supabase/` | The database schema, access rules and their tests. See [supabase/README.md](supabase/README.md). |
 | `lib/rules/` | The core rules from the design doc: topic picking, the inbox and "lessons waiting" reminders, review timing, the weekly recap, progress and prerequisites, milestones. Plain functions with no database access. Every tunable number is in `lib/rules/constants.ts`. |
-| `lib/jobs/` | The daily delivery job and its database queries. |
+| `lib/jobs/` | Server-side work on the database: the daily delivery job, marking a lesson read when it's opened (`lessons.ts`), and loading and grading quizzes and weekly recaps, including review scheduling, milestones and "Go deeper" (`quiz.ts`). |
 | `lib/email/` | The daily lesson and "lessons waiting" emails, signed unsubscribe links, and sending through Resend. |
 | `app/api/jobs/deliver` | The endpoint Vercel Cron calls at 11:00 UTC every day (`vercel.json`). |
 | `app/api/unsubscribe` | One-click unsubscribe from email links and email apps. |
