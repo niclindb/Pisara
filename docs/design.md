@@ -1,6 +1,6 @@
 # Pisara: Design Doc
 
-_Draft 2, November 3, 2026. Updated after the design review (see section 13). Builds on [user-stories-and-mvp.md](user-stories-and-mvp.md); story IDs like B1 refer to that document._
+_Draft 2, November 3, 2026. Updated after the design review (see section 14). Builds on [user-stories-and-mvp.md](user-stories-and-mvp.md); story IDs like B1 refer to that document._
 
 ## 1. Overview
 
@@ -330,7 +330,41 @@ Emails link to the lesson page; lessons aren't included in full in the email, so
 - **Data collected:** email, an optional display name, time zone, settings, and learning activity. No tracking pixels, no third-party analytics in the MVP.
 - **Delete account** removes the profile and all learner data (D9).
 
-## 10. Measuring success
+## 10. Accessibility
+
+Pisara must meet **WCAG 2.2 level AA** on every page and email, for learners and authors alike. This is the standard US courts and the DOJ use for the ADA, and the same level the EU's accessibility rules require. It's a release requirement, not a polish step: a page that fails it isn't done.
+
+### Rules for every page
+- **Keyboard:** everything works with the keyboard alone, in a sensible order, with no traps. Quiz answers can be picked with arrow keys and Enter. Drag to reorder in the author tools also has Move up / Move down buttons (2.5.7).
+- **Visible focus:** a clear focus ring on every focusable element, at least 3:1 against what's around it, never hidden by sticky headers (2.4.7, 2.4.11).
+- **Color contrast:** 4.5:1 for normal text, 3:1 for large text, borders, icons and focus rings. Checked automatically from the color tokens (see section 12).
+- **Color is never the only signal:** right and wrong answers also show an icon and the words "Correct" or "Not quite".
+- **Tap targets:** at least 24 by 24 px (2.5.8); aim for 44 px on quiz answers and main buttons.
+- **Structure:** one `h1` per page, headings in order, landmarks (`header`, `nav`, `main`), and a "Skip to content" link. Every page has a unique `<title>`. `lang="en"` on the page.
+- **Forms:** every input has a visible label. Errors say what's wrong and how to fix it, are linked to the field, and are announced. The sign-in form allows pasting and password managers (3.3.8).
+- **Announcements:** quiz results, "check your inbox", and saved settings are announced to screen readers through a live region. Moving between pages moves focus to the new page's heading.
+- **Zoom and small screens:** works at 200% zoom and 320 px wide with no sideways scrolling (1.4.10). Text sizes in `rem`, so the reader's font size setting applies.
+- **Motion:** milestone celebrations and other animation respect `prefers-reduced-motion`. Nothing flashes.
+- **Time limits:** none on lessons or quizzes. The 15-minute sign-in link is the only one, and requesting a new one is easy.
+- **Lesson content:** authors must give images alt text (the editor asks for it), use real headings in Markdown, and write link text that makes sense alone. Code blocks scroll on their own instead of the page.
+- **Help is consistent:** the help or contact link sits in the same place on every page (3.2.6).
+
+### Emails
+Real text (not images of text), a heading, readable link text instead of "click here", `lang` set, the same contrast rules as the site, and a plain-text version.
+
+### How it's checked
+| Check | Catches | Runs |
+|---|---|---|
+| Color contrast test (`lib/a11y/`) | Any token pair below AA | Every PR (Vitest) |
+| `eslint-plugin-jsx-a11y` (strict) | Missing alt text, unlabeled controls, bad ARIA | Every PR and in the editor |
+| axe in component tests (`vitest-axe`) | Problems in each component and its states | Every PR |
+| Playwright + axe on every page, signed out, as a learner and as an author | WCAG 2.2 AA failures on real pages, plus keyboard-only runs of sign-in, onboarding and a quiz | Every PR |
+| Lighthouse CI | Accessibility score must be 100 | Every PR |
+| Manual checklist ([accessibility-checklist.md](accessibility-checklist.md)) | What tools can't judge: focus order, screen reader experience, clear wording | Every PR that changes UI, and in full before each release |
+
+Automated tools find only a third to a half of real problems, so the manual checklist isn't optional.
+
+## 11. Measuring success
 
 The success targets in the MVP doc come straight from the database, with no analytics service needed:
 
@@ -343,17 +377,18 @@ The success targets in the MVP doc come straight from the database, with no anal
 
 A simple author-only `/author/stats` page can show these later. For the MVP, saved SQL queries in the Supabase dashboard are enough.
 
-## 11. Testing
+## 12. Testing
 
 - **Unit tests** for everything in `lib/rules/`: topic picking (including the "not 3 days in a row" rule and odds over many runs), review steps (missed questions only, up to 2 a day), recap building, milestones, inbox limit and "lessons waiting" reminders, prerequisite notes and "Go deeper".
 - **Time zone tests** for the delivery job: local dates across several zones (including ones where 11:00 UTC is already tomorrow), daylight saving changes, and the job running twice.
-- **Manual checklist** before each release: sign up, onboard, read, quiz, get emails, author publishes a lesson.
+- **Accessibility checks** on every PR: contrast, lint, axe in component and page tests, Lighthouse. See section 10.
+- **Manual checklist** before each release: sign up, onboard, read, quiz, get emails, author publishes a lesson. Includes the [accessibility checklist](accessibility-checklist.md).
 
-## 12. Build plan
+## 13. Build plan
 
 | Phase | What gets built | Ends with |
 |---|---|---|
-| 1. Setup | Next.js project, Supabase project, database tables, deploy to Vercel | Empty app live at a URL |
+| 1. Setup | Next.js project, Supabase project, database tables, deploy to Vercel, accessibility checks (lint, axe, Playwright, Lighthouse CI) in the PR check | Empty app live at a URL |
 | 2. Author tools | Categories, topic tree, lesson editor, publish | Author can add real lessons |
 | 3. Content | Write 3+ lessons for each of a few topics | Enough content to test with |
 | 4. Learner flow | Sign-in, onboarding, inbox, lesson page, quiz, progress | Founder can use it by hand |
@@ -361,8 +396,9 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 | 6. Review & celebrations | Review questions, weekly recap, milestones | Full MVP |
 | 7. Founder test | Use it daily for 2 weeks, fix what's annoying | Ready to open sign-up |
 
-## 13. Decisions in this doc
+## 14. Decisions in this doc
 
+- **Accessibility:** WCAG 2.2 AA is a release requirement, checked automatically on every PR and by hand before release (section 10).
 - **Email provider:** Resend.
 - **Tech stack:** Next.js (React) + TypeScript, Supabase (database, sign-in), Vercel (hosting, daily scheduled job).
 - **Weekly recap delivery:** in the inbox, with a mention in that day's lesson email. No separate email.
@@ -374,7 +410,7 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 - **Progress:** counts read lessons, not delivered ones.
 - **Unpublishing:** lessons stay where learners already have them, but leave picking and review.
 
-## 14. Open questions
+## 15. Open questions
 
 1. **Daily run time:** 11:00 UTC is a placeholder. Pick a time aimed at the first learners' morning.
 2. **Domain:** register pisara.co or getpisara.com before the first deploy so emails come from the real domain.

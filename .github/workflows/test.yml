@@ -7,7 +7,7 @@ on:
 
 jobs:
   rules:
-    name: Core rules
+    name: Unit tests (rules, color contrast)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
