@@ -103,6 +103,7 @@ Three layers, each one short:
 | C8 | As a learner, I want a monthly look back at what I learned, with an optional recap quiz, so I can see how far I've come. | Later |
 | C9 | As a learner, I want to see how many of my recent review questions I remembered so I can tell I'm actually learning. | Should |
 | C10 | As a learner, I want practice problems with a lesson, with worked solutions I can reveal, so I can check I can use what I just read. | Must |
+| C11 | As a learner, I want my answers to practice problems checked, and the ones I get wrong to come back in review, so practice counts toward what I remember. | Later |
 
 **Acceptance criteria**
 - C1: The quiz is optional twice over: an author can publish a lesson without one, and a learner can always skip it. Skipping still leaves the lesson read, but its questions don't enter review. A lesson with no quiz still offers any review questions that are due, which can also be skipped.
@@ -197,6 +198,7 @@ A6, A10, B7, C4, C7, C9, D4, D5, D6, E7
 - Prerequisites other than a topic's parent (for example, Algebra before Physics)
 - AI-drafted lessons (E3)
 - Typed-answer questions (multiple choice only)
+- Graded practice problems that feed review (C11); MVP practice problems are ungraded
 - Monthly recap (C8)
 - Native mobile apps and push notifications
 - Contributors, topic requests, voting (all of section F)
