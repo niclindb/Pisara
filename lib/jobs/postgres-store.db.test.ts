@@ -6,6 +6,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { runDailyDelivery } from "./deliver";
 import { connect, postgresStore } from "./postgres-store";
 import { unsubscribe } from "./unsubscribe";
+import { markLessonOpened } from "./lessons";
 import { unsubscribeUrl } from "../email/unsubscribe";
 import type { EmailMessage } from "./types";
 
@@ -131,6 +132,25 @@ describe.skipIf(!url)("delivery job on Postgres", () => {
     expect(recap!.question_ids[0]).toBe(q!.id);
     expect(recap!.question_ids).toHaveLength(2);
     expect(sent.at(-1)!.text).toContain("weekly recap");
+  });
+
+  it("marks a lesson read when it's opened, which frees the inbox and resets reminders", async () => {
+    const { deps: d } = deps();
+    for (const date of ["2026-11-01", "2026-11-02", "2026-11-03"]) {
+      await runDailyDelivery(at(`${date}T11:00:00Z`), d);
+    }
+    await runDailyDelivery(at("2026-11-04T11:00:00Z"), d); // inbox full: first reminder
+    const opened = at("2026-11-04T19:00:00Z");
+    expect(await markLessonOpened(sql, U1, lesson(1, 1), opened)).toBe("opened");
+    expect(await markLessonOpened(sql, U1, lesson(1, 1), opened)).toBe("already_read");
+    expect(await markLessonOpened(sql, U1, lesson(2, 1), opened)).toBe("not_delivered");
+    const [p] = await sql`select waiting_reminders_sent, last_active_at from public.profiles`;
+    expect(p).toEqual({ waiting_reminders_sent: 0, last_active_at: opened });
+    const [r] = await sql`select read_at from public.deliveries where lesson_id = ${lesson(1, 1)}`;
+    expect(r!.read_at).toEqual(opened);
+    // With room in the inbox again, the next day brings a new lesson... but the path is done.
+    const day5 = await runDailyDelivery(at("2026-11-05T11:00:00Z"), d);
+    expect(day5.outcomes[0]).toMatchObject({ outcome: "skipped", reason: "nothing_to_pick" });
   });
 
   it("turns emails off from a valid unsubscribe link only", async () => {

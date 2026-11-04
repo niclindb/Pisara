@@ -43,16 +43,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Schema and access rules
         run: |
-          psql -v ON_ERROR_STOP=1 \
-            -f supabase/tests/stub_supabase.sql \
-            -f supabase/migrations/20261103000000_initial_schema.sql \
-            -f supabase/tests/rls_test.sql
+          supabase/tests/load_schema.sh pisara_test
+          psql -v ON_ERROR_STOP=1 -f supabase/tests/rls_test.sql
       - name: Fresh database for the delivery job tests
         run: |
           createdb pisara_jobs
-          psql -v ON_ERROR_STOP=1 -d pisara_jobs \
-            -f supabase/tests/stub_supabase.sql \
-            -f supabase/migrations/20261103000000_initial_schema.sql
+          supabase/tests/load_schema.sh pisara_jobs
       - uses: actions/setup-node@v4
         with:
           node-version: 22
