@@ -39,6 +39,10 @@ export async function requestSignInLink(input: string): Promise<SignInLinkResult
 
 /** The signed-in user, checked with Supabase, or null. */
 export async function currentUser(): Promise<CurrentUser | null> {
+  // Local development only (`npm run dev`, never a production build): pretend to be
+  // this user, so pages can be tried without a Supabase project.
+  const devUser = process.env.NODE_ENV === "development" ? process.env.DEV_SIGNED_IN_USER_ID : undefined;
+  if (devUser) return loadUser(devUser);
   const supabase = await supabaseServer();
   const { data } = await supabase.auth.getUser();
   if (!data.user) return null;
@@ -53,10 +57,10 @@ async function loadUser(id: string): Promise<CurrentUser | null> {
   return p ? { id: p.id, email: p.email, role: p.role, onboarded: p.onboarded } : null;
 }
 
-/** Where to go right after signing in: onboarding until a topic is on, then Home (or `next`). */
+/** Where to go right after signing in: onboarding until a topic is on (authors skip it), then Home (or `next`). */
 export function afterSignIn(user: CurrentUser | null, next: string | null): string {
   if (!user) return paths.signInExpired;
-  if (!user.onboarded) return paths.onboarding;
+  if (!user.onboarded) return user.role === "author" ? (next ?? paths.author) : paths.onboarding;
   return next ?? paths.home;
 }
 

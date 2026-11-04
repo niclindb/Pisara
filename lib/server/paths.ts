@@ -6,6 +6,7 @@ export const paths = {
   signIn: "/sign-in",
   signInExpired: "/sign-in/expired",
   landing: "/",
+  author: "/author",
 } as const;
 
 /** Only same-site paths are allowed as "next", so a sign-in link can't send someone elsewhere. */

@@ -8,7 +8,7 @@ Pisara (Finnish for "a drop") sends you one short lesson a day from topics you c
 
 ## Code so far
 
-The backend only. No pages yet: those wait for the design scheme.
+The backend, plus the first pages: sign-in and the author tools. The learner pages come next.
 
 | Path | What it is |
 |---|---|
@@ -17,6 +17,9 @@ The backend only. No pages yet: those wait for the design scheme.
 | `lib/jobs/` | Server-side work on the database: the daily delivery job (`deliver.ts`), opening a lesson and its practice problems (`lessons.ts`), the Home, lesson, history and progress pages (`learner.ts`), settings, email preferences and account deletion (`settings.ts`), extra lessons and the first lesson after onboarding (`extra.ts`), quizzes, review and the weekly recap (`quiz.ts`), choosing topics and onboarding (`topics.ts`), and the author tools (`author.ts`). |
 | `lib/email/` | The daily lesson and "lessons waiting" emails, signed unsubscribe links, and sending through Resend. |
 | `lib/server/` | Server-only helpers: settings from environment variables, the database connection, and sign-in with Supabase Auth (`auth.ts`). |
+| `app/author/` | The author tools: categories and topic trees (`/author`), the topic editor, and the lesson editor with live preview, practice problems and quiz. Only authors can open them; everyone else gets the not-found page. |
+| `app/sign-in/` | Sign in with an email link. |
+| `app/globals.css`, `components/` | The design scheme as CSS variables and Tailwind colors (checked against `lib/a11y/color-pairs.ts`), and the shared buttons, cards, forms and lesson view. |
 | `app/auth/confirm`, `app/auth/sign-out` | Where the sign-in email link lands (then onboarding or Home), and signing out. `proxy.ts` keeps the sign-in session fresh. |
 | `app/api/jobs/deliver` | The daily lesson run at 8am Eastern. Vercel Cron calls it at 12:00 and 13:00 UTC (`vercel.json`), and only the call in New York's 8am hour runs. |
 | `app/api/unsubscribe` | One-click unsubscribe from email links and email apps. |
@@ -31,6 +34,10 @@ npm run build
 `npm run test:db` also runs the delivery job against a real Postgres database. Set `TEST_DATABASE_URL` to an **empty test database** with the schema loaded (see supabase/README.md). It deletes all data in that database.
 
 Every pull request runs all of these (`.github/workflows/test.yml`).
+
+### Trying the pages locally
+
+`npm run dev` needs a database with the schema loaded. Without a Supabase project, you can pretend to be signed in: set `DEV_SIGNED_IN_USER_ID` in `.env.local` to the id of a user in that database (give them `role = 'author'` to see the author tools). This only works in `npm run dev`, never in a production build.
 
 ## Going live (one time)
 

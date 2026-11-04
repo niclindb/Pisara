@@ -1,0 +1,125 @@
+/* Pisara design scheme (docs/design-scheme.md). The color values must match
+   lib/a11y/color-pairs.ts; app/globals.test.ts checks that they do. */
+@import "tailwindcss";
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-hairline: var(--hairline);
+  --color-primary: var(--primary);
+  --color-primary-text: var(--primary-text);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-fill-text: var(--accent-fill-text);
+  --color-bright: var(--bright);
+  --color-bright-text: var(--bright-text);
+  --color-focus-ring: var(--focus-ring);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-hero-bg: var(--hero-bg);
+  --color-hero-text: var(--hero-text);
+  --color-hero-muted: var(--hero-muted);
+  --font-heading: var(--font-libre-baskerville), Georgia, serif;
+  --font-sans: var(--font-karla), system-ui, sans-serif;
+  --radius-control: 8px;
+  --radius-card-sm: 12px;
+  --radius-card: 16px;
+}
+
+:root {
+  --page: #E5E9EC;
+  --surface: #F9FAFB;
+  --text: #07182D;
+  --text-muted: #5C6774;
+  --border: #6E7A86;
+  --hairline: #B8C0C7;
+  --primary: #0B2545;
+  --primary-text: #FFFFFF;
+  --accent: #6B1040;
+  --accent-fill: #6B1040;
+  --accent-fill-text: #FFFFFF;
+  --bright: #00C2FF;
+  --bright-text: #07182D;
+  --focus-ring: #0B2545;
+  --success: #0B6B4F;
+  --success-bg: #E1F2EA;
+  --danger: #B42318;
+  --danger-bg: #FBE7E4;
+  --hero-bg: #0B2545;
+  --hero-text: #FFFFFF;
+  --hero-muted: #D0D7DC;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #040F1C;
+    --surface: #061528;
+    --text: #F3F5F6;
+    --text-muted: #D0D7DC;
+    --border: #6B7C8F;
+    --hairline: #293646;
+    --primary: #00C2FF;
+    --primary-text: #040F1C;
+    --accent: #D7527F;
+    --accent-fill: #3F1B37;
+    --accent-fill-text: #F3F5F6;
+    --bright: #00C2FF;
+    --bright-text: #040F1C;
+    --focus-ring: #00C2FF;
+    --success: #7FE0B5;
+    --success-bg: #083336;
+    --danger: #FF8A80;
+    --danger-bg: #3A1418;
+    --hero-bg: #061528;
+    --hero-text: #F3F5F6;
+    --hero-muted: #D0D7DC;
+    color-scheme: dark;
+  }
+}
+
+html {
+  background: var(--page);
+  color: var(--text);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Lesson text: 18px, line height 1.75, about 65 characters wide. */
+.prose-lesson {
+  font-size: 18px;
+  line-height: 1.75;
+  max-width: 65ch;
+}
+.prose-lesson > * + * { margin-top: 1em; }
+.prose-lesson h2 { font-size: 22px; margin-top: 1.6em; }
+.prose-lesson h3 { font-size: 18px; margin-top: 1.4em; }
+.prose-lesson ul { list-style: disc; padding-left: 1.4em; }
+.prose-lesson ol { list-style: decimal; padding-left: 1.4em; }
+.prose-lesson a { color: var(--primary); text-decoration: underline; }
+.prose-lesson blockquote { border-left: 3px solid var(--hairline); padding-left: 1em; color: var(--text-muted); }
+.prose-lesson code { font-size: 0.9em; background: var(--page); padding: 0.1em 0.3em; border-radius: 4px; }
+.prose-lesson pre { background: var(--page); padding: 1em; border-radius: 8px; overflow-x: auto; }
+.prose-lesson pre code { background: none; padding: 0; }
+.prose-lesson table { border-collapse: collapse; }
+.prose-lesson th, .prose-lesson td { border: 1px solid var(--hairline); padding: 0.3em 0.6em; text-align: left; }
