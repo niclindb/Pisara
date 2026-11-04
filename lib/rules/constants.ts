@@ -45,3 +45,9 @@ export const MANY_TOPICS = 8;
 
 /** Published lessons a topic needs before learners can pick it (E4). */
 export const MIN_PUBLISHED_LESSONS = 3;
+
+/** Words per minute used to estimate a lesson's reading time (E6). */
+export const READING_WORDS_PER_MINUTE = 200;
+
+/** Most quiz questions a lesson can have. Zero is fine: the quiz is optional. */
+export const MAX_QUIZ_QUESTIONS = 3;
