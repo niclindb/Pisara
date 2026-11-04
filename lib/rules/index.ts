@@ -10,3 +10,4 @@ export * from "./progress";
 export * from "./milestones";
 export * from "./quiz";
 export * from "./authoring";
+export * from "./onboarding";

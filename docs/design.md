@@ -261,7 +261,7 @@ A wrong answer is due tomorrow. A right one comes back in 3, then 7, 21, and 60 
 _Why only missed questions:_ if every question entered review, a learner would add 2–3 items a day, each needing about 5 more answers, or roughly 12 review answers a day. With only missed questions (15–40% at the target accuracy), up to 2 a day plus the 5-question weekly recap roughly keeps up.
 
 ### 5.4 Weekly recap (C7)
-On the learner's recap day, if they read 2 or more lessons in the past 7 days, build a recap of 5 questions: due review items first, then questions from this week's lessons they got wrong, then any from this week's lessons. It appears at the top of the inbox, and that day's email mentions it.
+On the learner's recap day, if they read 2 or more lessons in the past 7 days, build a recap of 5 questions: due review items first, then questions from this week's lessons they got wrong, then any from this week's lessons. It appears on Home below the waiting lessons, and that day's email mentions it.
 
 ### 5.5 Milestones (D3)
 Checked after each quiz is submitted:
