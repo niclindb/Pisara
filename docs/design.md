@@ -59,6 +59,7 @@ erDiagram
   topics ||--o{ topics : "sub-topics"
   topics ||--o{ lessons : "path of"
   lessons ||--o{ questions : has
+  lessons ||--o{ practice_problems : has
   profiles ||--o{ user_topics : chooses
   topics ||--o{ user_topics : ""
   profiles ||--o{ deliveries : receives
@@ -117,6 +118,19 @@ A topic is shown to learners when it has at least 3 published lessons (E4). A pa
 | options | text[] | 2–4 choices |
 | correct_index | int | |
 | explanation | text | One line, shown after answering (C2) |
+
+A lesson can have no questions: the quiz is optional, and authors can publish a lesson without one.
+
+**practice_problems** (optional, any number per lesson)
+| Column | Type | Notes |
+|---|---|---|
+| id | uuid | |
+| lesson_id | uuid | |
+| position | int | |
+| prompt | text | Markdown |
+| solution | text | Markdown worked solution, hidden until the learner taps "Show solution" |
+
+Practice problems aren't graded or recorded and never enter review. Readable by anyone who can read the lesson, like its questions.
 
 ### Learner data
 

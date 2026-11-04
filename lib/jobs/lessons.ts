@@ -23,3 +23,27 @@ export async function markLessonOpened(sql: Sql, userId: string, lessonId: strin
     return "opened";
   });
 }
+
+export type PracticeProblem = { id: string; prompt: string; solution: string };
+
+/**
+ * A lesson's optional practice problems, in order. The page shows each prompt
+ * with a "Show solution" button. They aren't graded or recorded. Returns null
+ * when the learner can't open the lesson: it must be delivered to them, or be
+ * a topic's free preview (pass userId null for a signed-out visitor).
+ */
+export async function loadPracticeProblems(
+  sql: Sql,
+  userId: string | null,
+  lessonId: string,
+): Promise<PracticeProblem[] | null> {
+  const [lesson] = await sql`
+    select public.is_preview_lesson(${lessonId}) as preview,
+           exists (select 1 from public.deliveries
+                   where user_id = ${userId} and lesson_id = ${lessonId}) as delivered`;
+  if (!lesson?.preview && !lesson?.delivered) return null;
+  const rows = await sql`
+    select id, prompt, solution from public.practice_problems
+    where lesson_id = ${lessonId} order by position, created_at, id`;
+  return rows.map((r) => ({ id: r.id, prompt: r.prompt, solution: r.solution }));
+}
