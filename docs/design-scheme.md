@@ -9,7 +9,7 @@ _Version 1, November 4, 2026. Chosen with Nick in the design thread. Screen mock
 | Fjord navy | `#0B2545` | The main color: primary buttons and the home page hero. Text is a darker shade of it |
 | Mist | `#D0D7DC` | The neutral. Page and card backgrounds are lighter tints of it |
 | Cherry plum | `#6B1040` | The red in light mode |
-| Lit black cherry | `#7A0F3A` | The red in dark mode (fills); topic labels lift to `#D7527F` so small text stays readable |
+| Lit black cherry | `#7A0F3A` | The red in dark mode; topic labels lift to `#D7527F` so small text stays readable, and fills deepen to a soft tint `#3F1B37` |
 | Electric cyan | `#00C2FF` | The bright accent. Used for fills and highlights, never as small text on light backgrounds |
 
 No yellows.
@@ -29,7 +29,7 @@ Use these names in code (Tailwind theme and CSS variables). The same values are 
 | `primary` | `#0B2545` | `#00C2FF` | Primary buttons and links |
 | `primaryText` | `#FFFFFF` | `#040F1C` | Text on primary buttons |
 | `accent` | `#6B1040` | `#D7527F` | Topic labels, step numbers (black cherry) |
-| `accentFill` | `#6B1040` | `#85224A` | Milestone card and other cherry fills |
+| `accentFill` | `#6B1040` | `#3F1B37` | Milestone card and other cherry fills |
 | `accentFillText` | `#FFFFFF` | `#F3F5F6` | Text on cherry fills |
 | `bright` | `#00C2FF` | `#00C2FF` | Highlighted words, "lessons waiting" badge, progress, home page buttons |
 | `brightText` | `#07182D` | `#040F1C` | Text on bright fills |
@@ -43,6 +43,16 @@ Use these names in code (Tailwind theme and CSS variables). The same values are 
 | `heroMuted` | `#D0D7DC` | `#D0D7DC` | Hero intro text |
 
 Dark mode follows the device setting, with a manual switch later.
+
+### Dark mode is quieter
+
+There are only two modes, Light and Dark. Cyan glows on dark backgrounds, so dark mode uses it in fewer places than light mode:
+
+- Cyan stays on primary buttons, highlighted words and the "lessons waiting" badge.
+- Progress bars and the avatar use Mist (`textMuted`) instead of the primary color.
+- The top band on the Today card is a thin 2px cherry (`accent`) line, not a 6px cyan bar.
+- The milestone card is a soft cherry tint (`accentFill`) with normal text color.
+- Secondary buttons in the navigation are outlined, not filled.
 
 ## 3. Type
 
