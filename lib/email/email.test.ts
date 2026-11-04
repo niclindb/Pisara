@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { dailyLessonEmail, lessonsWaitingEmail, type EmailContext } from "./templates";
-import { unsubscribeUrl, verifyUnsubscribe } from "./unsubscribe";
+import { emailSettingsToken, readEmailSettingsToken, unsubscribeUrl, verifyUnsubscribe } from "./unsubscribe";
 import { resendMailer } from "./resend";
 
 const secret = "test-secret";
@@ -76,5 +76,16 @@ describe("resendMailer", () => {
   it("throws when Resend refuses", async () => {
     const fakeFetch = (async () => new Response("bad key", { status: 401 })) as unknown as typeof fetch;
     await expect(resendMailer({ apiKey: "x", from: "x", fetch: fakeFetch }).send(lessonsWaitingEmail(ctx, 3))).rejects.toThrow("401");
+  });
+});
+
+describe("email settings tokens", () => {
+  const id = "00000000-0000-4000-8000-000000000001";
+  it("round-trips and rejects forgeries", () => {
+    const token = emailSettingsToken(id, "s");
+    expect(readEmailSettingsToken(token, "s")).toBe(id);
+    expect(readEmailSettingsToken(token, "other")).toBeNull();
+    expect(readEmailSettingsToken(`00000000-0000-4000-8000-000000000002.${token.split(".")[1]}`, "s")).toBeNull();
+    expect(readEmailSettingsToken("nonsense", "s")).toBeNull();
   });
 });

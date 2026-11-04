@@ -19,3 +19,20 @@ export function verifyUnsubscribe(userId: string, token: string, secret: string)
   const given = Buffer.from(token);
   return expected.length === given.length && timingSafeEqual(expected, given);
 }
+
+/**
+ * The token in an email's "Email settings" link (/email/[token]): the user id
+ * and the same signature as the unsubscribe link, so it works without signing in.
+ */
+export function emailSettingsToken(userId: string, secret: string): string {
+  return `${userId}.${sign(userId, secret)}`;
+}
+
+/** The user id from an email settings token, or null if it isn't genuine. */
+export function readEmailSettingsToken(token: string, secret: string): string | null {
+  const dot = token.indexOf(".");
+  if (dot < 0) return null;
+  const userId = token.slice(0, dot);
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) return null;
+  return verifyUnsubscribe(userId, token.slice(dot + 1), secret) ? userId : null;
+}
