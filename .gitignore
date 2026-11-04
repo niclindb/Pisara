@@ -147,3 +147,9 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+!.env.example
+
+# Next.js
+.next/
+next-env.d.ts
+*.tsbuildinfo

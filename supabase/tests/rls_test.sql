@@ -88,8 +88,11 @@ do $$
 declare n int;
 begin
   select count(*) into n from public.profiles; if n <> 1 then raise exception 'learner sees % profiles', n; end if;
-  -- 3 published + the unpublished one in their inbox; not the draft.
-  select count(*) into n from public.lessons; if n <> 4 then raise exception 'learner sees % lessons', n; end if;
+  -- Only the free preview (L1) and the unpublished lesson already in their
+  -- inbox: not later published lessons (no reading ahead), not the draft.
+  select count(*) into n from public.lessons; if n <> 2 then raise exception 'learner sees % lessons', n; end if;
+  select count(*) into n from public.lessons where title in ('L2', 'L3', 'Draft');
+  if n <> 0 then raise exception 'learner can read ahead'; end if;
   select count(*) into n from public.questions; if n <> 1 then raise exception 'learner sees % questions (draft leaked?)', n; end if;
   select count(*) into n from public.deliveries; if n <> 1 then raise exception 'learner sees % deliveries', n; end if;
   -- Can't promote themselves.
