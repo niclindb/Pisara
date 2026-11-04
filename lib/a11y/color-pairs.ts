@@ -39,7 +39,7 @@ export const colors = {
     primary: "#00C2FF",
     primaryText: "#040F1C",
     accent: "#D7527F",
-    accentFill: "#85224A",
+    accentFill: "#3F1B37",
     accentFillText: "#F3F5F6",
     bright: "#00C2FF",
     brightText: "#040F1C",
