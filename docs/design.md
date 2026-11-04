@@ -239,6 +239,10 @@ The random function is passed in so tests can control it.
 - "You have 3 lessons waiting" goes out on the first day the inbox is full and once more 7 days later, then never again while it stays full. `waiting_reminders_sent` tracks this.
 - Reading a lesson sets `read_at` and resets `waiting_reminders_sent` to 0. Finishing or skipping the quiz doesn't change inbox status.
 
+### 5.2a Extra and first lessons (B7, A6)
+- **Extra lesson:** from Home or a topic page. From a topic page, it's the next lesson in that topic's path, whether or not the topic is turned on. "Surprise me" uses the daily pick (5.1), without the "not 3 days in a row" rule. It counts toward the 3-lesson inbox, so it isn't offered while 3 lessons are waiting. No email is sent.
+- **First lesson:** right after onboarding, one lesson is picked as today's daily lesson, so the daily run skips the learner until tomorrow.
+
 ### 5.3 Review scheduling (C5, C6)
 
 ```text
