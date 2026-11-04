@@ -4,6 +4,7 @@ Pisara (Finnish for "a drop") sends you one short lesson a day from topics you c
 
 - [User stories and MVP](docs/user-stories-and-mvp.md)
 - [Design doc](docs/design.md)
+- [Design scheme](docs/design-scheme.md): colors, fonts, spacing
 
 ## Code so far
 
