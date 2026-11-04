@@ -9,7 +9,7 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:db": "vitest run lib/jobs/postgres-store.db.test.ts",
+    "test:db": "vitest run db.test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

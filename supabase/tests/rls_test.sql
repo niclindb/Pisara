@@ -24,6 +24,10 @@ insert into public.questions (lesson_id, prompt, options, correct_index) values
   ('30000000-0000-0000-0000-000000000004', 'Q?', array['a','b'], 0);
 insert into public.questions (lesson_id, prompt, options, correct_index) values
   ('30000000-0000-0000-0000-000000000001', 'Preview Q?', array['a','b'], 1);
+insert into public.practice_problems (lesson_id, prompt, solution) values
+  ('30000000-0000-0000-0000-000000000001', 'Preview problem', 'Worked solution'),
+  ('30000000-0000-0000-0000-000000000002', 'Later problem', 'Worked solution'),
+  ('30000000-0000-0000-0000-000000000004', 'Draft problem', 'Worked solution');
 insert into public.deliveries (user_id, lesson_id, local_date) values
   ('00000000-0000-0000-0000-00000000000b', '30000000-0000-0000-0000-000000000005', '2026-11-03'),
   ('00000000-0000-0000-0000-00000000000c', '30000000-0000-0000-0000-000000000001', '2026-11-03');
@@ -70,6 +74,7 @@ begin
   select count(*) into n from public.lessons; if n <> 1 then raise exception 'visitor sees % lessons', n; end if;
   select count(*) into n from public.lessons where title = 'L1'; if n <> 1 then raise exception 'preview is not L1'; end if;
   select count(*) into n from public.questions; if n <> 1 then raise exception 'visitor sees % questions', n; end if;
+  select count(*) into n from public.practice_problems; if n <> 1 then raise exception 'visitor sees % practice problems', n; end if;
   select count(*) into n from public.topics; if n <> 0 then raise exception 'visitor reads topics table'; end if;
   select count(*) into n from public.profiles; if n <> 0 then raise exception 'visitor sees profiles'; end if;
   select count(*) into n from public.deliveries; if n <> 0 then raise exception 'visitor sees deliveries'; end if;
@@ -94,6 +99,8 @@ begin
   select count(*) into n from public.lessons where title in ('L2', 'L3', 'Draft');
   if n <> 0 then raise exception 'learner can read ahead'; end if;
   select count(*) into n from public.questions; if n <> 1 then raise exception 'learner sees % questions (draft leaked?)', n; end if;
+  -- Only the preview lesson's problem: not L2's (reading ahead) or the draft's.
+  select count(*) into n from public.practice_problems; if n <> 1 then raise exception 'learner sees % practice problems', n; end if;
   select count(*) into n from public.deliveries; if n <> 1 then raise exception 'learner sees % deliveries', n; end if;
   -- Can't promote themselves.
   begin
@@ -108,6 +115,12 @@ begin
   begin
     insert into public.categories (name) values ('Hacked');
     raise exception 'learner wrote content';
+  exception when insufficient_privilege then null;
+  end;
+  begin
+    insert into public.practice_problems (lesson_id, prompt, solution) values
+      ('30000000-0000-0000-0000-000000000001', 'Hacked', 'x');
+    raise exception 'learner wrote a practice problem';
   exception when insufficient_privilege then null;
   end;
   -- Can't write someone else's data.
@@ -129,6 +142,9 @@ do $$
 declare n int;
 begin
   select count(*) into n from public.lessons; if n <> 5 then raise exception 'author sees % lessons', n; end if;
+  select count(*) into n from public.practice_problems; if n <> 3 then raise exception 'author sees % practice problems', n; end if;
+  insert into public.practice_problems (lesson_id, prompt, solution) values
+    ('30000000-0000-0000-0000-000000000003', 'New problem', 'Solution');
   insert into public.categories (name) values ('Languages');
 end $$;
 reset role;
