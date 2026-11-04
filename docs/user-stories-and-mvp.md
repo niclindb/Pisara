@@ -1,12 +1,12 @@
 # Pisara: User Stories & MVP
 
-_Draft 4, November 3, 2026. Updated after the design review: one daily run, interest levels 1–5, sub-topics, and review only for missed questions._
+_Draft 5, November 4, 2026. Draft 4 added one daily run, interest levels 1–5, sub-topics, and review only for missed questions. Draft 5 adds practice problems, makes the quiz optional for every lesson, and adds the free preview for visitors, the optional display name, read-on-open, and no reading ahead._
 
 **Pisara** is Finnish for "a drop," like a raindrop. Small lessons, drop by drop, add up to real knowledge. Say it PEE-sah-rah.
 
 ## 1. Product summary
 
-Pisara sends you a short lesson on a topic you care about, picked at random from the topics you've chosen. You set how often each topic should come up. Each lesson ends with a quick quiz and one review question from something you learned earlier. Once a week you get a short recap quiz, and once a month a look back at what you've learned. Lessons in each topic get harder as you go and build toward a goal.
+Pisara sends you a short lesson on a topic you care about, picked at random from the topics you've chosen. You set how often each topic should come up. A lesson can come with practice problems to work through and a quick quiz, plus up to 2 review questions from things you learned earlier. Once a week you get a short recap quiz, and once a month a look back at what you've learned. Lessons in each topic get harder as you go and build toward a goal.
 
 **Why it's different from asking a chatbot:** it remembers what you've learned, puts lessons in order, tests you again later, and shows up on its own.
 
@@ -24,7 +24,8 @@ Pisara sends you a short lesson on a topic you care about, picked at random from
 - **Topic:** one subject, such as Astronomy. Each topic has a **path**. Topics can have **sub-topics** that go deeper, and those can have their own, to any depth (Astronomy → Stars → Black holes). Every topic in the tree, not just the deepest ones, has its own goal and path and can be picked.
 - **Prerequisite:** a topic's parent. Picking a sub-topic before finishing its parent shows a gentle note, never a block.
 - **Path:** an ordered list of lessons building toward a stated **goal**, for example "Understand the life cycle of a star." Lessons have a **level** (difficulty). Paths grow over time: authors publish lessons one at a time.
-- **Lesson:** a title, body text, estimated reading time, and 2–3 quiz questions.
+- **Lesson:** a title, body text, and estimated reading time. It can also have practice problems and a quiz of up to 3 questions; both are optional.
+- **Practice problem:** an exercise that helps the learner apply a lesson, with a worked solution they can reveal. Not graded, and never enters review.
 - **Inbox:** the learner's unread lessons, up to 3. The newest one is the "current lesson."
 - **Interest level:** how often a learner wants a topic. Off, or a level from 1 to 5. The level is the weight, so a topic at 5 comes up 5× as often as one at 1.
 - **Freshness boost:** a topic's chance goes up 10% per day since it last came up, up to 2×.
@@ -48,6 +49,8 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 | A6 | As a learner, I want to get my first lesson right after signing up so I see what the app is like immediately. | Should |
 | A7 | As a learner, I want to sign in with Google or Apple so I don't have to wait for an email. | Later |
 | A8 | As a learner, I want to choose what time my lesson arrives so it fits my routine. | Later |
+| A9 | As a visitor, I want to browse topics and read each topic's first lesson before signing up so I can see what Pisara is like. | Must |
+| A10 | As a learner, I want to give an optional display name so greetings feel personal. | Should |
 
 **Acceptance criteria**
 - A1: Anyone can create an account. Entering an email sends a sign-in link that works once and expires after 15 minutes. No password anywhere.
@@ -55,6 +58,8 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 - A3a: Picking a sub-topic whose parent the learner hasn't finished shows a note such as "This builds on Stars, which you haven't finished." The learner can carry on anyway.
 - A5: Lessons go out once a day for everyone, at 11:00 UTC. The learner's time zone is detected automatically (and can be changed) and decides what counts as "today" and their weekly recap day.
 - A7: Accounts are linked by email address, so adding a sign-in method later doesn't create duplicate accounts.
+- A9: Signed-out visitors can browse categories and topics and read each visible topic's first published lesson, with its practice problems and quiz. Their answers aren't saved. The preview ends with a sign-up prompt.
+- A10: Up to 50 characters, set during onboarding or in settings. Never shown to other learners.
 
 ### B. Daily lesson
 
@@ -72,6 +77,7 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 **Acceptance criteria**
 - B1/B2: Chance of a topic = interest weight × freshness boost, divided by the total for all eligible topics. Topics set to Off, or with no unread published lessons left, are never picked.
 - B1: The same topic shouldn't come up more than 2 days in a row unless it's the only topic available.
+- B4/B6: A lesson counts as read as soon as the learner opens it, which takes it out of the inbox. Learners can open only lessons delivered to them, never lessons further along their path (the free preview in A9 is the only exception).
 - B6: The inbox is the first thing the learner sees after signing in, with the current lesson at the top. It holds up to 3 unread lessons. When it's full, no new lessons are picked until one is read, and no daily email is sent. Instead a "You have 3 lessons waiting" email goes out on the first day the inbox is full, once more a week later, and then never again. Reading a lesson resets this.
 - B3: Unsubscribing or pausing emails takes one click from the email.
 
@@ -81,24 +87,26 @@ Three layers, each one short:
 
 | When | What | Length |
 |---|---|---|
-| After every lesson | Quiz on that lesson, plus up to 2 review questions from earlier lessons | 3–5 questions, about 1 minute |
+| After a lesson | Practice problems and a quiz on that lesson if it has them, plus up to 2 review questions from earlier lessons | Up to 5 questions, about 1 minute, plus any practice |
 | Once a week | Recap quiz on the week's lessons, focused on what the learner missed | 5 questions, about 2 minutes |
 | Once a month | Month in review: what you learned, how you did, plus an optional recap quiz | About 3 minutes |
 
 | ID | Story | Priority |
 |---|---|---|
-| C1 | As a learner, I want 2–3 quick questions right after each lesson so I can check that I understood it while it's fresh. | Must |
+| C1 | As a learner, I want a few quick questions right after a lesson so I can check that I understood it while it's fresh. | Must |
 | C2 | As a learner, I want to see the right answer and a one-line explanation after I submit so I learn from my mistakes. | Must |
 | C3 | As a learner, I want to move on to the next lesson in a topic even if I miss questions so I'm never stuck repeating a lesson. | Must |
 | C4 | As a learner, I want to re-read a past lesson whenever I choose, but never be forced to. | Should |
-| C5 | As a learner, I want up to 2 review questions from past lessons after each quiz so I remember what I've learned. | Must |
+| C5 | As a learner, I want up to 2 review questions from past lessons after each lesson so I remember what I've learned. | Must |
 | C6 | As a learner, I want questions I got wrong to come back sooner than ones I got right so review focuses on what I'm weak at. | Must |
 | C7 | As a learner, I want a short weekly recap quiz on the week's lessons so I can lock in what I learned. | Should |
 | C8 | As a learner, I want a monthly look back at what I learned, with an optional recap quiz, so I can see how far I've come. | Later |
 | C9 | As a learner, I want to see how many of my recent review questions I remembered so I can tell I'm actually learning. | Should |
+| C10 | As a learner, I want practice problems with a lesson, with worked solutions I can reveal, so I can check I can use what I just read. | Must |
 
 **Acceptance criteria**
-- C1: The quiz is optional. Skipping it still marks the lesson as read, but its questions don't enter review.
+- C1: The quiz is optional twice over: an author can publish a lesson without one, and a learner can always skip it. Skipping still leaves the lesson read, but its questions don't enter review. A lesson with no quiz still offers any review questions that are due, which can also be skipped.
+- C10: Practice problems are optional for each lesson and appear between the lesson and the quiz. Each has a prompt and a worked solution, hidden until the learner reveals it. Nothing is graded or recorded, and practice problems never enter review.
 - C3: Finishing a lesson always unlocks the next one in the path, whatever the score. Missed questions go into review (C6) instead of making the learner retake the lesson. If a learner misses most questions on a lesson, the end-of-quiz screen offers a link to re-read it.
 - C5/C6: Only questions the learner missed go into review. Questions answered correctly the first time don't. This keeps the review queue small enough that up to 2 a day, plus the weekly recap, can keep up.
 - C6: Review timing: wrong answer → 1 day. Right answers → 3, then 7, then 21, then 60 days. A wrong answer at any point resets to 1 day. Review questions come from a different topic than today's lesson when possible.
@@ -133,7 +141,7 @@ Three layers, each one short:
 | E1 | As an author, I want to add categories, add topics to each category, and add sub-topics under any topic, each with a goal. | Must |
 | E2 | As an author, I want to write a path outline (an ordered list of lesson titles and key points) that I can add to over time. | Must |
 | E3 | As an author, I want AI to draft a lesson and its quiz questions from an outline entry so I don't write everything from scratch. | Later |
-| E4 | As an author, I want to write a lesson and its quiz questions as a draft and publish it when it's ready so only finished lessons reach learners. | Must |
+| E4 | As an author, I want to write a lesson, with optional practice problems and quiz questions, as a draft and publish it when it's ready so only finished lessons reach learners. | Must |
 | E5 | As an author, I want to publish lessons one at a time so a topic can launch small and grow. | Must |
 | E6 | As an author, I want to set or adjust each lesson's level and reading time. | Must |
 | E7 | As an author, I want to unpublish a lesson that turns out to be wrong. | Should |
@@ -141,7 +149,7 @@ Three layers, each one short:
 
 **Acceptance criteria**
 - E1: The app ships as an empty template with no built-in categories or topics. Everything learners see is added by an author.
-- E4: A lesson has a title, a body of any length, 2–3 multiple-choice questions with one correct answer and a one-line explanation each, and a reading time. Drafts are never shown to learners.
+- E4: A lesson has a title, a body of any length, and a reading time. Optionally it has practice problems (each a Markdown prompt and a worked solution) and up to 3 multiple-choice questions (each with one correct answer and a one-line explanation). A lesson can be published with neither, but any problem or question it has must be complete. Drafts are never shown to learners.
 - E4/E5: Only lessons marked "Published" can be picked. A topic appears to learners once it has at least 3 published lessons.
 - E5: When a learner has read every published lesson in a topic, the topic stops being picked and shows "New lessons coming soon." When a new lesson is published, it becomes eligible again on the next pick.
 - E6: Reading time is estimated at about 200 words per minute and can be edited.
@@ -168,17 +176,20 @@ The founder first, for 2 weeks. Then sign-up opens to anyone, with a first push 
 ### In
 - Web app that works well on phones
 - Open sign-up with email sign-in links (A1)
+- Topic browsing and a free first-lesson preview for signed-out visitors (A9)
+- Privacy policy and terms pages, before sign-up opens to anyone
 - Topic picking with sub-topics, interest levels, one daily delivery (A2–A5, A3a)
 - Daily weighted random pick with freshness boost, run once a day for everyone (B1–B2)
 - Daily email, inbox, and lesson page with reading time (B3–B6)
-- Quiz after each lesson, with answers and explanations; no forced retakes (C1–C3)
+- Optional practice problems with revealable solutions (C10)
+- Optional quiz after a lesson, with answers and explanations; no forced retakes (C1–C3)
 - Up to 2 review questions per day, missed questions only, with spaced timing (C5–C6)
 - Progress page, topic settings, milestone celebrations, "Go deeper" suggestions, account deletion (D1–D3, D8, D9)
 - Author tools: add categories and topics, outline paths, write lessons, publish one at a time (E1, E2, E4–E6)
 - Starts as an empty template. The author adds categories, topics, and lessons; there is no fixed starting list.
 
 ### In if time allows
-A6, B7, C4, C7, C9, D4, D5, D6, E7
+A6, A10, B7, C4, C7, C9, D4, D5, D6, E7
 
 ### Out (not in the MVP)
 - Google, Apple, or other sign-in methods (A7)
@@ -216,6 +227,11 @@ If week 3 opens collapse, fix delivery and lesson quality before adding anything
 - **Interest levels:** Off, or 1–5 with the level as the weight.
 - **Sub-topics:** topics form a tree of any depth. Any topic can be picked. A topic's parent is its only prerequisite, and it's a warning, not a block.
 - **Review:** only missed questions enter review, up to 2 a day.
+- **Quizzes are optional:** authors can publish a lesson without one, and learners can skip any quiz.
+- **Practice problems:** optional per lesson, ungraded, with a worked solution to reveal; not part of review.
+- **Reading:** a lesson is read as soon as it's opened. No reading ahead in a path for now.
+- **Visitors:** can browse topics and preview each topic's first lesson without signing up.
+- **Pages:** the full page list is in [design.md](design.md#7-pages).
 
 ## 8. Open questions
 

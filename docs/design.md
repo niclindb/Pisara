@@ -290,24 +290,52 @@ When a learner finishes onboarding, the same delivery logic runs once immediatel
 
 ## 7. Pages
 
+21 pages for the MVP. Paths are suggestions. States of a page (such as "check your email" after requesting a sign-in link) are listed with the page, not as pages of their own.
+
+### Signed-out visitors
+Explore and the topic page are shared with signed-in learners, who see their own controls on them.
+
+| Path | Page | What it shows | Stories |
+|---|---|---|---|
+| `/` | Landing | What Pisara is and how it works, email sign-up, "Browse topics". Signed-in learners go to the inbox. | A1, A9 |
+| `/explore` | Explore topics | Categories and the topic tree; each topic's description, goal and lesson count. Only topics with 3+ published lessons. | A2, A3, A3a, A9 |
+| `/explore/[topic]` | Topic page | Goal, description, lesson count, parent (with prerequisite note), sub-topics. Signed out: "Read the first lesson free" and sign-up. Signed in: interest control, level, lessons read, "New lessons coming soon". No lesson list, so there's no reading ahead. | A3, A3a, A4, A9, D1, D2, E5 |
+| `/explore/[topic]/preview` | Lesson preview | The topic's first published lesson with its practice problems and quiz. Nothing saved. Ends with sign-up. | A9 |
+
+### Sign-in and email links
+| Path | Page | What it shows | Stories |
+|---|---|---|---|
+| `/sign-in` | Sign in | Email field, "Send me a link"; then "Check your email" with "Send again". Also creates new accounts. | A1 |
+| `/sign-in/expired` | Sign-in link problem | For links already used or past 15 minutes; send a new one. `/auth/callback` has no screen and routes to onboarding or the inbox. | A1 |
+| `/email/[token]` | Email preferences | Opened from any email without signing in: emails paused right away, with Undo; pause until a date; stop all emails. | B3, D6 |
+
 ### Learner
-| Path | What it shows | Stories |
-|---|---|---|
-| `/` | Landing page with sign-up | A1 |
-| `/sign-in` | Enter email; "check your inbox" message | A1 |
-| `/onboarding` | Pick topics by category as an expandable tree, set interest 1–5, prerequisite notes | A2–A4, A3a |
-| `/inbox` | Home after sign-in. Current lesson on top, other unread below, weekly recap if any, "Get an extra lesson" button | B6, B7, C7 |
-| `/lessons/[id]` | Lesson with reading time, then the quiz and up to 2 review questions; results with explanations; milestone if earned; "Go deeper" when a path is finished | B4, B5, C1–C3, C5, D3, D8 |
-| `/progress` | Per-topic level and progress toward goal, grouped by the topic tree; "Go deeper" suggestions; review accuracy; past lessons | D1, D8, C9, D5 |
-| `/topics` | The topic tree: change interest levels, add or remove topics, prerequisite notes; note if more than 8 are on | D2, D4, A3a |
-| `/settings` | Time zone, recap day, pause, email on/off, delete account | A5, D6, B3, D9 |
+| Path | Page | What it shows | Stories |
+|---|---|---|---|
+| `/onboarding` | Onboarding | Optional display name, detected time zone; topic tree with interest (one tap = level 3), prerequisite notes, note above 8 topics; at least one topic required; first lesson delivered on finish. | A2–A6, A3a, A10, D4 |
+| `/inbox` | Inbox | Home after sign-in. Current lesson on top, up to 2 more unread, weekly recap card, "Get an extra lesson". States: caught up, inbox full, paused, all topics finished. | B5, B6, B7, C7, D6, E5 |
+| `/lessons/[id]` | Lesson | Reading time and body; opening marks it read. Then practice problems with "Show solution", if any. Then the quiz, if any, plus up to 2 due review questions, with "Skip quiz". Results appear on the same page: explanations, re-read link, milestone, "Go deeper", next lesson. Only delivered lessons open. | B4, B5, C1–C6, C10, D3, D8 |
+| `/recap/[id]` | Weekly recap | Five questions one at a time, then results and any milestone. | C7, C6, D3 |
+| `/progress` | Progress | Topic tree with level and lessons read toward each goal, "Go deeper", review accuracy, total lessons read. | D1, D8, C9 |
+| `/history` | Lesson history | Read lessons newest first, filter by topic, re-read. | D5, C4, E7 |
+| `/topics` | My topics | Topic tree with interest controls, prerequisite notes, note above 8 topics. | D2, D4, A3a, A4, E5 |
+| `/settings` | Settings | Display name, email, time zone, recap day, emails on/off, pause, sign out, delete account (with confirmation). | A5, A10, B3, D6, D9 |
 
 ### Author (role = author only)
-| Path | What it shows | Stories |
+Anyone else gets the not-found page. Categories are edited inline on `/author`.
+
+| Path | Page | What it shows | Stories |
+|---|---|---|---|
+| `/author` | Author home | Categories (add, rename, reorder) and topic trees with lesson counts by status and whether learners can see each topic yet. | E1, E4, E5 |
+| `/author/topics/[id]` | Topic editor | Name, category or parent, description, goal, outline, sub-topics, ordered lesson list (drag to reorder). | E1, E2, E5, E6 |
+| `/author/lessons/[id]` | Lesson editor | Title, level, Markdown body with live preview, reading time; optional practice problems (prompt and worked solution); optional quiz of up to 3 questions; publish and unpublish; "Preview as learner". | E4–E7 |
+
+### System
+| Path | Page | What it shows |
 |---|---|---|
-| `/author` | Categories and the topic tree, with lesson counts by status | E1 |
-| `/author/topics/[id]` | Topic details, parent topic, goal, outline, sub-topics, ordered lesson list (drag to reorder) | E1, E2 |
-| `/author/lessons/[id]` | Lesson editor: Markdown with live preview, questions, level, reading time, publish/unpublish | E4–E7 |
+| any unknown path | Not found | Message and a link home. |
+| on failure | Error | Message, "Try again", link home. |
+| `/privacy`, `/terms` | Privacy and terms | What's collected and how to delete it (section 9). Linked from the landing page, sign-in and every email. |
 
 ## 8. Emails
 
