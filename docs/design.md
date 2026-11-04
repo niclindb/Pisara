@@ -456,5 +456,5 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 
 1. **Daily run time:** 11:00 UTC is a placeholder. Pick a time aimed at the first learners' morning.
 2. **Domain:** register pisara.co or getpisara.com before the first deploy so emails come from the real domain.
-3. **Look and feel:** colors, fonts, logo. Could be a short design pass during phase 4.
+3. **Look and feel:** colors and fonts are decided in [design-scheme.md](design-scheme.md). The logo is still open; the wordmark is the stand-in.
 4. **Lesson images:** text only for the MVP, or allow images in lessons? Images need file storage (Supabase Storage can do it).
