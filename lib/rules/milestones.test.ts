@@ -69,7 +69,7 @@ describe("milestoneMessage", () => {
     expect(milestoneMessage("lessons_25", names)).toBe("You've read 25 lessons.");
     expect(milestoneMessage("level_up:t1:2", names)).toBe("You reached level 2 in Stars.");
     expect(milestoneMessage("topic_goal:t1", names)).toBe("You finished Stars.");
-    expect(milestoneMessage("long_memory:q1", names)).toBe("You remembered that one after three weeks or more.");
+    expect(milestoneMessage("long_memory:q1", names)).toBe("You remembered an answer after three weeks or more.");
   });
   it("never mentions days in a row", () => {
     for (const k of ["lessons_1", "lessons_100", "level_up:t1:3", "topic_goal:t1", "long_memory:q"]) {

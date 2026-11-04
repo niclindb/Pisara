@@ -37,7 +37,7 @@ Every pull request runs all of these (`.github/workflows/test.yml`).
 
 ### Trying the pages locally
 
-`npm run dev` needs a database with the schema loaded. Without a Supabase project, you can pretend to be signed in: set `DEV_SIGNED_IN_USER_ID` in `.env.local` to the id of a user in that database (give them `role = 'author'` to see the author tools). This only works in `npm run dev`, never in a production build.
+`npm run dev` needs a database with the schema loaded. Without a Supabase project, you can pretend to be signed in: set `DEV_SIGNED_IN_USER_ID` in `.env.local` to the id of a user in that database (give them `role = 'author'` to see the author tools; a new learner starts at onboarding). This only works in `npm run dev`, never in a production build.
 
 ## Going live (one time)
 

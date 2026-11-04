@@ -68,5 +68,5 @@ export function milestoneMessage(kind: string, topicName: (topicId: string) => s
     return `You reached level ${level} in ${topicName(topicId!) ?? "a topic"}.`;
   }
   if (kind.startsWith("topic_goal:")) return `You finished ${topicName(kind.slice("topic_goal:".length)) ?? "a topic"}.`;
-  return "You remembered that one after three weeks or more.";
+  return "You remembered an answer after three weeks or more.";
 }

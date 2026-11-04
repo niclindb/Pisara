@@ -49,13 +49,20 @@ describe("daily lesson email", () => {
     expect(m.headers["List-Unsubscribe-Post"]).toBe("List-Unsubscribe=One-Click");
     expect(m.html).toContain("Stop these emails");
   });
+
+  it("links to the email settings page, which works without signing in", () => {
+    const m = dailyLessonEmail(ctx, lesson, false);
+    const link = m.text.match(/Email settings: (\S+)/)![1]!;
+    const token = new URL(link).pathname.replace("/email/", "");
+    expect(readEmailSettingsToken(token, secret)).toBe(userId);
+  });
 });
 
 describe("lessons waiting email", () => {
-  it("says how many are waiting and links to the inbox", () => {
+  it("says how many are waiting and links to Home", () => {
     const m = lessonsWaitingEmail(ctx, 3);
     expect(m.subject).toBe("You have 3 lessons waiting");
-    expect(m.text).toContain("https://getpisara.com/inbox");
+    expect(m.text).toContain("https://getpisara.com/home");
   });
 });
 
