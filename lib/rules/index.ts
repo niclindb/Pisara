@@ -5,6 +5,7 @@ export * from "./constants";
 export * from "./dates";
 export * from "./picking";
 export * from "./delivery";
+export * from "./delivery-time";
 export * from "./review";
 export * from "./progress";
 export * from "./milestones";

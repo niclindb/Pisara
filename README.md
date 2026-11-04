@@ -18,7 +18,7 @@ The backend only. No pages yet: those wait for the design scheme.
 | `lib/email/` | The daily lesson and "lessons waiting" emails, signed unsubscribe links, and sending through Resend. |
 | `lib/server/` | Server-only helpers: settings from environment variables, the database connection, and sign-in with Supabase Auth (`auth.ts`). |
 | `app/auth/confirm`, `app/auth/sign-out` | Where the sign-in email link lands (then onboarding or Home), and signing out. `proxy.ts` keeps the sign-in session fresh. |
-| `app/api/jobs/deliver` | The endpoint Vercel Cron calls at 11:00 UTC every day (`vercel.json`). |
+| `app/api/jobs/deliver` | The daily lesson run at 8am Eastern. Vercel Cron calls it at 12:00 and 13:00 UTC (`vercel.json`), and only the call in New York's 8am hour runs. |
 | `app/api/unsubscribe` | One-click unsubscribe from email links and email apps. |
 
 ```sh
