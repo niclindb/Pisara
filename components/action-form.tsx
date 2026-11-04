@@ -10,6 +10,7 @@ import { Button, ErrorList, type ButtonVariant } from "./ui";
 export function ActionForm({
   action,
   submit,
+  submitLabel,
   pendingLabel = "Saving…",
   variant = "primary",
   confirm,
@@ -18,6 +19,8 @@ export function ActionForm({
 }: {
   action: (prev: ActionResult | null, form: FormData) => Promise<ActionResult>;
   submit: string;
+  /** A fuller name for screen readers; it must start with the visible `submit` text. */
+  submitLabel?: string;
   pendingLabel?: string;
   variant?: ButtonVariant;
   /** Ask before running, for things that can't be undone. */
@@ -36,7 +39,7 @@ export function ActionForm({
     >
       {children}
       <div className="flex flex-wrap items-center gap-3">
-        <Button variant={variant} disabled={pending}>
+        <Button variant={variant} disabled={pending} aria-label={pending ? undefined : submitLabel}>
           {pending ? pendingLabel : submit}
         </Button>
         <p role="status" className="text-[15px] text-success">

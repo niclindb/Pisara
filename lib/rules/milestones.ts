@@ -58,3 +58,15 @@ export function checkMilestones(m: MilestoneInput): MilestoneResult {
 export function isLongMemory(stepBeforeAnswer: number): boolean {
   return stepBeforeAnswer >= LONG_MEMORY_STEP;
 }
+
+/** What a milestone says to the learner (D3). Never mentions days in a row or missed days. */
+export function milestoneMessage(kind: string, topicName: (topicId: string) => string | undefined): string {
+  if (kind === "lessons_1") return "You read your first lesson.";
+  if (kind.startsWith("lessons_")) return `You've read ${kind.slice("lessons_".length)} lessons.`;
+  if (kind.startsWith("level_up:")) {
+    const [, topicId, level] = kind.split(":");
+    return `You reached level ${level} in ${topicName(topicId!) ?? "a topic"}.`;
+  }
+  if (kind.startsWith("topic_goal:")) return `You finished ${topicName(kind.slice("topic_goal:".length)) ?? "a topic"}.`;
+  return "You remembered that one after three weeks or more.";
+}
