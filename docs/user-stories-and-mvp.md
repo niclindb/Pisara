@@ -1,6 +1,6 @@
 # Pisara: User Stories & MVP
 
-_Draft 5, November 4, 2026. Draft 4 added one daily run, interest levels 1–5, sub-topics, and review only for missed questions. Draft 5 adds practice problems, makes the quiz optional for every lesson, and adds the free preview for visitors, the optional display name, read-on-open, and no reading ahead._
+_Draft 6, November 4, 2026. Draft 4 added one daily run, interest levels 1–5, sub-topics, and review only for missed questions. Draft 5 adds practice problems, makes the quiz optional for every lesson, and adds the free preview for visitors, the optional display name, read-on-open, and no reading ahead. Draft 6 (November 4) renames the inbox to Home, lets learners start an extra lesson from a chosen topic, and keeps the 3-lesson limit out of what learners are told._
 
 **Pisara** is Finnish for "a drop," like a raindrop. Small lessons, drop by drop, add up to real knowledge. Say it PEE-sah-rah.
 
@@ -26,7 +26,7 @@ Pisara sends you a short lesson on a topic you care about, picked at random from
 - **Path:** an ordered list of lessons building toward a stated **goal**, for example "Understand the life cycle of a star." Lessons have a **level** (difficulty). Paths grow over time: authors publish lessons one at a time.
 - **Lesson:** a title, body text, and estimated reading time. It can also have practice problems and a quiz of up to 3 questions; both are optional.
 - **Practice problem:** an exercise that helps the learner apply a lesson, with a worked solution they can reveal. Not graded, and never enters review.
-- **Inbox:** the learner's unread lessons, up to 3. The newest one is the "current lesson."
+- **Home:** the main page after sign-in. It holds the learner's unread lessons, at most 3 (a limit learners aren't told). The newest one is the "current lesson."
 - **Interest level:** how often a learner wants a topic. Off, or a level from 1 to 5. The level is the weight, so a topic at 5 comes up 5× as often as one at 1.
 - **Freshness boost:** a topic's chance goes up 10% per day since it last came up, up to 2×.
 - **Review item:** a quiz question the learner missed, scheduled to come back. Wrong answers return sooner, right answers later and later.
@@ -70,16 +70,17 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 | B3 | As a learner, I want a daily email with the lesson title, topic, and reading time so I can decide when to read it. | Must |
 | B4 | As a learner, I want to read the lesson in a clean, readable page on my phone or computer. | Must |
 | B5 | As a learner, I want to see the estimated reading time before I start so I can save longer lessons for later. | Must |
-| B6 | As a learner, I want an inbox that holds my unread lessons so I can always get to my current lesson, and a missed day isn't a lost lesson. | Must |
-| B7 | As a learner, I want to ask for an extra lesson when I'm in the mood so I can learn more on days I have time. | Should |
+| B6 | As a learner, I want a Home page that holds my unread lessons so I can always get to my current lesson, and a missed day isn't a lost lesson. | Must |
+| B7 | As a learner, I want to start an extra lesson when I'm in the mood, in a topic I choose or as a surprise, so I can learn more on days I have time. | Should |
 | B8 | As a learner, I want to see why today's topic was picked so the randomness feels fair. | Later |
 
 **Acceptance criteria**
 - B1/B2: Chance of a topic = interest weight × freshness boost, divided by the total for all eligible topics. Topics set to Off, or with no unread published lessons left, are never picked.
 - B1: The same topic shouldn't come up more than 2 days in a row unless it's the only topic available.
-- B4/B6: A lesson counts as read as soon as the learner opens it, which takes it out of the inbox. Learners can open only lessons delivered to them, never lessons further along their path (the free preview in A9 is the only exception).
-- B6: The inbox is the first thing the learner sees after signing in, with the current lesson at the top. It holds up to 3 unread lessons. When it's full, no new lessons are picked until one is read, and no daily email is sent. Instead a "You have 3 lessons waiting" email goes out on the first day the inbox is full, once more a week later, and then never again. Reading a lesson resets this.
+- B4/B6: A lesson counts as read as soon as the learner opens it, which takes it off Home. Learners can open only lessons delivered to them, never lessons further along their path (the free preview in A9 is the only exception).
+- B6: Home is the first thing the learner sees after signing in, with the current lesson at the top. It holds up to 3 unread lessons, but the app never tells learners about that limit. When it's full, no new lessons are picked until one is read, and no daily email is sent. Instead a "You have 3 lessons waiting" email goes out on the first day the inbox is full, once more a week later, and then never again. Reading a lesson resets this.
 - B3: Unsubscribing or pausing emails takes one click from the email.
+- B7: Each turned-on topic has a Start button that gives the learner the next lesson in that topic's path and opens it. This isn't reading ahead: it's the same next lesson the daily pick would deliver. A "Surprise me" button gives an extra lesson using the normal weighted pick (B1/B2). Extra lessons appear on Home like any other until read.
 
 ### C. Quizzes and review
 
@@ -111,7 +112,7 @@ Three layers, each one short:
 - C3: Finishing a lesson always unlocks the next one in the path, whatever the score. Missed questions go into review (C6) instead of making the learner retake the lesson. If a learner misses most questions on a lesson, the end-of-quiz screen offers a link to re-read it.
 - C5/C6: Only questions the learner missed go into review. Questions answered correctly the first time don't. This keeps the review queue small enough that up to 2 a day, plus the weekly recap, can keep up.
 - C6: Review timing: wrong answer → 1 day. Right answers → 3, then 7, then 21, then 60 days. A wrong answer at any point resets to 1 day. Review questions come from a different topic than today's lesson when possible.
-- C7: Sent on the learner's chosen day (default Sunday). Questions due for review are picked first, then questions from the week's lessons. Skipped if the learner read fewer than 2 lessons that week.
+- C7: Sent on the learner's chosen day (default Sunday). It's shown on Home below the waiting lessons, not above them. Questions due for review are picked first, then questions from the week's lessons. Skipped if the learner read fewer than 2 lessons that week.
 
 ### D. Progress and celebrations
 
@@ -154,7 +155,7 @@ Three layers, each one short:
 - E4/E5: Only lessons marked "Published" can be picked. A topic appears to learners once it has at least 3 published lessons.
 - E5: When a learner has read every published lesson in a topic, the topic stops being picked and shows "New lessons coming soon." When a new lesson is published, it becomes eligible again on the next pick.
 - E6: Reading time is estimated at about 200 words per minute and can be edited.
-- E7: An unpublished lesson stays in the inbox and history of learners who already got it, but is never picked again, and its questions leave review.
+- E7: An unpublished lesson stays on Home and in the history of learners who already got it, but is never picked again, and its questions leave review.
 
 ### F. Community (after the MVP)
 
@@ -181,7 +182,7 @@ The founder first, for 2 weeks. Then sign-up opens to anyone, with a first push 
 - Privacy policy and terms pages, before sign-up opens to anyone
 - Topic picking with sub-topics, interest levels, one daily delivery (A2–A5, A3a)
 - Daily weighted random pick with freshness boost, run once a day for everyone (B1–B2)
-- Daily email, inbox, and lesson page with reading time (B3–B6)
+- Daily email, Home, and lesson page with reading time (B3–B6)
 - Optional practice problems with revealable solutions (C10)
 - Optional quiz after a lesson, with answers and explanations; no forced retakes (C1–C3)
 - Up to 2 review questions per day, missed questions only, with spaced timing (C5–C6)

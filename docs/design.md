@@ -311,28 +311,28 @@ Explore and the topic page are shared with signed-in learners, who see their own
 
 | Path | Page | What it shows | Stories |
 |---|---|---|---|
-| `/` | Landing | What Pisara is and how it works, email sign-up, "Browse topics". Signed-in learners go to the inbox. | A1, A9 |
+| `/` | Landing | What Pisara is and how it works, email sign-up, "Browse topics". Signed-in learners go to Home. | A1, A9 |
 | `/explore` | Explore topics | Categories and the topic tree; each topic's description, goal and lesson count. Only topics with 3+ published lessons. | A2, A3, A3a, A9 |
-| `/explore/[topic]` | Topic page | Goal, description, lesson count, parent (with prerequisite note), sub-topics. Signed out: "Read the first lesson free" and sign-up. Signed in: interest control, level, lessons read, "New lessons coming soon". No lesson list, so there's no reading ahead. | A3, A3a, A4, A9, D1, D2, E5 |
+| `/explore/[topic]` | Topic page | Goal, description, lesson count, parent (with prerequisite note), sub-topics. Signed out: "Read the first lesson free" and sign-up. Signed in: interest control, level, lessons read, Start (an extra lesson in this topic), "New lessons coming soon". No lesson list, so there's no reading ahead. | A3, A3a, A4, A9, D1, D2, E5 |
 | `/explore/[topic]/preview` | Lesson preview | The topic's first published lesson with its practice problems and quiz. Nothing saved. Ends with sign-up. | A9 |
 
 ### Sign-in and email links
 | Path | Page | What it shows | Stories |
 |---|---|---|---|
 | `/sign-in` | Sign in | Email field, "Send me a link"; then "Check your email" with "Send again". Also creates new accounts. | A1 |
-| `/sign-in/expired` | Sign-in link problem | For links already used or past 15 minutes; send a new one. `/auth/callback` has no screen and routes to onboarding or the inbox. | A1 |
+| `/sign-in/expired` | Sign-in link problem | For links already used or past 15 minutes; send a new one. `/auth/callback` has no screen and routes to onboarding or Home. | A1 |
 | `/email/[token]` | Email preferences | Opened from any email without signing in: emails paused right away, with Undo; pause until a date; stop all emails. | B3, D6 |
 
 ### Learner
 | Path | Page | What it shows | Stories |
 |---|---|---|---|
 | `/onboarding` | Onboarding | Optional display name, detected time zone; topic tree with interest (one tap = level 3), prerequisite notes, note above 8 topics; at least one topic required; first lesson delivered on finish. | A2–A6, A3a, A10, D4 |
-| `/inbox` | Inbox | Home after sign-in. Current lesson on top, up to 2 more unread, weekly recap card, "Get an extra lesson". States: caught up, inbox full, paused, all topics finished. | B5, B6, B7, C7, D6, E5 |
+| `/home` | Home | The main page after sign-in, on phone and desktop. Current lesson on top, other unread lessons below, then the weekly recap card on recap day; "Surprise me" for an extra lesson. Never mentions the 3-lesson limit. States: caught up, paused, all topics finished. | B5, B6, B7, C7, D6, E5 |
 | `/lessons/[id]` | Lesson | Reading time and body; opening marks it read. Then practice problems with "Show solution", if any. Then the quiz, if any, plus up to 2 due review questions, with "Skip quiz". Results appear on the same page: explanations, re-read link, milestone, "Go deeper", next lesson. Only delivered lessons open. | B4, B5, C1–C6, C10, D3, D8 |
 | `/recap/[id]` | Weekly recap | Five questions one at a time, then results and any milestone. | C7, C6, D3 |
 | `/progress` | Progress | Topic tree with level and lessons read toward each goal, "Go deeper", review accuracy, total lessons read. | D1, D8, C9 |
 | `/history` | Lesson history | Read lessons newest first, filter by topic, re-read. | D5, C4, E7 |
-| `/topics` | My topics | Topic tree with interest controls, prerequisite notes, note above 8 topics. | D2, D4, A3a, A4, E5 |
+| `/topics` | My topics | Topic tree with interest controls and a Start button on each turned-on topic for an extra lesson in it; prerequisite notes, note above 8 topics. | B7, D2, D4, A3a, A4, E5 |
 | `/settings` | Settings | Display name, email, time zone, recap day, emails on/off, pause, sign out, delete account (with confirmation). | A5, A10, B3, D6, D9 |
 
 ### Author (role = author only)
