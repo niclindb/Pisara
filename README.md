@@ -14,8 +14,10 @@ The backend only. No pages yet: those wait for the design scheme.
 |---|---|
 | `supabase/` | The database schema, access rules and their tests. See [supabase/README.md](supabase/README.md). |
 | `lib/rules/` | The core rules from the design doc: topic picking, the inbox and "lessons waiting" reminders, review timing, the weekly recap, progress and prerequisites, milestones. Plain functions with no database access. Every tunable number is in `lib/rules/constants.ts`. |
-| `lib/jobs/` | Server-side work on the database: the daily delivery job, marking a lesson read when it's opened (`lessons.ts`), and loading and grading quizzes and weekly recaps, including review scheduling, milestones and "Go deeper" (`quiz.ts`), and the author tools: categories, the topic tree, and writing, publishing and ordering lessons with their questions and practice problems (`author.ts`). |
+| `lib/jobs/` | Server-side work on the database: the daily delivery job (`deliver.ts`), opening a lesson and its practice problems (`lessons.ts`), the Home, lesson, history and progress pages (`learner.ts`), settings, email preferences and account deletion (`settings.ts`), extra lessons and the first lesson after onboarding (`extra.ts`), quizzes, review and the weekly recap (`quiz.ts`), choosing topics and onboarding (`topics.ts`), and the author tools (`author.ts`). |
 | `lib/email/` | The daily lesson and "lessons waiting" emails, signed unsubscribe links, and sending through Resend. |
+| `lib/server/` | Server-only helpers: settings from environment variables, the database connection, and sign-in with Supabase Auth (`auth.ts`). |
+| `app/auth/confirm`, `app/auth/sign-out` | Where the sign-in email link lands (then onboarding or Home), and signing out. `proxy.ts` keeps the sign-in session fresh. |
 | `app/api/jobs/deliver` | The endpoint Vercel Cron calls at 11:00 UTC every day (`vercel.json`). |
 | `app/api/unsubscribe` | One-click unsubscribe from email links and email apps. |
 
