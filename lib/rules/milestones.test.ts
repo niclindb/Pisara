@@ -67,7 +67,7 @@ describe("milestoneMessage", () => {
   it("says each kind in plain words", () => {
     expect(milestoneMessage("lessons_1", names)).toBe("You read your first lesson.");
     expect(milestoneMessage("lessons_25", names)).toBe("You've read 25 lessons.");
-    expect(milestoneMessage("level_up:t1:2", names)).toBe("You reached level 2 in Stars.");
+    expect(milestoneMessage("level_up:t1:2", names)).toBe("You reached Intermediate in Stars.");
     expect(milestoneMessage("topic_goal:t1", names)).toBe("You finished Stars.");
     expect(milestoneMessage("long_memory:q1", names)).toBe("You remembered an answer after three weeks or more.");
   });

@@ -80,7 +80,7 @@ describe("runDailyDelivery", () => {
     const summary = await runDailyDelivery(now, f.deps);
     expect(summary.delivered).toBe(1);
     expect(f.deliveries).toEqual([{ userId: "u1", lessonId: "l1", topicId: "astro", localDate: "2026-11-10", deliveredAt: now }]);
-    expect(f.sent.map((m) => m.subject)).toEqual(["Light-years (3 min read)"]);
+    expect(f.sent.map((m) => m.subject)).toEqual(["Light-years (3 min)"]);
   });
 
   it("uses each learner's own date", async () => {

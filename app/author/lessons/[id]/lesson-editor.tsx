@@ -12,6 +12,7 @@ import type { LessonForEditing, LessonStatus } from "@/lib/jobs/author";
 import { estimateReadingMinutes, type LessonDraft, type ProblemDraft, type QuestionDraft } from "@/lib/rules/authoring";
 import { MAX_QUIZ_QUESTIONS } from "@/lib/rules/constants";
 import { deleteLessonAction, publishLessonAction, saveLessonAction, unpublishLessonAction, type ActionResult } from "../../actions";
+import { LEVEL_NAMES } from "@/lib/rules/levels";
 
 const input = "mt-1 block w-full rounded-control border border-border bg-surface px-3 py-2.5";
 const label = "font-medium";
@@ -97,7 +98,13 @@ export function LessonEditor({ lesson, topicName }: { lesson: LessonForEditing; 
         <div className="flex flex-wrap gap-6">
           <label className="block">
             <span className={label}>Level</span>
-            <input type="number" min={1} className={`${input} w-24`} value={level} onChange={(e) => change(setLevel)(Number(e.target.value))} />
+            <select className={`${input} w-48`} value={level} onChange={(e) => change(setLevel)(Number(e.target.value))}>
+              {LEVEL_NAMES.map((name, i) => (
+                <option key={name} value={i + 1}>
+                  {name}
+                </option>
+              ))}
+            </select>
           </label>
           <fieldset>
             <legend className={label}>Reading time</legend>

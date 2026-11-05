@@ -31,9 +31,9 @@ describe("daily lesson email", () => {
 
   it("has the title, topic, reading time and a link to the lesson", () => {
     const m = dailyLessonEmail(ctx, lesson, false);
-    expect(m.subject).toBe("Why stars <twinkle> (4 min read)");
+    expect(m.subject).toBe("Why stars <twinkle> (4 min)");
     expect(m.text).toContain("Good morning, Nick.");
-    expect(m.text).toContain("Astronomy · 4 min read");
+    expect(m.text).toContain("Astronomy · 4 min");
     expect(m.text).toContain("https://getpisara.com/lessons/lesson-1");
     expect(m.text).not.toContain("weekly recap");
   });

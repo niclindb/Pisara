@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, PageTitle } from "@/components/ui";
 import { loadProgress } from "@/lib/jobs/learner";
 import { loadTopicChoices } from "@/lib/jobs/topics";
+import { levelName } from "@/lib/rules/levels";
 import { milestoneMessage } from "@/lib/rules/milestones";
 import { db } from "@/lib/server/db";
 import { requireLearner } from "../guard";
@@ -59,7 +60,7 @@ export default async function ProgressPage() {
                       {t.name}
                     </Link>
                     <span className="text-[15px] text-text-muted">
-                      {t.progress.level > 0 ? `Level ${t.progress.level} · ` : ""}
+                      {t.progress.level > 0 ? `${levelName(t.progress.level)} · ` : ""}
                       {t.interest === 0 ? "Off · " : ""}
                       {t.progress.read} of {t.progress.total} read
                     </span>

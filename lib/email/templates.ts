@@ -23,11 +23,12 @@ function greeting(name: string | null): string {
 function wrap(ctx: EmailContext, subject: string, bodyHtml: string, bodyText: string): EmailMessage {
   const unsub = unsubscribeUrl(ctx.baseUrl, ctx.userId, ctx.unsubscribeSecret);
   const settings = new URL(`/email/${emailSettingsToken(ctx.userId, ctx.unsubscribeSecret)}`, ctx.baseUrl).toString();
+  const privacy = new URL("/privacy", ctx.baseUrl).toString();
   const html = `<!doctype html><html><body style="font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#161D2B;max-width:560px;margin:0 auto;padding:24px">
 ${bodyHtml}
-<p style="margin-top:40px;font-size:13px;color:#596377">You get this because you signed up for Pisara. <a href="${escapeHtml(settings)}" style="color:#596377">Email settings</a> · <a href="${escapeHtml(unsub)}" style="color:#596377">Stop these emails</a></p>
+<p style="margin-top:40px;font-size:13px;color:#596377">You get this because you signed up for Pisara. <a href="${escapeHtml(settings)}" style="color:#596377">Email settings</a> · <a href="${escapeHtml(unsub)}" style="color:#596377">Stop these emails</a> · <a href="${escapeHtml(privacy)}" style="color:#596377">Privacy</a></p>
 </body></html>`;
-  const text = `${bodyText}\n\n--\nEmail settings: ${settings}\nStop these emails: ${unsub}\n`;
+  const text = `${bodyText}\n\n--\nEmail settings: ${settings}\nStop these emails: ${unsub}\nPrivacy: ${privacy}\n`;
   return {
     to: ctx.to,
     subject,
@@ -50,14 +51,14 @@ export function dailyLessonEmail(
   hasRecap: boolean,
 ): EmailMessage {
   const url = new URL(`/lessons/${lesson.id}`, ctx.baseUrl).toString();
-  const minutes = `${lesson.readingMinutes} min read`;
+  const minutes = `${lesson.readingMinutes} min`;
   const recapLine = "Your weekly recap is waiting on Home too: 5 quick questions on what you learned this week.";
   const html = `<p>${escapeHtml(greeting(ctx.displayName))} Today's lesson is in ${escapeHtml(lesson.topicName)}:</p>
 <h1 style="font-size:24px;line-height:1.25;margin:16px 0 4px">${escapeHtml(lesson.title)}</h1>
 <p style="margin-top:0;color:#596377">${escapeHtml(lesson.topicName)} · ${minutes}</p>
-${button(url, "Read lesson")}
+${button(url, "Begin lesson")}
 ${hasRecap ? `<p>${recapLine}</p>` : ""}`;
-  const text = `${greeting(ctx.displayName)} Today's lesson is in ${lesson.topicName}:\n\n${lesson.title}\n${lesson.topicName} · ${minutes}\n\nRead it: ${url}${hasRecap ? `\n\n${recapLine}` : ""}`;
+  const text = `${greeting(ctx.displayName)} Today's lesson is in ${lesson.topicName}:\n\n${lesson.title}\n${lesson.topicName} · ${minutes}\n\nBegin lesson: ${url}${hasRecap ? `\n\n${recapLine}` : ""}`;
   return wrap(ctx, `${lesson.title} (${minutes})`, html, text);
 }
 

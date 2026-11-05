@@ -89,10 +89,23 @@ export function ErrorList({ problems }: { problems: string[] }) {
   );
 }
 
-export function Wordmark({ href = "/" }: { href?: string }) {
+/**
+ * The logo, linking home. `onDark` is for the navy hero band, which stays navy
+ * in both modes; elsewhere it follows the device's light or dark mode.
+ */
+export function Wordmark({ href = "/", onDark = false }: { href?: string; onDark?: boolean }) {
+  const img = (theme: "light" | "dark", className = "") => (
+    <img src={`/brand/pisara-logo-horizontal-${theme}.svg`} alt="" width={108} height={29} className={`h-[29px] w-auto ${className}`} />
+  );
   return (
-    <Link href={href} className="font-heading text-[22px] font-bold tracking-tight">
-      pisara
+    <Link href={href} className="inline-flex items-center py-1">
+      <span className="sr-only">Pisara home</span>
+      {onDark ? img("dark") : (
+        <>
+          {img("light", "dark:hidden")}
+          {img("dark", "hidden dark:block")}
+        </>
+      )}
     </Link>
   );
 }

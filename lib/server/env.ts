@@ -21,5 +21,7 @@ export const env = {
   supabaseAnonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
   /** Without these, emails are printed to the log instead of sent. */
   resendApiKey: () => process.env.RESEND_API_KEY ?? null,
+  /** Shown on the privacy and terms pages; null until the domain is set up. */
+  contactEmail: () => process.env.CONTACT_EMAIL?.trim() || null,
   emailFrom: () => process.env.EMAIL_FROM ?? "Pisara <lessons@getpisara.com>",
 };

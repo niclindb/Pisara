@@ -49,7 +49,7 @@ export default async function HomePage() {
                   <span className="block text-[13px] font-bold uppercase tracking-[0.08em] text-accent">{l.topicName}</span>
                   <span className="mt-1 block font-heading text-[18px] font-bold">{l.title}</span>
                   <span className="mt-1 block text-[15px] text-text-muted">
-                    {l.readingMinutes} min read{l.kind === "extra" ? " · Extra" : ""}
+                    {l.readingMinutes} min{l.kind === "extra" ? " · Extra" : ""}
                   </span>
                 </Link>
               </li>
@@ -195,9 +195,9 @@ function CurrentLesson({ lesson }: { lesson: LessonCard }) {
         <h2 id="current-heading" className="mt-2 text-[26px] leading-tight sm:text-[32px]">
           {lesson.title}
         </h2>
-        <p className="mt-2 text-[15px] text-text-muted">{lesson.readingMinutes} min read</p>
+        <p className="mt-2 text-[15px] text-text-muted">{lesson.readingMinutes} min</p>
         <LinkButton href={`/lessons/${lesson.lessonId}`} className="mt-5">
-          Read now
+          Begin lesson
         </LinkButton>
       </div>
     </section>
