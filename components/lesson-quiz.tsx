@@ -3,6 +3,7 @@
 // The quiz after a lesson, graded on the server (C1–C3), with up to 2 review
 // questions from earlier lessons (C5). Results show on the same page.
 
+import { NotQuiteMark, optionClass, RightMark } from "./answer-mark";
 import Link from "next/link";
 import { useRef, useState, useTransition, type ReactNode } from "react";
 import type { QuizOutcome } from "@/app/(learner)/actions";
@@ -87,7 +88,7 @@ export function LessonQuiz({
                     <label
                       key={j}
                       className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-control border px-3 py-2 ${
-                        isRight ? "border-success bg-success-bg" : isWrong ? "border-danger bg-danger-bg" : "border-border"
+                        optionClass(Boolean(isRight), Boolean(isWrong))
                       }`}
                     >
                       <input
@@ -99,8 +100,8 @@ export function LessonQuiz({
                         className="h-5 w-5 shrink-0"
                       />
                       <span>{o}</span>
-                      {isRight && <span className="ml-auto shrink-0 text-[15px] font-medium text-success">Right answer</span>}
-                      {isWrong && <span className="ml-auto shrink-0 text-[15px] font-medium text-danger">Your answer</span>}
+                      {isRight && <RightMark chosen={g.chosenIndex === j} />}
+                      {isWrong && <NotQuiteMark />}
                     </label>
                   );
                 })}

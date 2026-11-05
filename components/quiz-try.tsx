@@ -3,6 +3,7 @@
 // A quiz that grades in the browser. Only for author previews, where the
 // answers are already known; learners' quizzes are graded on the server.
 
+import { NotQuiteMark, optionClass, RightMark } from "./answer-mark";
 import { useState } from "react";
 import { Button } from "./ui";
 
@@ -39,7 +40,7 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
                   <label
                     key={j}
                     className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-control border px-3 py-2 ${
-                      right ? "border-success bg-success-bg" : wrong ? "border-danger bg-danger-bg" : "border-border"
+                      optionClass(right, wrong)
                     }`}
                   >
                     <input
@@ -51,8 +52,8 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
                       className="h-5 w-5"
                     />
                     <span>{o}</span>
-                    {right && <span className="ml-auto text-[15px] font-medium text-success">Right answer</span>}
-                    {wrong && <span className="ml-auto text-[15px] font-medium text-danger">Your answer</span>}
+                    {right && <RightMark chosen={chosen[q.id] === j} />}
+                    {wrong && <NotQuiteMark />}
                   </label>
                 );
               })}
