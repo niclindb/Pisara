@@ -3,6 +3,7 @@
 // problems are optional (decided Nov 4, 2026).
 
 import { MAX_QUIZ_QUESTIONS, READING_WORDS_PER_MINUTE } from "./constants";
+import { isValidLevel } from "./levels";
 
 /** A change an author can't make. `problems` lists what to fix, when there's more than one thing. */
 export class AuthorError extends Error {
@@ -48,7 +49,7 @@ export function estimateReadingMinutes(body: string): number {
 export function draftProblems(draft: LessonDraft): string[] {
   const out: string[] = [];
   if (blank(draft.title)) out.push("Add a title.");
-  if (!Number.isInteger(draft.level) || draft.level < 1) out.push("Level must be 1 or more.");
+  if (!isValidLevel(draft.level)) out.push("Pick Beginner, Intermediate or Advanced.");
   if (draft.readingMinutes !== undefined && (!Number.isInteger(draft.readingMinutes) || draft.readingMinutes < 1)) {
     out.push("Reading time must be at least 1 minute.");
   }

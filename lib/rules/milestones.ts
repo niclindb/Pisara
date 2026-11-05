@@ -1,11 +1,12 @@
 // Milestones (D3; design 5.5). Checked after each quiz.
 
 import { LESSON_MILESTONES, LONG_MEMORY_STEP } from "./constants";
+import { levelName } from "./levels";
 
 export interface MilestoneInput {
   /** Total lessons read, including this one. */
   lessonsRead: number;
-  /** Topics whose level went up with this lesson. */
+  /** Topics whose level (1 Beginner, 2 Intermediate, 3 Advanced) went up with this lesson. */
   levelUps: { topicId: string; level: number }[];
   /** Topics finished with this lesson. */
   topicsFinished: string[];
@@ -65,7 +66,7 @@ export function milestoneMessage(kind: string, topicName: (topicId: string) => s
   if (kind.startsWith("lessons_")) return `You've read ${kind.slice("lessons_".length)} lessons.`;
   if (kind.startsWith("level_up:")) {
     const [, topicId, level] = kind.split(":");
-    return `You reached level ${level} in ${topicName(topicId!) ?? "a topic"}.`;
+    return `You reached ${levelName(Number(level))} in ${topicName(topicId!) ?? "a topic"}.`;
   }
   if (kind.startsWith("topic_goal:")) return `You finished ${topicName(kind.slice("topic_goal:".length)) ?? "a topic"}.`;
   return "You remembered an answer after three weeks or more.";

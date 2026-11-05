@@ -101,7 +101,7 @@ A topic is shown to learners when it has at least 3 published lessons (E4). A pa
 | id | uuid | |
 | topic_id | uuid | |
 | position | int | Order in the path. Gaps allowed so lessons can be inserted. |
-| level | int | Difficulty, 1 and up (E6) |
+| level | int | 1 Beginner, 2 Intermediate, 3 Advanced (E6). Pages always show the word. |
 | title | text | |
 | body | text | Markdown, any length |
 | reading_minutes | int | Auto-estimated at 200 words/min, editable (E6) |
@@ -170,7 +170,7 @@ Practice problems aren't graded or recorded and never enter review. Readable by 
 
 Unique on (user_id, local_date) where kind = `daily`, so a learner can never get two daily lessons on one day, even if the job runs twice.
 
-Progress in a topic = the lessons in it the learner has **read** (`read_at` is set). Their level in a topic = the highest level among those lessons. The next lesson = the lowest-position published lesson in that topic not yet delivered to them.
+Progress in a topic = the lessons in it the learner has **read** (`read_at` is set). Their level in a topic = the highest level among those lessons, shown as Beginner, Intermediate or Advanced. The next lesson = the lowest-position published lesson in that topic not yet delivered to them.
 
 **answers**
 | Column | Type | Notes |
@@ -204,7 +204,7 @@ Progress in a topic = the lessons in it the learner has **read** (`read_at` is s
 | Column | Type | Notes |
 |---|---|---|
 | user_id | uuid | |
-| kind | text | e.g. `lessons_10`, `level_up:astronomy:2`, `topic_goal:astronomy` |
+| kind | text | e.g. `lessons_10`, `level_up:astronomy:2` (2 = Intermediate), `topic_goal:astronomy` |
 | achieved_at | timestamptz | |
 | shown_at | timestamptz | Null until shown |
 
@@ -270,7 +270,7 @@ On the learner's recap day, if they read 2 or more lessons in the past 7 days, b
 ### 5.5 Milestones (D3)
 Checked after each quiz is submitted:
 - Lessons read: 1, 10, 25, 50, 100, then every 100
-- A new level reached in a topic (the highest level of lesson read in it goes up)
+- Intermediate or Advanced reached in a topic (the highest level of lesson read in it goes up), so at most twice per topic
 - All published lessons in a topic's path read (topic goal reached)
 - A review question answered correctly at step 3 or higher (remembered after 21+ days)
 
@@ -448,6 +448,7 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 - **Email provider:** Resend.
 - **Tech stack:** Next.js (React) + TypeScript, Supabase (database, sign-in), Vercel (hosting, daily scheduled job).
 - **Weekly recap delivery:** in the inbox, with a mention in that day's lesson email. No separate email.
+- **Lesson levels:** Beginner, Intermediate and Advanced, stored as 1–3 (decided Nov 5, 2026). The same words show a learner's standing in a topic. _Draft 2 had open-ended numbered levels._
 - **Delivery time:** one run a day for everyone, at 8am Eastern (decided Nov 4, 2026). Learners don't choose a time in the MVP (A8 is Later). _Changed in draft 2; draft 1 had an hourly job and a chosen hour._
 - **"Lessons waiting" email:** first day the inbox is full, again 7 days later, then never again until a lesson is read.
 - **Interest levels:** Off, or 1–5 where the level is the weight.

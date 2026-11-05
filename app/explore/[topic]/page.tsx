@@ -8,6 +8,7 @@ import { TopicInterest } from "@/components/topic-interest";
 import { Card, LinkButton } from "@/components/ui";
 import { previewLessonId } from "@/lib/jobs/learner";
 import { loadTopicChoices } from "@/lib/jobs/topics";
+import { levelName } from "@/lib/rules/levels";
 import { currentUser } from "@/lib/server/auth";
 import { db } from "@/lib/server/db";
 
@@ -61,7 +62,7 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
             <div>
               <p className="font-medium">
                 {topic.progress.read} of {topic.progress.total} lessons read
-                {topic.progress.level > 0 && ` · Level ${topic.progress.level}`}
+                {topic.progress.level > 0 && ` · ${levelName(topic.progress.level)}`}
               </p>
               {topic.progress.finished && <p className="text-text-muted">New lessons coming soon.</p>}
             </div>
