@@ -28,12 +28,7 @@ function placeOptions(tree: { categories: { id: string; name: string }[]; topics
   let grew = true;
   while (grew) {
     grew = false;
-    for (const t of tree.topics) {
-      if (t.parentId && below.has(t.parentId) && !below.has(t.id)) {
-        below.add(t.id);
-        grew = true;
-      }
-    }
+    for (const t of tree.topics) if (t.parentId && below.has(t.parentId) && !below.has(t.id)) (below.add(t.id), (grew = true));
   }
   const out: { value: string; label: string }[] = [];
   const walk = (parent: string, depth: number) => {

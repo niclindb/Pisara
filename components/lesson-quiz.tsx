@@ -39,7 +39,7 @@ export function LessonQuiz({
   if (!quiz || (!result && (quiz.completed || skipped))) {
     return (
       <section aria-label="What's next" className="mt-12 border-t border-hairline pt-6">
-        {quiz?.completed && <p className="mb-4 text-text-muted">You’ve done this lesson’s quiz.</p>}
+        {quiz?.completed && <p className="mb-4 text-text-muted">You've done this lesson's quiz.</p>}
         {next}
       </section>
     );

@@ -161,7 +161,7 @@ export function LessonEditor({ lesson, topicName }: { lesson: LessonForEditing; 
           <h2 id="problems-heading" className="text-[22px]">
             Practice problems <span className="font-sans text-[15px] font-normal text-text-muted">(optional)</span>
           </h2>
-          <p className="text-[15px] text-text-muted">Learners see each problem with a “Show solution” button. They aren’t graded.</p>
+          <p className="text-[15px] text-text-muted">Learners see each problem with a "Show solution" button. They aren't graded.</p>
         </div>
         {problems.map((p, i) => (
           <fieldset key={p.key} className="space-y-3 rounded-card-sm border border-hairline p-4">
@@ -191,7 +191,7 @@ export function LessonEditor({ lesson, topicName }: { lesson: LessonForEditing; 
           </h2>
           <p className="text-[15px] text-text-muted">Missed questions come back later in review.</p>
           {lesson.deliveredCount > 0 && questions.some((q) => q.id) && (
-            <p className="mt-1 text-[15px] text-text-muted">Removing a question also removes learners’ answers to it.</p>
+            <p className="mt-1 text-[15px] text-text-muted">Removing a question also removes learners' answers to it.</p>
           )}
         </div>
         {questions.map((q, i) => (

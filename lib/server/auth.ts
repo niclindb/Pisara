@@ -1,7 +1,6 @@
 // Sign-in with email links (A1), and who is signed in. Pages call these from
 // server actions and server components.
 
-import { cookies } from "next/headers";
 import { env } from "./env";
 import { db } from "./db";
 import { paths } from "./paths";
@@ -38,20 +37,12 @@ export async function requestSignInLink(input: string): Promise<SignInLinkResult
   return { ok: false, reason: "failed" };
 }
 
-/** Development only: a user id that overrides DEV_SIGNED_IN_USER_ID, or "signed-out". */
-export const DEV_USER_COOKIE = "pisara-dev-user";
-
 /** The signed-in user, checked with Supabase, or null. */
 export async function currentUser(): Promise<CurrentUser | null> {
   // Local development only (`npm run dev`, never a production build): pretend to be
-  // this user, so pages can be tried without a Supabase project. The page checks
-  // in e2e/ switch users with the DEV_USER_COOKIE cookie ("signed-out" for none).
-  if (process.env.NODE_ENV === "development") {
-    const override = (await cookies()).get(DEV_USER_COOKIE)?.value;
-    if (override === "signed-out") return null;
-    const devUser = override ?? process.env.DEV_SIGNED_IN_USER_ID;
-    if (devUser) return loadUser(devUser);
-  }
+  // this user, so pages can be tried without a Supabase project.
+  const devUser = process.env.NODE_ENV === "development" ? process.env.DEV_SIGNED_IN_USER_ID : undefined;
+  if (devUser) return loadUser(devUser);
   const supabase = await supabaseServer();
   const { data } = await supabase.auth.getUser();
   if (!data.user) return null;

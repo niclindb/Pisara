@@ -17,12 +17,9 @@ export function OnboardingForm({ choices, zones }: { choices: TopicChoices; zone
   const [problems, setProblems] = useState<string[]>([]);
   const [pending, start] = useTransition();
 
-  // Detect the time zone in the browser; the server can't know it. This has to
-  // run after the first render (the server renders the default), so setting
-  // state in the effect is intended here.
+  // Detect the time zone in the browser; the server can't know it.
   useEffect(() => {
     const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (detected && zones.includes(detected)) setTimeZone(detected);
   }, [zones]);
 

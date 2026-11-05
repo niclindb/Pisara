@@ -6,7 +6,7 @@ export default function NotFound() {
       <div>
         <Wordmark />
       </div>
-      <h1 className="text-[28px]">This page isn’t here</h1>
+      <h1 className="text-[28px]">This page isn't here</h1>
       <p>The link may be old, or the page may have moved.</p>
       <div>
         <LinkButton href="/">Go to Pisara</LinkButton>
