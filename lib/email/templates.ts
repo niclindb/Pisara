@@ -23,11 +23,12 @@ function greeting(name: string | null): string {
 function wrap(ctx: EmailContext, subject: string, bodyHtml: string, bodyText: string): EmailMessage {
   const unsub = unsubscribeUrl(ctx.baseUrl, ctx.userId, ctx.unsubscribeSecret);
   const settings = new URL(`/email/${emailSettingsToken(ctx.userId, ctx.unsubscribeSecret)}`, ctx.baseUrl).toString();
+  const privacy = new URL("/privacy", ctx.baseUrl).toString();
   const html = `<!doctype html><html><body style="font-family:Georgia,serif;font-size:16px;line-height:1.6;color:#161D2B;max-width:560px;margin:0 auto;padding:24px">
 ${bodyHtml}
-<p style="margin-top:40px;font-size:13px;color:#596377">You get this because you signed up for Pisara. <a href="${escapeHtml(settings)}" style="color:#596377">Email settings</a> · <a href="${escapeHtml(unsub)}" style="color:#596377">Stop these emails</a></p>
+<p style="margin-top:40px;font-size:13px;color:#596377">You get this because you signed up for Pisara. <a href="${escapeHtml(settings)}" style="color:#596377">Email settings</a> · <a href="${escapeHtml(unsub)}" style="color:#596377">Stop these emails</a> · <a href="${escapeHtml(privacy)}" style="color:#596377">Privacy</a></p>
 </body></html>`;
-  const text = `${bodyText}\n\n--\nEmail settings: ${settings}\nStop these emails: ${unsub}\n`;
+  const text = `${bodyText}\n\n--\nEmail settings: ${settings}\nStop these emails: ${unsub}\nPrivacy: ${privacy}\n`;
   return {
     to: ctx.to,
     subject,

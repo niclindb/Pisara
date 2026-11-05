@@ -112,6 +112,8 @@ h1, h2, h3 {
   max-width: 65ch;
 }
 .prose-lesson > * + * { margin-top: 1em; }
+.prose-lesson h1 { font-size: 32px; line-height: 1.2; }
+.prose-lesson li + li { margin-top: 0.4em; }
 .prose-lesson h2 { font-size: 22px; margin-top: 1.6em; }
 .prose-lesson h3 { font-size: 18px; margin-top: 1.4em; }
 .prose-lesson ul { list-style: disc; padding-left: 1.4em; }
