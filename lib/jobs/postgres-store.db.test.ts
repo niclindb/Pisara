@@ -67,7 +67,7 @@ describe.skipIf(!url)("delivery job on Postgres", () => {
     expect(rows).toEqual([{ lesson_id: lesson(1, 1), date: "2026-11-09", kind: "daily" }]);
     const [ut] = await sql`select last_delivered_at from public.user_topics where topic_id = ${ASTRO}`;
     expect(ut!.last_delivered_at).toEqual(at("2026-11-09T11:00:00Z"));
-    expect(sent.map((m) => m.subject)).toEqual(["Lesson 1.1 (3 min read)"]);
+    expect(sent.map((m) => m.subject)).toEqual(["Lesson 1.1 (3 min)"]);
   });
 
   it("doesn't deliver twice on the same day", async () => {

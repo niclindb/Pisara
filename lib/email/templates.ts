@@ -50,14 +50,14 @@ export function dailyLessonEmail(
   hasRecap: boolean,
 ): EmailMessage {
   const url = new URL(`/lessons/${lesson.id}`, ctx.baseUrl).toString();
-  const minutes = `${lesson.readingMinutes} min read`;
+  const minutes = `${lesson.readingMinutes} min`;
   const recapLine = "Your weekly recap is waiting on Home too: 5 quick questions on what you learned this week.";
   const html = `<p>${escapeHtml(greeting(ctx.displayName))} Today's lesson is in ${escapeHtml(lesson.topicName)}:</p>
 <h1 style="font-size:24px;line-height:1.25;margin:16px 0 4px">${escapeHtml(lesson.title)}</h1>
 <p style="margin-top:0;color:#596377">${escapeHtml(lesson.topicName)} · ${minutes}</p>
-${button(url, "Read lesson")}
+${button(url, "Begin lesson")}
 ${hasRecap ? `<p>${recapLine}</p>` : ""}`;
-  const text = `${greeting(ctx.displayName)} Today's lesson is in ${lesson.topicName}:\n\n${lesson.title}\n${lesson.topicName} · ${minutes}\n\nRead it: ${url}${hasRecap ? `\n\n${recapLine}` : ""}`;
+  const text = `${greeting(ctx.displayName)} Today's lesson is in ${lesson.topicName}:\n\n${lesson.title}\n${lesson.topicName} · ${minutes}\n\nBegin lesson: ${url}${hasRecap ? `\n\n${recapLine}` : ""}`;
   return wrap(ctx, `${lesson.title} (${minutes})`, html, text);
 }
 
