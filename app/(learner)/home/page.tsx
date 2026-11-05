@@ -24,7 +24,8 @@ export default async function HomePage() {
   const choices = await loadTopicChoices(db(), user.id);
   const topicsOn = choices.topics.filter((t) => t.interest > 0);
   // Extra lessons count toward Home, so Start and Surprise me only show while there's room.
-  const roomForExtra = home.waiting.length < INBOX_LIMIT;
+  const roomForExtra = home.waiting.length < INBOX_LIMIT && home.extrasLeftToday > 0;
+  const doneForToday = home.waiting.length < INBOX_LIMIT && home.extrasLeftToday === 0;
   const [current, ...others] = home.waiting;
 
   return (
@@ -82,6 +83,7 @@ export default async function HomePage() {
             {roomForExtra && home.state !== "all_finished" && (
               <ActionForm action={extraLessonAction} submit="Surprise me" pendingLabel="Picking…" variant="secondary" />
             )}
+            {doneForToday && home.state !== "all_finished" && <p className="text-[15px] text-text-muted">More lessons tomorrow</p>}
           </div>
           <ul className="divide-y divide-hairline rounded-card border border-hairline bg-surface">
             {topicsOn.map((t) => (

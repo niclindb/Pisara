@@ -7,6 +7,9 @@ export const INBOX_LIMIT = 3;
 /** Days between the first and second "lessons waiting" email (B6). */
 export const WAITING_REMINDER_GAP_DAYS = 7;
 
+/** Extra lessons (Start and "Surprise me" together) a learner can take per local day (B7). */
+export const EXTRA_LESSONS_PER_DAY = 2;
+
 /** "Lessons waiting" emails sent per full inbox before going quiet (B6). */
 export const WAITING_REMINDER_MAX = 2;
 

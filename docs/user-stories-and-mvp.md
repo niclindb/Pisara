@@ -80,7 +80,7 @@ Priority: **Must** = in the MVP · **Should** = in the MVP if time allows · **L
 - B4/B6: A lesson counts as read as soon as the learner opens it, which takes it off Home. Learners can open only lessons delivered to them, never lessons further along their path (the free preview in A9 is the only exception).
 - B6: Home is the first thing the learner sees after signing in, with the current lesson at the top. It holds up to 3 unread lessons, but the app never tells learners about that limit. When it's full, no new lessons are picked until one is read, and no daily email is sent. Instead a "You have 3 lessons waiting" email goes out on the first day the inbox is full, once more a week later, and then never again. Reading a lesson resets this.
 - B3: Unsubscribing or pausing emails takes one click from the email.
-- B7: Each turned-on topic has a Start button that gives the learner the next lesson in that topic's path and opens it. This isn't reading ahead: it's the same next lesson the daily pick would deliver. A "Surprise me" button gives an extra lesson using the normal weighted pick (B1/B2). Extra lessons appear on Home like any other until read.
+- B7: Each turned-on topic has a Start button that gives the learner the next lesson in that topic's path and opens it. This isn't reading ahead: it's the same next lesson the daily pick would deliver. A "Surprise me" button gives an extra lesson using the normal weighted pick (B1/B2). Extra lessons appear on Home like any other until read. A learner can take 2 extra lessons a day (Start and "Surprise me" together); after that Home says "More lessons tomorrow". Because a lesson counts as read when it opens, this is what keeps a learner from reading a whole path in one sitting.
 
 ### C. Quizzes and review
 

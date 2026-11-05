@@ -2,10 +2,11 @@
 // B5, A9), history (D5, C4) and progress (D1, D8, C9). The pages call these
 // with the signed-in user's id; signed-out visitors only get the previews.
 
-import { INBOX_LIMIT } from "../rules/constants";
+import { EXTRA_LESSONS_PER_DAY, INBOX_LIMIT } from "../rules/constants";
 import { localDate, type LocalDate } from "../rules/dates";
 import { goDeeperSuggestions, topicProgress, type TopicProgress } from "../rules/progress";
 import { gradeAnswers, QuizError, suggestReread, type GradedAnswer, type SubmittedAnswer } from "../rules/quiz";
+import { extraLessonsToday } from "./extra";
 import { loadPracticeProblems, markLessonOpened, type PracticeProblem } from "./lessons";
 import { loadQuiz, loadRecap, type QuizView } from "./quiz";
 import type { Sql } from "./postgres-store";
@@ -40,6 +41,8 @@ export interface HomeView {
   pausedUntil: LocalDate | null;
   /** No topic is turned on (they turned everything off after onboarding). */
   noTopicsOn: boolean;
+  /** Extra lessons still allowed today (B7): 0 hides Start and "Surprise me" until tomorrow. */
+  extrasLeftToday: number;
 }
 
 export async function loadHome(sql: Sql, userId: string, now: Date): Promise<HomeView | null> {
@@ -88,6 +91,7 @@ export async function loadHome(sql: Sql, userId: string, now: Date): Promise<Hom
     recap: recap && recap.questions.length ? { recapId: recap.recapId, questionCount: recap.questions.length } : null,
     pausedUntil: paused,
     noTopicsOn: topics!.on_count === 0,
+    extrasLeftToday: Math.max(0, EXTRA_LESSONS_PER_DAY - (await extraLessonsToday(sql, userId, today))),
   };
 }
 

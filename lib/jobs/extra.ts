@@ -3,7 +3,7 @@
 // (the same weighted pick as the daily lesson), and the first lesson right
 // after onboarding (A6). Neither sends an email: the learner is on the site.
 
-import { INBOX_LIMIT } from "../rules/constants";
+import { EXTRA_LESSONS_PER_DAY, INBOX_LIMIT } from "../rules/constants";
 import { localDate } from "../rules/dates";
 import { pickTopic } from "../rules/picking";
 import { postgresStore, type Sql } from "./postgres-store";
@@ -16,6 +16,8 @@ export type ExtraLessonResult =
       reason:
         /** 3 lessons are already waiting: read one first. */
         | "inbox_full"
+        /** Already had the day's extra lessons (2): more tomorrow. */
+        | "daily_limit"
         /** The picked topic has no lessons left for this learner. */
         | "topic_finished"
         /** The picked topic isn't open to learners. */
@@ -50,7 +52,9 @@ async function loadLearner(sql: Sql, userId: string): Promise<Learner | null> {
  * Delivers an extra lesson now (B7). With `topicId`, it's the next lesson in
  * that topic's path; the topic doesn't have to be turned on. Without it, it's
  * "Surprise me". Extra lessons count toward the 3-lesson inbox, but not toward
- * the daily "no 3 days in a row" rule.
+ * the daily "no 3 days in a row" rule. At most 2 a day: a lesson counts as read
+ * the moment it opens, so without a limit a learner could read a whole path in
+ * one sitting, which is reading ahead by another name.
  */
 export async function getExtraLesson(
   sql: Sql,
@@ -63,6 +67,7 @@ export async function getExtraLesson(
   const today = localDate(now, learner.timeZone);
   const day = await postgresStore(sql).loadDay(learner, today);
   if (day.unreadCount >= INBOX_LIMIT) return { ok: false, reason: "inbox_full" };
+  if ((await extraLessonsToday(sql, userId, today)) >= EXTRA_LESSONS_PER_DAY) return { ok: false, reason: "daily_limit" };
 
   let topicId: string;
   let lessonId: string;
@@ -115,4 +120,12 @@ export async function deliverFirstLesson(sql: Sql, userId: string, now: Date, ra
   if (!topic?.nextLesson) return null;
   const created = await store.recordDelivery({ userId, lessonId: topic.nextLesson.id, topicId: topic.topicId, localDate: today, deliveredAt: now });
   return created ? topic.nextLesson.id : null;
+}
+
+/** Extra lessons taken on the learner's local date, read or not. */
+export async function extraLessonsToday(sql: Sql, userId: string, today: string): Promise<number> {
+  const [r] = await sql`
+    select count(*)::int as n from public.deliveries
+    where user_id = ${userId} and kind = 'extra' and local_date = ${today}`;
+  return r!.n;
 }

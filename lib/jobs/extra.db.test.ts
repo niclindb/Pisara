@@ -45,20 +45,35 @@ describe.skipIf(!url)("extra lessons on Postgres", () => {
   });
 
   it("starts the next lesson in a picked topic, even one that isn't turned on", async () => {
+    expect(await getExtraLesson(sql, U, now, { topicId: DRAFTY })).toEqual({ ok: false, reason: "topic_unavailable" });
     expect(await getExtraLesson(sql, U, now, { topicId: ROME })).toEqual({ ok: true, lessonId: L(2, 1), topicId: ROME });
     expect(await getExtraLesson(sql, U, now, { topicId: ROME })).toMatchObject({ lessonId: L(2, 2) });
-    expect(await getExtraLesson(sql, U, now, { topicId: DRAFTY })).toEqual({ ok: false, reason: "topic_unavailable" });
     expect((await deliveries()).map((d) => d.kind)).toEqual(["extra", "extra"]);
+  });
+
+  it("allows 2 extra lessons a day, even when each is read straight away", async () => {
+    expect(await getExtraLesson(sql, U, now, { topicId: ROME })).toMatchObject({ ok: true, lessonId: L(2, 1) });
+    await sql`update public.deliveries set read_at = now()`;
+    expect(await getExtraLesson(sql, U, now)).toMatchObject({ ok: true });
+    await sql`update public.deliveries set read_at = now()`;
+    expect(await getExtraLesson(sql, U, now, { topicId: ROME })).toEqual({ ok: false, reason: "daily_limit" });
+    expect(await getExtraLesson(sql, U, now)).toEqual({ ok: false, reason: "daily_limit" });
+    // A new local day brings 2 more.
+    const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
+    expect(await getExtraLesson(sql, U, tomorrow, { topicId: ROME })).toMatchObject({ ok: true });
   });
 
   it("surprises from turned-on topics, and stops when 3 lessons are waiting", async () => {
     expect(await getExtraLesson(sql, U, now)).toMatchObject({ ok: true, topicId: STARS, lessonId: L(1, 1) });
     await getExtraLesson(sql, U, now);
-    await getExtraLesson(sql, U, now);
+    // The daily lesson fills the third spot.
+    await sql`insert into public.deliveries (user_id, lesson_id, kind, local_date, delivered_at)
+              values (${U}, ${L(1, 3)}, 'daily', '2026-11-04', now())`;
     expect(await getExtraLesson(sql, U, now)).toEqual({ ok: false, reason: "inbox_full" });
 
     await sql`update public.deliveries set read_at = now()`;
-    expect(await getExtraLesson(sql, U, now)).toEqual({ ok: false, reason: "nothing_left" });
-    expect(await getExtraLesson(sql, U, now, { topicId: STARS })).toEqual({ ok: false, reason: "topic_finished" });
+    const tomorrow = new Date(now.getTime() + 24 * 3600 * 1000);
+    expect(await getExtraLesson(sql, U, tomorrow)).toEqual({ ok: false, reason: "nothing_left" });
+    expect(await getExtraLesson(sql, U, tomorrow, { topicId: STARS })).toEqual({ ok: false, reason: "topic_finished" });
   });
 });
