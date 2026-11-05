@@ -34,7 +34,8 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
             </p>
             <div className="space-y-2">
               {q.options.map((o, j) => {
-                const right = checked && j === q.correctIndex;
+                // Green only when they picked it; a miss never lights up the right answer.
+                const right = checked && chosen[q.id] === j && j === q.correctIndex;
                 const wrong = checked && chosen[q.id] === j && j !== q.correctIndex;
                 return (
                   <label
@@ -52,12 +53,17 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
                       className="h-5 w-5"
                     />
                     <span>{o}</span>
-                    {right && <RightMark chosen={chosen[q.id] === j} />}
+                    {right && <RightMark chosen />}
                     {wrong && <NotQuiteMark />}
                   </label>
                 );
               })}
             </div>
+            {checked && chosen[q.id] !== q.correctIndex && (
+              <p className="mt-3 text-[15px]">
+                The answer: <span className="font-medium">{q.options[q.correctIndex]}</span>
+              </p>
+            )}
             {checked && q.explanation && <p className="mt-3 text-[15px]">{q.explanation}</p>}
           </fieldset>
         ))}

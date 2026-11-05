@@ -106,6 +106,6 @@ Rules:
 ## 6. Rules of thumb
 
 - Cyan is a spark: highlights, badges, progress and a few buttons. Don't use it for paragraphs or small text on light backgrounds.
-- Black cherry marks topics and celebrations. A missed quiz answer uses `danger` (cool crimson, never a warm red) with a cross and "Not quite", next to the right answer in green, so a miss can never be mistaken for a right answer or a topic label.
+- Black cherry marks topics and celebrations. A missed quiz answer uses `danger` (cool crimson, never a warm red) with a cross and "Not quite". Green only marks the learner's own pick when it was right; after a miss the right answer is not lit up, only named in plain text ("The answer: …") above the explanation.
 - Milestone wording never mentions days in a row or missed days (see design.md section 5.5).
 - Any new color goes into `lib/a11y/color-pairs.ts` first, with every pair it's used in.

@@ -19,7 +19,7 @@ function Cross() {
   );
 }
 
-/** "Correct" when the learner picked it, "Right answer" when they picked another one. */
+/** Shown only on the option the learner picked, when it was right. */
 export function RightMark({ chosen, className = "ml-auto" }: { chosen: boolean; className?: string }) {
   return (
     <span className={`${className} flex shrink-0 items-center gap-1.5 text-[15px] font-medium text-success`}>
@@ -38,7 +38,7 @@ export function NotQuiteMark({ className = "ml-auto" }: { className?: string }) 
   );
 }
 
-/** Option row styles: right answers in green, the learner's miss in crimson. */
+/** Option row styles: the learner's pick in green when right, crimson when not. The right answer is never lit up after a miss. */
 export function optionClass(right: boolean, wrong: boolean): string {
   return right ? "border-success bg-success-bg" : wrong ? "border-danger bg-danger-bg" : "border-border";
 }

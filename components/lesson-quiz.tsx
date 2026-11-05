@@ -82,7 +82,8 @@ export function LessonQuiz({
               </p>
               <div className="space-y-2">
                 {q.options.map((o, j) => {
-                  const isRight = g && j === g.correctIndex;
+                  // Green only when they picked it; a miss never lights up the right answer.
+                  const isRight = g && g.correct && j === g.correctIndex;
                   const isWrong = g && g.chosenIndex === j && !g.correct;
                   return (
                     <label
@@ -100,12 +101,17 @@ export function LessonQuiz({
                         className="h-5 w-5 shrink-0"
                       />
                       <span>{o}</span>
-                      {isRight && <RightMark chosen={g.chosenIndex === j} />}
+                      {isRight && <RightMark chosen />}
                       {isWrong && <NotQuiteMark />}
                     </label>
                   );
                 })}
               </div>
+              {g && !g.correct && (
+                <p className="mt-3 text-[15px]">
+                  The answer: <span className="font-medium">{q.options[g.correctIndex]}</span>
+                </p>
+              )}
               {g?.explanation && <p className="mt-3 text-[15px]">{g.explanation}</p>}
             </fieldset>
           );
