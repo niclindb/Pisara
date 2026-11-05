@@ -11,6 +11,8 @@
     "test:watch": "vitest",
     "test:db": "vitest run db.test",
     "typecheck": "tsc --noEmit",
+    "lessons:check": "tsx scripts/import-lessons.ts --check",
+    "lessons:import": "tsx --env-file-if-exists=.env.local scripts/import-lessons.ts",
     "lint": "eslint .",
     "test:pages": "playwright test"
   },
@@ -23,6 +25,7 @@
     "eslint": "9.39.5",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
     "typescript-eslint": "8.72.1",
     "vitest": "4.1.12"
