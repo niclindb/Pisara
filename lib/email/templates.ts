@@ -69,6 +69,20 @@ export function lessonsWaitingEmail(ctx: EmailContext, waiting: number): EmailMe
   return wrap(ctx, `You have ${waiting} lessons waiting`, html, text);
 }
 
+/**
+ * The last "lessons waiting" email (B6), 30 days after the second. Short, no
+ * guilt, and points at pausing or stopping for anyone who's moved on.
+ */
+export function stillHereEmail(ctx: EmailContext, waiting: number): EmailMessage {
+  const home = new URL("/home", ctx.baseUrl).toString();
+  const settings = new URL(`/email/${emailSettingsToken(ctx.userId, ctx.unsubscribeSecret)}`, ctx.baseUrl).toString();
+  const line = `Your ${waiting} lessons are still here whenever you want them. This is the last reminder we'll send about them.`;
+  const offer = "If now isn't a good time, you can pause lessons or turn off emails.";
+  const html = `<p>${escapeHtml(greeting(ctx.displayName))}</p><p>${escapeHtml(line)}</p>${button(home, "Go to Home")}<p>${escapeHtml(offer)} <a href="${escapeHtml(settings)}">Email settings</a></p>`;
+  const text = `${greeting(ctx.displayName)}\n\n${line}\n\nHome: ${home}\n\n${offer} ${settings}`;
+  return wrap(ctx, "Your lessons are still here", html, text);
+}
+
 /** To the authors when the daily run had failures or crashed. No unsubscribe: it's an operations alert. */
 export function jobFailedEmail(
   to: string,

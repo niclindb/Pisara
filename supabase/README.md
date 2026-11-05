@@ -8,6 +8,7 @@ The database is defined entirely in `migrations/`. Don't change tables or access
 |---|---|
 | `migrations/20261103000000_initial_schema.sql` | All tables, the topic tree, triggers, and access rules (row-level security) from `docs/design.md` sections 4 and 9 |
 | `migrations/20261104000000_lessons_only_from_your_path.sql` | Learners can only open lessons delivered to them, plus each topic's free preview: no reading ahead |
+| `migrations/20261105020000_third_waiting_reminder.sql` | Lets `waiting_reminders_sent` reach 3, for the last "still here" email |
 | `migrations/20261105010000_job_runs.sql` | A record of each daily run (totals and first error), shown on the author page. Server only: no access through the public API |
 | `migrations/20261104010000_practice_problems.sql` | Optional practice problems per lesson (prompt + worked solution), readable by whoever can read the lesson |
 | `tests/load_schema.sh` | Loads the stand-in and every migration, in order, into a database |

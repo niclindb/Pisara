@@ -114,6 +114,14 @@ describe("runDailyDelivery", () => {
     expect(f.sent[0]!.subject).toBe("You have 3 lessons waiting");
   });
 
+  it("sends the last \"still here\" note 30 days after the second reminder", async () => {
+    const f = fakes([learner({ waitingRemindersSent: 2, waitingReminderSentOn: "2026-10-11" })], { u1: day({ unreadCount: 3 }) });
+    await runDailyDelivery(now, f.deps);
+    expect(f.reminders.u1).toEqual({ sent: 3, on: "2026-11-10" });
+    expect(f.sent[0]!.subject).toBe("Your lessons are still here");
+    expect(f.sent[0]!.text).toContain("last reminder");
+  });
+
   it("skips learners with nothing left to pick", async () => {
     const f = fakes([learner()], { u1: day({ topics: [] }) });
     const summary = await runDailyDelivery(now, f.deps);

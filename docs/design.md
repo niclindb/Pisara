@@ -144,7 +144,7 @@ Practice problems aren't graded or recorded and never enter review. Readable by 
 | weekly_recap_day | int | 0–6, default Sunday (C7) |
 | emails_enabled | bool | One-click pause/unsubscribe (B3) |
 | paused_until | date | Vacation pause (D6) |
-| waiting_reminders_sent | int | 0, 1 or 2. How many "lessons waiting" emails went out since the inbox filled (B6). Reset to 0 when a lesson is read. |
+| waiting_reminders_sent | int | 0 to 3. How many "lessons waiting" emails went out since the inbox filled (B6). Reset to 0 when a lesson is read. |
 | waiting_reminder_sent_on | date | Local date of the last "lessons waiting" email |
 | role | enum | `learner` or `author` |
 | created_at | timestamptz | |
@@ -236,7 +236,7 @@ The random function is passed in so tests can control it.
 
 ### 5.2 The inbox (B6)
 - Before picking, count the learner's unread deliveries. If there are 3, skip the pick and the daily email for today.
-- "You have 3 lessons waiting" goes out on the first day the inbox is full and once more 7 days later, then never again while it stays full. `waiting_reminders_sent` tracks this.
+- "You have 3 lessons waiting" goes out on the first day the inbox is full and once more 7 days later. A last "Your lessons are still here" note goes 30 days after that, then never again while it stays full. `waiting_reminders_sent` (0–3) tracks this.
 - Reading a lesson sets `read_at` and resets `waiting_reminders_sent` to 0. Finishing or skipping the quiz doesn't change inbox status.
 
 ### 5.2a Extra and first lessons (B7, A6)
@@ -362,7 +362,8 @@ Anyone else gets the not-found page. Categories are edited inline on `/author`.
 |---|---|---|
 | Sign-in link | On request | Link valid 15 minutes, single use |
 | Daily lesson | Daily run | Topic, title, reading time, "Read lesson" button. Mentions the weekly recap on recap day. |
-| Lessons waiting | Daily run, inbox full: first day, then 7 days later, then never again | "You have 3 lessons waiting," button to inbox |
+| Lessons waiting | Daily run, inbox full: first day, then 7 days later | "You have 3 lessons waiting," button to Home |
+| Still here | Daily run, inbox still full 30 days after the second "lessons waiting" email; then never again | "Your lessons are still here," button to Home, link to pause or turn off emails |
 
 Every learner email includes an email settings link and the standard `List-Unsubscribe` header with one-click POST, so email apps show their own unsubscribe button and it works in one tap. Links in the email body never change anything just by being opened, because work and school mail scanners open every link to check it; the settings page asks for a button press.
 
@@ -450,7 +451,7 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 - **Tech stack:** Next.js (React) + TypeScript, Supabase (database, sign-in), Vercel (hosting, daily scheduled job).
 - **Weekly recap delivery:** in the inbox, with a mention in that day's lesson email. No separate email.
 - **Delivery time:** one run a day for everyone, at 8am Eastern (decided Nov 4, 2026). Learners don't choose a time in the MVP (A8 is Later). _Changed in draft 2; draft 1 had an hourly job and a chosen hour._
-- **"Lessons waiting" email:** first day the inbox is full, again 7 days later, then never again until a lesson is read.
+- **"Lessons waiting" email:** first day the inbox is full, again 7 days later, a last "still here" note 30 days after that, then never again until a lesson is read (the third note added Nov 5, 2026).
 - **Interest levels:** Off, or 1–5 where the level is the weight.
 - **Sub-topics:** topics form a tree of any depth; any topic can be picked; the parent is a soft prerequisite.
 - **Review:** only missed questions enter review; up to 2 review questions a day.
