@@ -10,13 +10,16 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:db": "vitest run db.test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lessons:check": "tsx scripts/import-lessons.ts --check",
+    "lessons:import": "tsx --env-file-if-exists=.env.local scripts/import-lessons.ts"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "22.20.5",
     "@types/react": "19.3.0",
     "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
     "vitest": "4.1.12"
   },
