@@ -74,7 +74,34 @@ Scale (px): 13 labels · 15 meta · 16 UI · 18 lesson text · 22 section headin
 
 ## 5. Logo
 
-Not decided. Use the wordmark **pisara** in Libre Baskerville 700 as a stand-in. Ideas Nick liked so far: the cairn (stacked stones, small pieces built up) and the drop rising like a morning sun. The final mark should show what the app does: a lesson a day, and small pieces adding up.
+The mark is a smooth river stone with a drop worn through it, from the saying "drop by drop wears away the stone": small lessons, every day, change something solid. The hole has a sloping rim, and a short crescent of light runs along the stone's upper left edge. The name beside it is **pisara** in Libre Baskerville Bold, traced to outlines so it never depends on the font loading.
+
+Files live in `public/brand/`:
+
+| File | Use |
+|---|---|
+| `pisara-logo-horizontal-light.svg` / `-dark.svg` | Main logo, the icon beside the name. Use `-light` on light backgrounds and `-dark` on dark ones. PNG copies are for email |
+| `pisara-logo-stacked-light.svg` / `-dark.svg` | The icon above the name, for square spaces |
+| `pisara-logo-*-navy.svg` / `-white.svg` | One-color versions for single-ink print. The light and shade become thin gaps |
+| `pisara-icon-light.svg` / `-dark.svg`, `-navy`, `-white` | The icon alone |
+| `pisara-app-icon.svg`, `-1024.png`, `-512.png` | Square app icon on navy. The OS rounds the corners |
+
+Next.js picks up the browser icons from `app/` automatically: `app/icon.svg` (switches to the dark version when the browser is in dark mode), `app/favicon.ico` (16, 32 and 48 px), and `app/apple-icon.png` (180 px home-screen icon).
+
+Logo colors:
+
+| Part | Light mode | Dark mode | App icon |
+|---|---|---|---|
+| Stone | `#0B2545` | `#DCE2E7` | `#E5E9EC` on `#0B2545` |
+| Light and worn rim | `#3B5A80` | `#9AA8B6` | `#A9B7C5` |
+
+Logos are exempt from WCAG contrast rules, but the stone still stands out clearly: it is at least 12.6:1 against every page and surface color, and the shade is at least 6.8:1. These colors are only for the logo, so they are not in `lib/a11y/color-pairs.ts`.
+
+Rules:
+- Leave clear space around the logo at least as wide as the drop.
+- Don't use the icon smaller than 16 px, or the horizontal logo shorter than 20 px.
+- Don't recolor, stretch, rotate or add effects to the logo. Don't put the light-mode logo on navy or the dark-mode logo on a light background.
+- Don't use cyan in the logo. Cyan stays the spark color in the app.
 
 ## 6. Rules of thumb
 
