@@ -1,0 +1,20 @@
+import Link from "next/link";
+
+/** The footer on public pages: landing, sign-in, Explore, privacy and terms. */
+export function SiteFooter() {
+  return (
+    <footer className="border-t border-hairline">
+      <nav aria-label="Footer" className="mx-auto flex max-w-5xl flex-wrap gap-x-6 gap-y-2 px-4 py-6 text-[15px] text-text-muted sm:px-6">
+        <Link href="/explore" className="py-1 hover:underline">
+          Browse topics
+        </Link>
+        <Link href="/privacy" className="py-1 hover:underline">
+          Privacy
+        </Link>
+        <Link href="/terms" className="py-1 hover:underline">
+          Terms
+        </Link>
+      </nav>
+    </footer>
+  );
+}
