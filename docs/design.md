@@ -325,7 +325,7 @@ Explore and the topic page are shared with signed-in learners, who see their own
 |---|---|---|---|
 | `/sign-in` | Sign in | Email field, "Send me a link"; then "Check your email" with "Send again". Also creates new accounts. | A1 |
 | `/sign-in/expired` | Sign-in link problem | For links already used or past 15 minutes; send a new one. `/auth/callback` has no screen and routes to onboarding or Home. | A1 |
-| `/email/[token]` | Email preferences | Opened from any email without signing in: emails paused right away, with Undo; pause until a date; stop all emails. | B3, D6 |
+| `/email/[token]` | Email preferences | Opened from any email without signing in. Opening it changes nothing (mail scanners open links); buttons turn emails off or back on, or pause until a date. The footer "Stop these emails" link lands here too. | B3, D6 |
 
 ### Learner
 | Path | Page | What it shows | Stories |
@@ -363,7 +363,7 @@ Anyone else gets the not-found page. Categories are edited inline on `/author`.
 | Daily lesson | Daily run | Topic, title, reading time, "Read lesson" button. Mentions the weekly recap on recap day. |
 | Lessons waiting | Daily run, inbox full: first day, then 7 days later, then never again | "You have 3 lessons waiting," button to inbox |
 
-Every learner email includes a one-click pause/unsubscribe link and the standard `List-Unsubscribe` header, so email apps show their own unsubscribe button.
+Every learner email includes an email settings link and the standard `List-Unsubscribe` header with one-click POST, so email apps show their own unsubscribe button and it works in one tap. Links in the email body never change anything just by being opened, because work and school mail scanners open every link to check it; the settings page asks for a button press.
 
 Emails link to the lesson page; lessons aren't included in full in the email, so reading and quizzes always happen on the site, where they're recorded.
 

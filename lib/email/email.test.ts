@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { dailyLessonEmail, lessonsWaitingEmail, type EmailContext } from "./templates";
-import { emailSettingsToken, readEmailSettingsToken, unsubscribeUrl, verifyUnsubscribe } from "./unsubscribe";
+import { emailSettingsToken, readEmailSettingsToken, settingsPageFor, unsubscribeUrl, verifyUnsubscribe } from "./unsubscribe";
 import { resendMailer } from "./resend";
 
 const secret = "test-secret";
@@ -8,6 +8,13 @@ const userId = "6f1c1b7a-1111-4222-8333-944455556666";
 const ctx: EmailContext = { baseUrl: "https://getpisara.com", unsubscribeSecret: secret, userId, to: "a@example.com", displayName: "Nick" };
 
 describe("unsubscribe links", () => {
+  it("sends a clicked link to the email settings page instead of unsubscribing", () => {
+    const link = unsubscribeUrl(ctx.baseUrl, userId, secret);
+    expect(settingsPageFor(link, secret)).toBe(`https://getpisara.com/email/${emailSettingsToken(userId, secret)}`);
+    expect(settingsPageFor(link.replace(/t=[^&]+/, "t=forged"), secret)).toBe("https://getpisara.com/email/invalid");
+  });
+
+
   it("verify for the right user only", () => {
     const url = new URL(unsubscribeUrl(ctx.baseUrl, userId, secret));
     expect(url.pathname).toBe("/api/unsubscribe");
