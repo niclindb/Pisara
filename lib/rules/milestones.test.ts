@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkMilestones, isLongMemory, type MilestoneInput } from "./milestones";
+import { checkMilestones, isLongMemory, milestoneMessage, type MilestoneInput } from "./milestones";
 
 const base: MilestoneInput = {
   lessonsRead: 0,
@@ -59,5 +59,21 @@ describe("isLongMemory", () => {
   it("counts a right answer at the 21-day step or later", () => {
     expect(isLongMemory(2)).toBe(false);
     expect(isLongMemory(3)).toBe(true);
+  });
+});
+
+describe("milestoneMessage", () => {
+  const names = (id: string) => ({ t1: "Stars" })[id];
+  it("says each kind in plain words", () => {
+    expect(milestoneMessage("lessons_1", names)).toBe("You read your first lesson.");
+    expect(milestoneMessage("lessons_25", names)).toBe("You've read 25 lessons.");
+    expect(milestoneMessage("level_up:t1:2", names)).toBe("You reached level 2 in Stars.");
+    expect(milestoneMessage("topic_goal:t1", names)).toBe("You finished Stars.");
+    expect(milestoneMessage("long_memory:q1", names)).toBe("You remembered an answer after three weeks or more.");
+  });
+  it("never mentions days in a row", () => {
+    for (const k of ["lessons_1", "lessons_100", "level_up:t1:3", "topic_goal:t1", "long_memory:q"]) {
+      expect(milestoneMessage(k, names)).not.toMatch(/in a row|streak|missed/i);
+    }
   });
 });

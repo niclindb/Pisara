@@ -15,6 +15,7 @@ describe("sign-in helpers", () => {
     expect(afterSignIn(user, "/settings")).toBe("/onboarding");
     expect(afterSignIn({ ...user, onboarded: true }, null)).toBe("/home");
     expect(afterSignIn({ ...user, onboarded: true }, "/settings")).toBe("/settings");
+    expect(afterSignIn({ ...user, role: "author" }, null)).toBe("/author");
   });
 
   it("only follows same-site paths after sign-in", () => {

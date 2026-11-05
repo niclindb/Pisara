@@ -13,8 +13,10 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
     "@types/node": "22.20.5",
     "@types/react": "19.3.0",
+    "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
     "vitest": "4.1.12"
   },
@@ -24,6 +26,8 @@
     "next": "16.4.2",
     "postgres": "3.4.9",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
   }
 }

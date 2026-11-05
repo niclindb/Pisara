@@ -44,7 +44,7 @@ One web app does everything: pages for learners, pages for authors, and a few AP
 | Sign-in | **Supabase Auth** (email sign-in links) | Email sign-in links built in (A1). Google/Apple can be switched on later (A7) without changing accounts. | Auth.js, Clerk |
 | Email | **Resend** + React Email | Simple API, emails written as components, supports the one-click unsubscribe header. | Postmark, Amazon SES |
 | Hosting | **Vercel** | Deploys automatically from GitHub. | Netlify, Render |
-| Scheduled jobs | **Vercel Cron** calling an API route once a day (11:00 UTC) | Delivery runs once a day for everyone, which Vercel's free plan supports. If learners can choose their own time later (A8), this moves to an hourly job, for example Supabase Cron. | Supabase Cron, GitHub Actions schedule |
+| Scheduled jobs | **Vercel Cron** calling an API route once a day (8am Eastern) | Delivery runs once a day for everyone, which Vercel's free plan supports. If learners can choose their own time later (A8), this moves to an hourly job, for example Supabase Cron. | Supabase Cron, GitHub Actions schedule |
 | Styling | **Tailwind CSS** | Fast to build a clean, mobile-friendly UI. | Plain CSS modules |
 | Lesson text | **Markdown** | Easy to write; supports headings, lists, bold, examples. | Rich-text editor (later) |
 | Tests | **Vitest** | Fast unit tests for the picking and review rules. | Jest |
@@ -284,7 +284,7 @@ At most one milestone is shown per day. If several are earned, the biggest is sh
 ## 6. Scheduled jobs
 
 ### Daily delivery job
-Vercel Cron calls `POST /api/jobs/deliver` once a day at 11:00 UTC with a secret key. (11:00 UTC is a placeholder: 6am in New York, 3am in California, 1pm in Finland. Aim it at the first learners' morning.)
+The daily run is at 8am Eastern (America/New_York), all year. Vercel Cron only uses UTC, so it calls `GET /api/jobs/deliver` with a secret key at both 12:00 and 13:00 UTC, and only the call that lands in the 8am hour in New York runs (12:00 UTC in summer, 13:00 UTC in winter). 8am Eastern is 5am in California and 3pm in Finland.
 
 ```text
 for each learner where
@@ -426,7 +426,7 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 ## 12. Testing
 
 - **Unit tests** for everything in `lib/rules/`: topic picking (including the "not 3 days in a row" rule and odds over many runs), review steps (missed questions only, up to 2 a day), recap building, milestones, inbox limit and "lessons waiting" reminders, prerequisite notes and "Go deeper".
-- **Time zone tests** for the delivery job: local dates across several zones (including ones where 11:00 UTC is already tomorrow), daylight saving changes, and the job running twice.
+- **Time zone tests** for the delivery job: local dates across several zones (including ones where the run is already tomorrow), daylight saving changes, and the job running twice.
 - **Accessibility checks** on every PR: contrast, lint, axe in component and page tests, Lighthouse. See section 10.
 - **Manual checklist** before each release: sign up, onboard, read, quiz, get emails, author publishes a lesson. Includes the [accessibility checklist](accessibility-checklist.md).
 
@@ -448,7 +448,7 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 - **Email provider:** Resend.
 - **Tech stack:** Next.js (React) + TypeScript, Supabase (database, sign-in), Vercel (hosting, daily scheduled job).
 - **Weekly recap delivery:** in the inbox, with a mention in that day's lesson email. No separate email.
-- **Delivery time:** one run a day for everyone, at 11:00 UTC until a final time is picked. Learners don't choose a time in the MVP (A8 is Later). _Changed in draft 2; draft 1 had an hourly job and a chosen hour._
+- **Delivery time:** one run a day for everyone, at 8am Eastern (decided Nov 4, 2026). Learners don't choose a time in the MVP (A8 is Later). _Changed in draft 2; draft 1 had an hourly job and a chosen hour._
 - **"Lessons waiting" email:** first day the inbox is full, again 7 days later, then never again until a lesson is read.
 - **Interest levels:** Off, or 1–5 where the level is the weight.
 - **Sub-topics:** topics form a tree of any depth; any topic can be picked; the parent is a soft prerequisite.
@@ -458,7 +458,6 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 
 ## 15. Open questions
 
-1. **Daily run time:** 11:00 UTC is a placeholder. Pick a time aimed at the first learners' morning.
-2. **Domain:** register pisara.co or getpisara.com before the first deploy so emails come from the real domain.
-3. **Look and feel:** colors and fonts are decided in [design-scheme.md](design-scheme.md). The logo is still open; the wordmark is the stand-in.
-4. **Lesson images:** text only for the MVP, or allow images in lessons? Images need file storage (Supabase Storage can do it).
+1. **Domain:** the first deploy uses the free vercel.app address (decided Nov 4, 2026). Sending lesson emails to anyone but the founder needs a domain of our own, because Resend only sends from verified domains.
+2. **Look and feel:** colors and fonts are decided in [design-scheme.md](design-scheme.md). The logo is still open; the wordmark is the stand-in.
+3. **Lesson images:** text only for the MVP, or allow images in lessons? Images need file storage (Supabase Storage can do it).

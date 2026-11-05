@@ -49,6 +49,7 @@ describe.skipIf(!url)("topic choices on Postgres", () => {
       ["Black holes", true, 3, 0, null],
     ]);
     expect(choices.topics[1]!.prerequisiteNote).toBe("This builds on Stars, which you haven't finished.");
+    expect(choices.topics.map((t) => t.depth)).toEqual([0, 1]);
   });
 
   it("finishes onboarding only with a topic turned on", async () => {

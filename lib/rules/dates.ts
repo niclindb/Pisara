@@ -35,3 +35,15 @@ export function daysBetween(from: LocalDate, to: LocalDate): number {
 export function weekday(date: LocalDate): number {
   return new Date(toUtcMidnight(date)).getUTCDay();
 }
+
+/** "Monday, November 10" for a page. Add the year only when it isn't `thisYear`. */
+export function formatDate(date: LocalDate, thisYear?: number): string {
+  const d = new Date(toUtcMidnight(date));
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: thisYear === d.getUTCFullYear() ? undefined : "numeric",
+  }).format(d);
+}

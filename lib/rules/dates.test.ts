@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, daysBetween, localDate, weekday } from "./dates";
+import { addDays, daysBetween, formatDate, localDate, weekday } from "./dates";
 
 describe("localDate", () => {
   // The daily run is at 11:00 UTC.
@@ -45,5 +45,12 @@ describe("date math", () => {
 
   it("rejects malformed dates", () => {
     expect(() => addDays("11/03/2026", 1)).toThrow();
+  });
+});
+
+describe("formatDate", () => {
+  it("reads like a sentence, with the year only when it's another year", () => {
+    expect(formatDate("2026-11-10", 2026)).toBe("Tuesday, November 10");
+    expect(formatDate("2027-01-04", 2026)).toBe("Monday, January 4, 2027");
   });
 });

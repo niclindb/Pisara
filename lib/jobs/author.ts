@@ -57,6 +57,7 @@ export interface AuthorTopic {
   name: string;
   goal: string;
   description: string;
+  outline: string;
   lessons: Record<LessonStatus, number>;
   /** Learners can pick it once it has 3 published lessons (E4). */
   pickable: boolean;
@@ -72,7 +73,7 @@ export async function loadContentTree(sql: Sql, authorId: string): Promise<Conte
   return asAuthor(sql, authorId, async (tx) => {
     const categories = await tx`select id, name, position from public.categories order by position, name`;
     const topics = await tx`
-      select t.id, t.category_id, t.parent_id, t.position, t.name, t.goal, t.description,
+      select t.id, t.category_id, t.parent_id, t.position, t.name, t.goal, t.description, t.outline,
              count(*) filter (where l.status = 'draft')::int as draft,
              count(*) filter (where l.status = 'published')::int as published,
              count(*) filter (where l.status = 'unpublished')::int as unpublished
@@ -88,6 +89,7 @@ export async function loadContentTree(sql: Sql, authorId: string): Promise<Conte
         name: t.name,
         goal: t.goal,
         description: t.description,
+        outline: t.outline,
         lessons: { draft: t.draft, published: t.published, unpublished: t.unpublished },
         pickable: t.published >= MIN_PUBLISHED_LESSONS,
       })),

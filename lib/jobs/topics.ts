@@ -17,6 +17,8 @@ export interface TopicChoiceView {
   /** The top-level category, also for sub-topics. */
   categoryId: string;
   parentId: string | null;
+  /** 0 for a top-level topic, 1 for its sub-topics, and so on. */
+  depth: number;
   name: string;
   goal: string;
   description: string;
@@ -82,12 +84,13 @@ export async function loadTopicChoices(sql: Sql | Tx, userId: string | null): Pr
   };
 
   const ordered: TopicChoiceView[] = [];
-  const visit = (t: Row) => {
+  const visit = (t: Row, depth: number) => {
     const parent = t.parent_id ? byId.get(t.parent_id) : undefined;
     ordered.push({
       id: t.id,
       categoryId: rootCategory(t),
       parentId: t.parent_id,
+      depth,
       name: t.name,
       goal: t.goal,
       description: t.description,
@@ -97,9 +100,9 @@ export async function loadTopicChoices(sql: Sql | Tx, userId: string | null): Pr
       progress: userId ? progressOf(t.id) : null,
       prerequisiteNote: parent?.pickable ? prerequisiteNote({ name: parent.name, progress: progressOf(parent.id) }) : null,
     });
-    for (const c of children.get(t.id) ?? []) visit(c);
+    for (const c of children.get(t.id) ?? []) visit(c, depth + 1);
   };
-  for (const t of children.get(null) ?? []) visit(t);
+  for (const t of children.get(null) ?? []) visit(t, 0);
 
   return {
     categories: categories.map((c) => ({ id: c.id, name: c.name })),

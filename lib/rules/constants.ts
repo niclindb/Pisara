@@ -51,3 +51,7 @@ export const READING_WORDS_PER_MINUTE = 200;
 
 /** Most quiz questions a lesson can have. Zero is fine: the quiz is optional. */
 export const MAX_QUIZ_QUESTIONS = 3;
+
+/** The daily run goes out at this hour in this time zone (decided Nov 4, 2026: 8am Eastern). */
+export const DELIVERY_TIME_ZONE = "America/New_York";
+export const DELIVERY_HOUR = 8;
