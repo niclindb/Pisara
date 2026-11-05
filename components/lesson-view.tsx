@@ -24,7 +24,7 @@ export function LessonArticle({
         <p className="mb-2 text-[13px] font-bold uppercase tracking-[0.08em] text-accent">{topicName}</p>
         <h1 id="lesson-title" tabIndex={-1} className="text-[32px] leading-tight sm:text-[42px]">{title}</h1>
         <p className="mt-3 text-[15px] text-text-muted">
-          {readingMinutes} min read · {levelName(level)}
+          {readingMinutes} min · {levelName(level)}
         </p>
       </header>
       <Markdown>{body}</Markdown>
