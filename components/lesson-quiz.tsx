@@ -4,7 +4,7 @@
 // questions from earlier lessons (C5). Results show on the same page.
 
 import Link from "next/link";
-import { useRef, useState, useTransition, type ReactNode } from "react";
+import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import type { QuizOutcome } from "@/app/(learner)/actions";
 import type { QuizQuestionView, QuizView } from "@/lib/jobs/quiz";
 import type { GradedAnswer, SubmittedAnswer } from "@/lib/rules/quiz";
@@ -34,6 +34,12 @@ export function LessonQuiz({
   const [pending, start] = useTransition();
   const resultsRef = useRef<HTMLDivElement>(null);
 
+  // Move focus to the results once they're on screen. The transition can commit
+  // well after the grade comes back (the page refreshes too), so wait for it.
+  useEffect(() => {
+    if (result) resultsRef.current?.focus();
+  }, [result]);
+
   // Once graded, the page refreshes with the quiz marked done; keep showing the results.
   if (!quiz || (!result && (quiz.completed || skipped))) {
     return (
@@ -59,7 +65,6 @@ export function LessonQuiz({
       }
       setProblems([]);
       setResult(outcome);
-      requestAnimationFrame(() => resultsRef.current?.focus());
     });
 
   return (
