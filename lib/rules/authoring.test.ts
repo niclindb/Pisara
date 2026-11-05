@@ -46,7 +46,7 @@ describe("draftProblems", () => {
     );
     expect(problems).toEqual([
       "Add a title.",
-      "Level must be 1 or more.",
+      "Pick Beginner, Intermediate or Advanced.",
       "Reading time must be at least 1 minute.",
       "Question 1: add the question.",
       "Question 1: give 2 to 4 choices.",

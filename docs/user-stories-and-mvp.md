@@ -23,7 +23,7 @@ Pisara sends you a short lesson on a topic you care about, picked at random from
 - **Category:** a group of topics, such as Science or Languages.
 - **Topic:** one subject, such as Astronomy. Each topic has a **path**. Topics can have **sub-topics** that go deeper, and those can have their own, to any depth (Astronomy → Stars → Black holes). Every topic in the tree, not just the deepest ones, has its own goal and path and can be picked.
 - **Prerequisite:** a topic's parent. Picking a sub-topic before finishing its parent shows a gentle note, never a block.
-- **Path:** an ordered list of lessons building toward a stated **goal**, for example "Understand the life cycle of a star." Lessons have a **level** (difficulty). Paths grow over time: authors publish lessons one at a time.
+- **Path:** an ordered list of lessons building toward a stated **goal**, for example "Understand the life cycle of a star." Lessons have a **level**: Beginner, Intermediate or Advanced. Paths grow over time: authors publish lessons one at a time.
 - **Lesson:** a title, body text, and estimated reading time. It can also have practice problems and a quiz of up to 3 questions; both are optional.
 - **Practice problem:** an exercise that helps the learner apply a lesson, with a worked solution they can reveal. Not graded, and never enters review.
 - **Home:** the main page after sign-in. It holds the learner's unread lessons, at most 3 (a limit learners aren't told). The newest one is the "current lesson."
@@ -118,7 +118,7 @@ Three layers, each one short:
 
 | ID | Story | Priority |
 |---|---|---|
-| D1 | As a learner, I want to see my level in each topic and how close I am to the topic's goal. | Must |
+| D1 | As a learner, I want to see my level in each topic (Beginner, Intermediate or Advanced) and how close I am to the topic's goal. | Must |
 | D2 | As a learner, I want to change interest levels or add and remove topics at any time. | Must |
 | D3 | As a learner, I want to be congratulated now and then when I reach a milestone so I feel my progress. | Must |
 | D4 | As a learner, I want a gentle note when I have so many topics on that each one will move very slowly. | Should |
@@ -129,9 +129,9 @@ Three layers, each one short:
 | D9 | As a learner, I want to delete my account and all my data. | Must |
 
 **Acceptance criteria**
-- D1: Progress counts lessons the learner has read, not just received. A learner's level in a topic is the highest level of lesson they've read in it.
+- D1: Progress counts lessons the learner has read, not just received. A learner's level in a topic is the highest level of lesson they've read in it, shown in the same words as lesson levels: Beginner, Intermediate or Advanced. Levels are always words, never numbers like "Level 2 of 6".
 - D2: Changes take effect from the next pick. Turning a topic off keeps its progress.
-- D3: Milestones: first lesson finished; 10, 25, 50, 100 and every 100 lessons after; each new level in a topic; reaching a topic's goal; a review question remembered after 21+ days. Shown once, on the screen after the quiz, and at most once a day. Never counts consecutive days, and never mentions missed days.
+- D3: Milestones: first lesson finished; 10, 25, 50, 100 and every 100 lessons after; reaching Intermediate or Advanced in a topic (at most twice per topic); reaching a topic's goal; a review question remembered after 21+ days. Shown once, on the screen after the quiz, and at most once a day. Never counts consecutive days, and never mentions missed days.
 - D4: Show the note when more than 8 topics are on. Never block the learner.
 - D8: When a learner reads the last published lesson in a topic that has sub-topics, the screen after the quiz and the progress page show "Go deeper" with those sub-topics.
 - D9: Deleting removes the profile and all learner data. It asks for confirmation first.
@@ -154,7 +154,7 @@ Three layers, each one short:
 - E4: A lesson has a title, a body of any length, and a reading time. Optionally it has practice problems (each a Markdown prompt and a worked solution) and up to 3 multiple-choice questions (each with one correct answer and a one-line explanation). A lesson can be published with neither, but any problem or question it has must be complete. Drafts are never shown to learners.
 - E4/E5: Only lessons marked "Published" can be picked. A topic appears to learners once it has at least 3 published lessons.
 - E5: When a learner has read every published lesson in a topic, the topic stops being picked and shows "New lessons coming soon." When a new lesson is published, it becomes eligible again on the next pick.
-- E6: Reading time is estimated at about 200 words per minute and can be edited.
+- E6: Each lesson's level is Beginner, Intermediate or Advanced. Reading time is estimated at about 200 words per minute and can be edited.
 - E7: An unpublished lesson stays on Home and in the history of learners who already got it, but is never picked again, and its questions leave review.
 
 ### F. Community (after the MVP)
@@ -228,6 +228,7 @@ If week 3 opens collapse, fix delivery and lesson quality before adding anything
 - **Quiz types:** multiple choice only for the MVP. It's simple to grade automatically. Typed answers can come later.
 - **Delivery:** one run a day for everyone at 8am Eastern (decided Nov 4, 2026). Learners can't choose a time in the MVP.
 - **Interest levels:** Off, or 1–5 with the level as the weight.
+- **Lesson levels:** three named stages, Beginner, Intermediate and Advanced, used for lessons and for a learner's standing in a topic (decided Nov 5, 2026). They replace numbered levels such as "Level 2 of 6".
 - **Sub-topics:** topics form a tree of any depth. Any topic can be picked. A topic's parent is its only prerequisite, and it's a warning, not a block.
 - **Review:** only missed questions enter review, up to 2 a day.
 - **Quizzes are optional:** authors can publish a lesson without one, and learners can skip any quiz.

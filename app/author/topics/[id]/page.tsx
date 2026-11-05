@@ -17,6 +17,7 @@ import {
   updateTopicAction,
 } from "../../actions";
 import { requireAuthor } from "../../guard";
+import { levelName } from "@/lib/rules/levels";
 
 export const metadata: Metadata = { title: "Topic" };
 
@@ -104,7 +105,7 @@ export default async function TopicEditor({ params }: { params: Promise<{ id: st
                       {l.title}
                     </Link>
                     <p className="text-[15px] text-text-muted">
-                      Level {l.level} · {l.readingMinutes} min · {l.questionCount} quiz {l.questionCount === 1 ? "question" : "questions"} ·{" "}
+                      {levelName(l.level)} · {l.readingMinutes} min · {l.questionCount} quiz {l.questionCount === 1 ? "question" : "questions"} ·{" "}
                       {l.problemCount} practice {l.problemCount === 1 ? "problem" : "problems"}
                     </p>
                   </div>
