@@ -59,8 +59,8 @@ export default async function SettingsPage() {
               </select>
             )}
           </Field>
-          <label className="flex min-h-11 items-center gap-3">
-            <input type="checkbox" name="emailsEnabled" defaultChecked={s.emailsEnabled} className="h-5 w-5" />
+          <label htmlFor="emails-enabled" className="flex min-h-11 items-center gap-3">
+            <input id="emails-enabled" type="checkbox" name="emailsEnabled" defaultChecked={s.emailsEnabled} className="h-5 w-5" />
             <span>
               <span className="font-medium">Email me each lesson</span>
               <span className="block text-[15px] text-text-muted">With emails off, lessons still wait on Home.</span>

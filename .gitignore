@@ -153,3 +153,7 @@ vite.config.ts.timestamp-*
 .next/
 next-env.d.ts
 *.tsbuildinfo
+
+# Playwright page checks
+/test-results/
+/playwright-report/
