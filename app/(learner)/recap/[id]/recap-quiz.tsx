@@ -1,7 +1,7 @@
 "use client";
 
 import { NotQuiteMark, RightMark } from "@/components/answer-mark";
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Button, ErrorList, LinkButton } from "@/components/ui";
 import type { SubmittedAnswer } from "@/lib/rules/quiz";
 import type { RecapOutcome } from "../../actions";
@@ -16,6 +16,10 @@ export function RecapQuiz({ questions, grade }: { questions: Question[]; grade: 
   const [pending, start] = useTransition();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const focusHeading = () => requestAnimationFrame(() => headingRef.current?.focus());
+  // The results commit with the transition, so focus them once they're on screen.
+  useEffect(() => {
+    if (result) headingRef.current?.focus();
+  }, [result]);
 
   if (result) {
     const right = result.answers.filter((a) => a.correct).length;
@@ -64,7 +68,6 @@ export function RecapQuiz({ questions, grade }: { questions: Question[]; grade: 
       const r = await grade(questions.map((x) => ({ questionId: x.id, chosenIndex: chosen[x.id]! })));
       if (!r.ok) return setProblems(r.problems);
       setResult(r);
-      focusHeading();
     });
   };
   return (
