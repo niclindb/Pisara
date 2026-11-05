@@ -5,6 +5,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { runDailyDelivery } from "@/lib/jobs/deliver";
 import { isDeliveryHour } from "@/lib/rules/delivery-time";
+import { jobRunFrom, recordJobRun, type RunResult } from "@/lib/jobs/job-runs";
 import { postgresStore } from "@/lib/jobs/postgres-store";
 import { consoleMailer, resendMailer } from "@/lib/email/resend";
 import { db } from "@/lib/server/db";
@@ -25,14 +26,27 @@ export async function GET(request: Request) {
   if (!isDeliveryHour(now)) return Response.json({ skipped: "Not 8am in New York; the other scheduled call runs today" });
 
   const apiKey = env.resendApiKey();
-  const summary = await runDailyDelivery(now, {
-    store: postgresStore(db()),
-    mailer: apiKey ? resendMailer({ apiKey, from: env.emailFrom() }) : consoleMailer(),
-    random: Math.random,
-    baseUrl: env.siteUrl(),
-    unsubscribeSecret: env.unsubscribeSecret(),
-    log: (message, detail) => console.error(message, detail),
-  });
+  const mailer = apiKey ? resendMailer({ apiKey, from: env.emailFrom() }) : consoleMailer();
+  const log = (message: string, detail: unknown) => console.error(message, detail);
+  let result: RunResult;
+  try {
+    result = {
+      summary: await runDailyDelivery(now, {
+        store: postgresStore(db()),
+        mailer,
+        random: Math.random,
+        baseUrl: env.siteUrl(),
+        unsubscribeSecret: env.unsubscribeSecret(),
+        log,
+      }),
+    };
+  } catch (err) {
+    result = { crashed: err instanceof Error ? err.message : String(err) };
+  }
+  // Saved to job_runs (shown on /author) and emailed to authors on failure.
+  await recordJobRun(db(), jobRunFrom(now, result), { mailer, baseUrl: env.siteUrl(), log });
+  if ("crashed" in result) return Response.json({ crashed: result.crashed }, { status: 500 });
+  const summary = result.summary;
   // Per-learner outcomes go to the log; the response stays small.
   console.log(JSON.stringify(summary.outcomes));
   const { outcomes: _outcomes, ...totals } = summary;

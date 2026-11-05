@@ -300,6 +300,7 @@ for each learner where
 ```
 
 - Each learner is handled separately, so one failure doesn't stop the rest. Failures are logged.
+- Every run is saved in `job_runs` (totals and the first error) and the last 7 are shown on `/author`. If any learner failed, or the run stopped, every author gets an email. Vercel keeps function logs only briefly, so this is how a failed 8am run gets noticed.
 - The unique (user_id, local_date) rule makes the job safe to run twice.
 - Everyone gets the email at the same moment, so for some learners it arrives at night. That's the trade-off for one simple run; choosing a time (A8) can come later.
 
