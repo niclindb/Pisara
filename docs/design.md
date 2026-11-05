@@ -372,6 +372,7 @@ Emails link to the lesson page; lessons aren't included in full in the email, so
 ## 9. Security and privacy
 
 - **Database access rules (Supabase row-level security):** signed-out visitors can browse categories and topics and read each topic's first published lesson as a free preview, so they can try Pisara before signing up. Learners can open only lessons delivered to them (no reading ahead in a path) plus the free previews, and only their own learner data. Only authors can write content.
+- **The app's own queries:** the Next.js server connects to the database as its owner, which skips the access rules above, so every learner query filters by the signed-in user itself. `lib/jobs/isolation.db.test.ts` checks that one learner's pages and actions never show or change another learner's data; add a check there for every new loader or action that takes a user id.
 - **Author role** is set by hand in the database for the MVP.
 - **Job endpoint** requires a secret key stored in environment variables.
 - **Lesson Markdown is sanitized** when rendered, so no scripts can run.
