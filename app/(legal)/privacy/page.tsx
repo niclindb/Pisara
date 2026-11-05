@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ContactLine } from "@/components/contact-line";
 
 export const metadata: Metadata = { title: "Privacy" };
 
@@ -48,6 +49,7 @@ export default function PrivacyPage() {
 
       <h2>Changes</h2>
       <p>If this page changes in a way that matters, we&rsquo;ll say so in an email before it takes effect.</p>
+      <ContactLine about="your data" />
     </>
   );
 }

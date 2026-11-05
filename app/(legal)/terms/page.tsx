@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ContactLine } from "@/components/contact-line";
 
 export const metadata: Metadata = { title: "Terms" };
 
@@ -33,6 +34,7 @@ export default function TermsPage() {
         <li>Pisara is provided as it is, without warranties, as far as the law allows.</li>
         <li>If these terms change in a way that matters, we&rsquo;ll say so in an email before it takes effect.</li>
       </ul>
+      <ContactLine about="these terms" />
     </>
   );
 }
