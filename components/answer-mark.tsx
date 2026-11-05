@@ -1,7 +1,7 @@
 // How a graded answer is marked (C2; design 10 "color is never the only
 // signal"): an icon and words, so it reads the same without color. A missed
-// answer is neutral, not red: missing a question is part of learning, and
-// danger red stays for form errors.
+// answer is marked in the cool crimson `danger` color (never the warm red),
+// so it can't be mistaken for a right one.
 
 function Check() {
   return (
@@ -31,14 +31,14 @@ export function RightMark({ chosen, className = "ml-auto" }: { chosen: boolean; 
 
 export function NotQuiteMark({ className = "ml-auto" }: { className?: string }) {
   return (
-    <span className={`${className} flex shrink-0 items-center gap-1.5 text-[15px] font-medium text-text`}>
+    <span className={`${className} flex shrink-0 items-center gap-1.5 text-[15px] font-medium text-danger`}>
       <Cross />
       Not quite
     </span>
   );
 }
 
-/** Option row styles: right answers in green, the learner's miss in a plain bordered box. */
+/** Option row styles: right answers in green, the learner's miss in crimson. */
 export function optionClass(right: boolean, wrong: boolean): string {
-  return right ? "border-success bg-success-bg" : wrong ? "border-text bg-surface" : "border-border";
+  return right ? "border-success bg-success-bg" : wrong ? "border-danger bg-danger-bg" : "border-border";
 }

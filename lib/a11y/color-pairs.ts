@@ -80,9 +80,8 @@ export const pairs: ColorPair[] = [
   { fg: "brightText", bg: "bright", use: "text", where: "Highlighted words, \"lessons waiting\" badge, bright buttons" },
   { fg: "success", bg: "surface", use: "text", where: "Right answer" },
   { fg: "success", bg: "successBg", use: "text", where: "Right answer in its tinted box" },
-  { fg: "danger", bg: "surface", use: "text", where: "Form errors, delete buttons" },
-  { fg: "text", bg: "surface", use: "ui", where: "Missed quiz answer box border" },
-  { fg: "danger", bg: "dangerBg", use: "text", where: "Error summary box" },
+  { fg: "danger", bg: "surface", use: "text", where: "Missed quiz answers, form errors, delete buttons" },
+  { fg: "danger", bg: "dangerBg", use: "text", where: "Missed quiz answer and error summary boxes" },
   { fg: "heroText", bg: "heroBg", use: "largeText", where: "Home page headline" },
   { fg: "heroText", bg: "heroBg", use: "text", where: "Home page navigation" },
   { fg: "heroMuted", bg: "heroBg", use: "text", where: "Home page intro text" },
@@ -92,7 +91,7 @@ export const pairs: ColorPair[] = [
   { fg: "focusRing", bg: "surface", use: "ui", where: "Focus ring on cards" },
   { fg: "primary", bg: "page", use: "ui", where: "Primary button against the page" },
   { fg: "success", bg: "successBg", use: "ui", where: "Right answer box border" },
-  { fg: "danger", bg: "dangerBg", use: "ui", where: "Error summary box border" },
+  { fg: "danger", bg: "dangerBg", use: "ui", where: "Missed quiz answer and error summary box borders" },
 ];
 
 export const modes = Object.keys(colors) as Mode[];

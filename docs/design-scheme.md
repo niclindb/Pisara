@@ -36,8 +36,8 @@ Use these names in code (Tailwind theme and CSS variables). The same values are 
 | `focusRing` | `#0B2545` | `#00C2FF` | Keyboard focus ring |
 | `success` | `#0B6B4F` | `#7FE0B5` | Right answers, with a check mark and "Correct" |
 | `successBg` | `#E1F2EA` | `#083336` | Right answer box |
-| `danger` | `#B3123F` | `#FF8FAB` | Form errors and delete buttons. A cool crimson, kept apart from the cherry accent. Not used for missed quiz answers |
-| `dangerBg` | `#FBE6EC` | `#3A1225` | Error summary box |
+| `danger` | `#B3123F` | `#FF8FAB` | Missed quiz answers (with a cross and "Not quite"), form errors and delete buttons. A cool crimson, kept apart from the cherry accent |
+| `dangerBg` | `#FBE6EC` | `#3A1225` | Missed answer box, error summary box |
 | `heroBg` | `#0B2545` | `#061528` | Home page hero band |
 | `heroText` | `#FFFFFF` | `#F3F5F6` | Hero headline and navigation |
 | `heroMuted` | `#D0D7DC` | `#D0D7DC` | Hero intro text |
@@ -106,6 +106,6 @@ Rules:
 ## 6. Rules of thumb
 
 - Cyan is a spark: highlights, badges, progress and a few buttons. Don't use it for paragraphs or small text on light backgrounds.
-- Black cherry marks topics and celebrations. A missed quiz answer is neutral: a plain box with a text-colored border, a cross and "Not quite", next to the right answer in green. Missing a question is part of learning, so it never shows as an error. `danger` (crimson) is only for form errors and destructive buttons.
+- Black cherry marks topics and celebrations. A missed quiz answer uses `danger` (cool crimson, never a warm red) with a cross and "Not quite", next to the right answer in green, so a miss can never be mistaken for a right answer or a topic label.
 - Milestone wording never mentions days in a row or missed days (see design.md section 5.5).
 - Any new color goes into `lib/a11y/color-pairs.ts` first, with every pair it's used in.
