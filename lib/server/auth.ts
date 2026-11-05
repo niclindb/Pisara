@@ -40,14 +40,26 @@ export async function requestSignInLink(input: string): Promise<SignInLinkResult
 /** The signed-in user, checked with Supabase, or null. */
 export async function currentUser(): Promise<CurrentUser | null> {
   // Local development only (`npm run dev`, never a production build): pretend to be
-  // this user, so pages can be tried without a Supabase project.
-  const devUser = process.env.NODE_ENV === "development" ? process.env.DEV_SIGNED_IN_USER_ID : undefined;
+  // this user, so pages can be tried without a Supabase project. "cookie" lets the
+  // page tests switch users with a cookie.
+  const devUser = process.env.NODE_ENV === "development" ? await devSignedInUser() : undefined;
   if (devUser) return loadUser(devUser);
   const supabase = await supabaseServer();
   const { data } = await supabase.auth.getUser();
   if (!data.user) return null;
   return loadUser(data.user.id);
 }
+
+async function devSignedInUser(): Promise<string | undefined> {
+  const setting = process.env.DEV_SIGNED_IN_USER_ID;
+  if (setting !== "cookie") return setting || undefined;
+  const { cookies } = await import("next/headers");
+  const id = (await cookies()).get(DEV_USER_COOKIE)?.value;
+  return id && /^[0-9a-f-]{36}$/i.test(id) ? id : undefined;
+}
+
+/** The cookie the page tests set to pick a user (development only, see above). */
+export const DEV_USER_COOKIE = "pisara-dev-user";
 
 async function loadUser(id: string): Promise<CurrentUser | null> {
   const [p] = await db()`
