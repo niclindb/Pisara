@@ -69,3 +69,36 @@ export function lessonsWaitingEmail(ctx: EmailContext, waiting: number): EmailMe
   const text = `${greeting(ctx.displayName)}\n\n${line}\n\nHome: ${url}`;
   return wrap(ctx, `You have ${waiting} lessons waiting`, html, text);
 }
+
+/**
+ * The last "lessons waiting" email (B6), 30 days after the second. Short, no
+ * guilt, and points at pausing or stopping for anyone who's moved on.
+ */
+export function stillHereEmail(ctx: EmailContext, waiting: number): EmailMessage {
+  const home = new URL("/home", ctx.baseUrl).toString();
+  const settings = new URL(`/email/${emailSettingsToken(ctx.userId, ctx.unsubscribeSecret)}`, ctx.baseUrl).toString();
+  const line = `Your ${waiting} lessons are still here whenever you want them. This is the last reminder we'll send about them.`;
+  const offer = "If now isn't a good time, you can pause lessons or turn off emails.";
+  const html = `<p>${escapeHtml(greeting(ctx.displayName))}</p><p>${escapeHtml(line)}</p>${button(home, "Go to Home")}<p>${escapeHtml(offer)} <a href="${escapeHtml(settings)}">Email settings</a></p>`;
+  const text = `${greeting(ctx.displayName)}\n\n${line}\n\nHome: ${home}\n\n${offer} ${settings}`;
+  return wrap(ctx, "Your lessons are still here", html, text);
+}
+
+/** To the authors when the daily run had failures or crashed. No unsubscribe: it's an operations alert. */
+export function jobFailedEmail(
+  to: string,
+  run: { startedAt: string; learners: number; delivered: number; failed: number; firstError: string | null },
+  baseUrl: string,
+): EmailMessage {
+  const url = new URL("/author", baseUrl).toString();
+  const crashed = run.failed === 0 && run.firstError !== null;
+  const line = crashed
+    ? `The daily lesson run at ${run.startedAt} stopped before delivering anything.`
+    : `The daily lesson run at ${run.startedAt} failed for ${run.failed} of ${run.learners} learners (${run.delivered} delivered).`;
+  const error = run.firstError ? `First error: ${run.firstError}` : "";
+  const html = `<!doctype html><html><body style="font-family:system-ui,sans-serif;font-size:16px;line-height:1.6;max-width:560px;margin:0 auto;padding:24px">
+<h1 style="font-size:20px">Pisara's daily run had a problem</h1><p>${escapeHtml(line)}</p>${error ? `<pre style="white-space:pre-wrap;font-size:14px">${escapeHtml(error)}</pre>` : ""}
+<p>Recent runs are on the <a href="${escapeHtml(url)}">author page</a>; the full log is in Vercel.</p></body></html>`;
+  const text = `${line}\n\n${error}\n\nRecent runs: ${url}\nThe full log is in Vercel.\n`;
+  return { to, subject: crashed ? "Pisara: the daily run stopped" : `Pisara: daily run failed for ${run.failed} learners`, html, text, headers: {} };
+}

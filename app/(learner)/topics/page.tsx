@@ -17,7 +17,7 @@ export const metadata: Metadata = { title: "My topics" };
 export default async function MyTopicsPage() {
   const user = await requireLearner();
   const [choices, home] = await Promise.all([loadTopicChoices(db(), user.id), loadHome(db(), user.id, new Date())]);
-  const roomForExtra = (home?.waiting.length ?? 0) < INBOX_LIMIT;
+  const roomForExtra = (home?.waiting.length ?? 0) < INBOX_LIMIT && (home?.extrasLeftToday ?? 0) > 0;
   const onCount = choices.topics.filter((t) => t.interest > 0).length;
   return (
     <>

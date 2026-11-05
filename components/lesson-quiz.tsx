@@ -3,6 +3,7 @@
 // The quiz after a lesson, graded on the server (C1–C3), with up to 2 review
 // questions from earlier lessons (C5). Results show on the same page.
 
+import { NotQuiteMark, optionClass, RightMark } from "./answer-mark";
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition, type ReactNode } from "react";
 import type { QuizOutcome } from "@/app/(learner)/actions";
@@ -86,13 +87,14 @@ export function LessonQuiz({
               </p>
               <div className="space-y-2">
                 {q.options.map((o, j) => {
-                  const isRight = g && j === g.correctIndex;
+                  // Green only when they picked it; a miss never lights up the right answer.
+                  const isRight = g && g.correct && j === g.correctIndex;
                   const isWrong = g && g.chosenIndex === j && !g.correct;
                   return (
                     <label
                       key={j}
                       className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-control border px-3 py-2 ${
-                        isRight ? "border-success bg-success-bg" : isWrong ? "border-danger bg-danger-bg" : "border-border"
+                        optionClass(Boolean(isRight), Boolean(isWrong))
                       }`}
                     >
                       <input
@@ -104,12 +106,17 @@ export function LessonQuiz({
                         className="h-5 w-5 shrink-0"
                       />
                       <span>{o}</span>
-                      {isRight && <span className="ml-auto shrink-0 text-[15px] font-medium text-success">Right answer</span>}
-                      {isWrong && <span className="ml-auto shrink-0 text-[15px] font-medium text-danger">Your answer</span>}
+                      {isRight && <RightMark chosen />}
+                      {isWrong && <NotQuiteMark />}
                     </label>
                   );
                 })}
               </div>
+              {g && !g.correct && (
+                <p className="mt-3 text-[15px]">
+                  The answer: <span className="font-medium">{q.options[g.correctIndex]}</span>
+                </p>
+              )}
               {g?.explanation && <p className="mt-3 text-[15px]">{g.explanation}</p>}
             </fieldset>
           );

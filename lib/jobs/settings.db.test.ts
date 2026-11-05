@@ -4,7 +4,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { emailSettingsToken } from "../email/unsubscribe";
 import { connect } from "./postgres-store";
-import { deleteAccount, loadSettings, openEmailPreferences, SettingsError, updateEmailPreferences, updateSettings } from "./settings";
+import { deleteAccount, loadSettings, loadEmailPreferences, SettingsError, updateEmailPreferences, updateSettings } from "./settings";
 
 const url = process.env.TEST_DATABASE_URL;
 const sql = url ? connect(url) : (null as never);
@@ -48,11 +48,14 @@ describe.skipIf(!url)("settings on Postgres", () => {
     expect((await loadSettings(sql, U, now))!.pausedUntil).toBeNull();
   });
 
-  it("turns emails off from the email link, with Undo and a pause", async () => {
+  it("opens the email link without changing anything, then turns emails off, on and pauses on a button press", async () => {
     const token = emailSettingsToken(U, SECRET);
-    expect(await openEmailPreferences(sql, `${U}.forged`, SECRET, now)).toBeNull();
-    expect(await openEmailPreferences(sql, emailSettingsToken(U, "wrong"), SECRET, now)).toBeNull();
-    expect(await openEmailPreferences(sql, token, SECRET, now)).toMatchObject({ emailsEnabled: false, email: "nick@example.com" });
+    expect(await loadEmailPreferences(sql, `${U}.forged`, SECRET, now)).toBeNull();
+    expect(await loadEmailPreferences(sql, emailSettingsToken(U, "wrong"), SECRET, now)).toBeNull();
+    // Mail scanners open links: opening must not turn emails off.
+    expect(await loadEmailPreferences(sql, token, SECRET, now)).toMatchObject({ emailsEnabled: true, email: "nick@example.com" });
+    expect(await updateEmailPreferences(sql, `${U}.forged`, SECRET, { emailsEnabled: false }, now)).toBeNull();
+    expect(await updateEmailPreferences(sql, token, SECRET, { emailsEnabled: false }, now)).toMatchObject({ emailsEnabled: false });
     expect(await updateEmailPreferences(sql, token, SECRET, { emailsEnabled: true }, now)).toMatchObject({ emailsEnabled: true });
     expect(await updateEmailPreferences(sql, token, SECRET, { pausedUntil: "2026-11-11" }, now)).toMatchObject({
       emailsEnabled: true,

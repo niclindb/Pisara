@@ -1,5 +1,6 @@
 "use client";
 
+import { NotQuiteMark, RightMark } from "@/components/answer-mark";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Button, ErrorList, LinkButton } from "@/components/ui";
 import type { SubmittedAnswer } from "@/lib/rules/quiz";
@@ -35,9 +36,12 @@ export function RecapQuiz({ questions, grade }: { questions: Question[]; grade: 
                 <p className="mb-2 font-medium">
                   {i + 1}. {q.prompt}
                 </p>
-                <p className={a.correct ? "text-success" : "text-danger"}>
-                  {a.correct ? "Right: " : `You said ${q.options[a.chosenIndex]}. The answer: `}
-                  {q.options[a.correctIndex]}
+                <p className="flex flex-wrap items-center gap-x-2">
+                  {a.correct ? <RightMark chosen className="" /> : <NotQuiteMark className="" />}
+                  <span>
+                    {a.correct ? "" : `You said ${q.options[a.chosenIndex]}. The answer: `}
+                    {q.options[a.correctIndex]}
+                  </span>
                 </p>
                 {a.explanation && <p className="mt-2 text-[15px]">{a.explanation}</p>}
               </li>

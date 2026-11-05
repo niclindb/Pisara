@@ -36,3 +36,12 @@ export function readEmailSettingsToken(token: string, secret: string): string | 
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) return null;
   return verifyUnsubscribe(userId, token.slice(dot + 1), secret) ? userId : null;
 }
+
+/** Where a clicked unsubscribe link goes: the email settings page, or the not-valid version of it. */
+export function settingsPageFor(requestUrl: string, secret: string): string {
+  const url = new URL(requestUrl);
+  const userId = url.searchParams.get("u") ?? "";
+  const token = url.searchParams.get("t") ?? "";
+  const genuine = /^[0-9a-f-]{36}$/i.test(userId) && verifyUnsubscribe(userId, token, secret);
+  return new URL(`/email/${genuine ? emailSettingsToken(userId, secret) : "invalid"}`, url).toString();
+}

@@ -18,6 +18,7 @@ import { requireLearner } from "./guard";
 
 const extraProblems = {
   inbox_full: "Read one of the lessons waiting on Home first.",
+  daily_limit: "That's all the extra lessons for today. More tomorrow.",
   topic_finished: "You've read every lesson in this topic so far. New ones are on the way.",
   topic_unavailable: "That topic isn't available yet.",
   nothing_left: "You've read every lesson in your topics so far. Turn on another topic to keep going.",

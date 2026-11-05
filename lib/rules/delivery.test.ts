@@ -50,8 +50,18 @@ describe("dailyAction", () => {
       expect(dailyAction(s, today)).toEqual({ kind: "waiting_reminder", remindersSent: 2 });
     });
 
-    it("never sends a third", () => {
-      const s = { ...full, waitingRemindersSent: 2, waitingReminderSentOn: "2026-09-01" };
+    it("stays quiet for 29 days after the second", () => {
+      const s = { ...full, waitingRemindersSent: 2, waitingReminderSentOn: "2026-10-12" };
+      expect(dailyAction(s, today)).toEqual({ kind: "skip", reason: "inbox_full_quiet" });
+    });
+
+    it("sends a last note 30 days after the second", () => {
+      const s = { ...full, waitingRemindersSent: 2, waitingReminderSentOn: "2026-10-11" };
+      expect(dailyAction(s, today)).toEqual({ kind: "waiting_reminder", remindersSent: 3 });
+    });
+
+    it("never sends a fourth", () => {
+      const s = { ...full, waitingRemindersSent: 3, waitingReminderSentOn: "2026-01-01" };
       expect(dailyAction(s, today)).toEqual({ kind: "skip", reason: "inbox_full_quiet" });
     });
 

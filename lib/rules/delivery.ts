@@ -3,7 +3,7 @@
 import {
   ACTIVE_WITHOUT_EMAIL_DAYS,
   INBOX_LIMIT,
-  WAITING_REMINDER_GAP_DAYS,
+  WAITING_REMINDER_GAPS_DAYS,
   WAITING_REMINDER_MAX,
 } from "./constants";
 import { daysBetween, type LocalDate } from "./dates";
@@ -17,7 +17,7 @@ export interface LearnerState {
   /** Whether a daily lesson already exists for today. */
   deliveredToday: boolean;
   unreadCount: number;
-  /** "Lessons waiting" emails sent since the inbox filled (0–2). */
+  /** "Lessons waiting" emails sent since the inbox filled (0–3). */
   waitingRemindersSent: number;
   waitingReminderSentOn: LocalDate | null;
 }
@@ -37,13 +37,16 @@ export function dailyAction(s: LearnerState, today: LocalDate): DailyAction {
   if (s.deliveredToday) return { kind: "skip", reason: "already_delivered" };
   if (s.unreadCount < INBOX_LIMIT) return { kind: "deliver" };
 
-  // Inbox full: remind on the first day, once more a week later, then never again.
+  // Inbox full: remind on the first day, once more a week later, a last
+  // "still here" note 30 days after that, then never again.
   const sent = s.waitingRemindersSent;
+  const gap = WAITING_REMINDER_GAPS_DAYS[sent - 1];
   const dueAgain =
     sent > 0 &&
     sent < WAITING_REMINDER_MAX &&
+    gap !== undefined &&
     s.waitingReminderSentOn !== null &&
-    daysBetween(s.waitingReminderSentOn, today) >= WAITING_REMINDER_GAP_DAYS;
+    daysBetween(s.waitingReminderSentOn, today) >= gap;
   if (sent === 0 || dueAgain) return { kind: "waiting_reminder", remindersSent: sent + 1 };
   return { kind: "skip", reason: "inbox_full_quiet" };
 }

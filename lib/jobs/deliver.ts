@@ -1,12 +1,12 @@
 // The daily delivery job (design 6). Runs once a day for every learner.
 // Safe to run twice: the database allows one daily lesson per local date.
 
-import { INBOX_LIMIT } from "../rules/constants";
+import { INBOX_LIMIT, WAITING_REMINDER_MAX } from "../rules/constants";
 import { addDays, localDate } from "../rules/dates";
 import { dailyAction } from "../rules/delivery";
 import { pickTopic } from "../rules/picking";
 import { buildWeeklyRecap } from "../rules/review";
-import { dailyLessonEmail, lessonsWaitingEmail, type EmailContext } from "../email/templates";
+import { dailyLessonEmail, lessonsWaitingEmail, stillHereEmail, type EmailContext } from "../email/templates";
 import type { DeliveryStore, Learner, Mailer } from "./types";
 
 export interface DeliveryDeps {
@@ -63,7 +63,10 @@ async function deliverOne(learner: Learner, now: Date, deps: DeliveryDeps): Prom
   if (action.kind === "waiting_reminder") {
     // Record first so a crash after sending can't cause a second email.
     await store.setWaitingReminders(learner.id, action.remindersSent, today);
-    if (learner.emailsEnabled) await mailer.send(lessonsWaitingEmail(ctx, INBOX_LIMIT));
+    if (learner.emailsEnabled) {
+      const last = action.remindersSent === WAITING_REMINDER_MAX;
+      await mailer.send(last ? stillHereEmail(ctx, INBOX_LIMIT) : lessonsWaitingEmail(ctx, INBOX_LIMIT));
+    }
     return { userId: learner.id, outcome: "waiting_reminder", remindersSent: action.remindersSent };
   }
 

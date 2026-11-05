@@ -144,7 +144,7 @@ Practice problems aren't graded or recorded and never enter review. Readable by 
 | weekly_recap_day | int | 0–6, default Sunday (C7) |
 | emails_enabled | bool | One-click pause/unsubscribe (B3) |
 | paused_until | date | Vacation pause (D6) |
-| waiting_reminders_sent | int | 0, 1 or 2. How many "lessons waiting" emails went out since the inbox filled (B6). Reset to 0 when a lesson is read. |
+| waiting_reminders_sent | int | 0 to 3. How many "lessons waiting" emails went out since the inbox filled (B6). Reset to 0 when a lesson is read. |
 | waiting_reminder_sent_on | date | Local date of the last "lessons waiting" email |
 | role | enum | `learner` or `author` |
 | created_at | timestamptz | |
@@ -236,11 +236,11 @@ The random function is passed in so tests can control it.
 
 ### 5.2 The inbox (B6)
 - Before picking, count the learner's unread deliveries. If there are 3, skip the pick and the daily email for today.
-- "You have 3 lessons waiting" goes out on the first day the inbox is full and once more 7 days later, then never again while it stays full. `waiting_reminders_sent` tracks this.
+- "You have 3 lessons waiting" goes out on the first day the inbox is full and once more 7 days later. A last "Your lessons are still here" note goes 30 days after that, then never again while it stays full. `waiting_reminders_sent` (0–3) tracks this.
 - Reading a lesson sets `read_at` and resets `waiting_reminders_sent` to 0. Finishing or skipping the quiz doesn't change inbox status.
 
 ### 5.2a Extra and first lessons (B7, A6)
-- **Extra lesson:** from Home or a topic page. From a topic page, it's the next lesson in that topic's path, whether or not the topic is turned on. "Surprise me" uses the daily pick (5.1), without the "not 3 days in a row" rule. It counts toward the 3-lesson inbox, so it isn't offered while 3 lessons are waiting. No email is sent.
+- **Extra lesson:** from Home or a topic page. From a topic page, it's the next lesson in that topic's path, whether or not the topic is turned on. "Surprise me" uses the daily pick (5.1), without the "not 3 days in a row" rule. It counts toward the 3-lesson inbox, so it isn't offered while 3 lessons are waiting. At most 2 extra lessons per local day (`EXTRA_LESSONS_PER_DAY`), counted whether or not they were read. No email is sent.
 - **First lesson:** right after onboarding, one lesson is picked as today's daily lesson, so the daily run skips the learner until tomorrow.
 
 ### 5.3 Review scheduling (C5, C6)
@@ -300,6 +300,7 @@ for each learner where
 ```
 
 - Each learner is handled separately, so one failure doesn't stop the rest. Failures are logged.
+- Every run is saved in `job_runs` (totals and the first error) and the last 7 are shown on `/author`. If any learner failed, or the run stopped, every author gets an email. Vercel keeps function logs only briefly, so this is how a failed 8am run gets noticed.
 - The unique (user_id, local_date) rule makes the job safe to run twice.
 - Everyone gets the email at the same moment, so for some learners it arrives at night. That's the trade-off for one simple run; choosing a time (A8) can come later.
 
@@ -325,7 +326,7 @@ Explore and the topic page are shared with signed-in learners, who see their own
 |---|---|---|---|
 | `/sign-in` | Sign in | Email field, "Send me a link"; then "Check your email" with "Send again". Also creates new accounts. | A1 |
 | `/sign-in/expired` | Sign-in link problem | For links already used or past 15 minutes; send a new one. `/auth/callback` has no screen and routes to onboarding or Home. | A1 |
-| `/email/[token]` | Email preferences | Opened from any email without signing in: emails paused right away, with Undo; pause until a date; stop all emails. | B3, D6 |
+| `/email/[token]` | Email preferences | Opened from any email without signing in. Opening it changes nothing (mail scanners open links); buttons turn emails off or back on, or pause until a date. The footer "Stop these emails" link lands here too. | B3, D6 |
 
 ### Learner
 | Path | Page | What it shows | Stories |
@@ -361,15 +362,17 @@ Anyone else gets the not-found page. Categories are edited inline on `/author`.
 |---|---|---|
 | Sign-in link | On request | Link valid 15 minutes, single use |
 | Daily lesson | Daily run | Topic, title, reading time, "Read lesson" button. Mentions the weekly recap on recap day. |
-| Lessons waiting | Daily run, inbox full: first day, then 7 days later, then never again | "You have 3 lessons waiting," button to inbox |
+| Lessons waiting | Daily run, inbox full: first day, then 7 days later | "You have 3 lessons waiting," button to Home |
+| Still here | Daily run, inbox still full 30 days after the second "lessons waiting" email; then never again | "Your lessons are still here," button to Home, link to pause or turn off emails |
 
-Every learner email includes a one-click pause/unsubscribe link and the standard `List-Unsubscribe` header, so email apps show their own unsubscribe button.
+Every learner email includes an email settings link and the standard `List-Unsubscribe` header with one-click POST, so email apps show their own unsubscribe button and it works in one tap. Links in the email body never change anything just by being opened, because work and school mail scanners open every link to check it; the settings page asks for a button press.
 
 Emails link to the lesson page; lessons aren't included in full in the email, so reading and quizzes always happen on the site, where they're recorded.
 
 ## 9. Security and privacy
 
 - **Database access rules (Supabase row-level security):** signed-out visitors can browse categories and topics and read each topic's first published lesson as a free preview, so they can try Pisara before signing up. Learners can open only lessons delivered to them (no reading ahead in a path) plus the free previews, and only their own learner data. Only authors can write content.
+- **The app's own queries:** the Next.js server connects to the database as its owner, which skips the access rules above, so every learner query filters by the signed-in user itself. `lib/jobs/isolation.db.test.ts` checks that one learner's pages and actions never show or change another learner's data; add a check there for every new loader or action that takes a user id.
 - **Author role** is set by hand in the database for the MVP.
 - **Job endpoint** requires a secret key stored in environment variables.
 - **Lesson Markdown is sanitized** when rendered, so no scripts can run.
@@ -450,7 +453,7 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 - **Weekly recap delivery:** in the inbox, with a mention in that day's lesson email. No separate email.
 - **Lesson levels:** Beginner, Intermediate and Advanced, stored as 1–3 (decided Nov 5, 2026). The same words show a learner's standing in a topic. _Draft 2 had open-ended numbered levels._
 - **Delivery time:** one run a day for everyone, at 8am Eastern (decided Nov 4, 2026). Learners don't choose a time in the MVP (A8 is Later). _Changed in draft 2; draft 1 had an hourly job and a chosen hour._
-- **"Lessons waiting" email:** first day the inbox is full, again 7 days later, then never again until a lesson is read.
+- **"Lessons waiting" email:** first day the inbox is full, again 7 days later, a last "still here" note 30 days after that, then never again until a lesson is read (the third note added Nov 5, 2026).
 - **Interest levels:** Off, or 1–5 where the level is the weight.
 - **Sub-topics:** topics form a tree of any depth; any topic can be picked; the parent is a soft prerequisite.
 - **Review:** only missed questions enter review; up to 2 review questions a day.

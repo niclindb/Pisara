@@ -63,18 +63,17 @@ export async function updateSettings(sql: Sql, userId: string, change: SettingsC
 export type EmailPreferences = Pick<SettingsView, "email" | "emailsEnabled" | "pausedUntil" | "today">;
 
 /**
- * Opening the email settings link turns emails off right away (B3), and the
- * page offers Undo, a pause until a date, or stopping emails for good. Null for
- * a link that isn't genuine.
+ * What the email settings page shows (B3, D6). Opening the link changes
+ * nothing: mail scanners open every link in an email, so only a button press
+ * turns emails off or pauses them. Null for a link that isn't genuine.
  */
-export async function openEmailPreferences(sql: Sql, token: string, secret: string, now: Date): Promise<EmailPreferences | null> {
+export async function loadEmailPreferences(sql: Sql, token: string, secret: string, now: Date): Promise<EmailPreferences | null> {
   const userId = readEmailSettingsToken(token, secret);
   if (!userId) return null;
-  await sql`update public.profiles set emails_enabled = false where id = ${userId}`;
   return emailPreferences(sql, userId, now);
 }
 
-/** Undo (emails back on), pause until a date, or stop: from the email settings page. */
+/** Turn emails off or back on, or pause until a date: buttons on the email settings page. */
 export async function updateEmailPreferences(
   sql: Sql,
   token: string,

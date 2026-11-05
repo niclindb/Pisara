@@ -4,6 +4,7 @@ import { ActionForm } from "@/components/action-form";
 import { MoveButtons } from "@/components/move-buttons";
 import { Card, PageTitle } from "@/components/ui";
 import { loadContentTree, type AuthorTopic } from "@/lib/jobs/author";
+import { loadRecentJobRuns, type JobRun } from "@/lib/jobs/job-runs";
 import { MIN_PUBLISHED_LESSONS } from "@/lib/rules/constants";
 import { db } from "@/lib/server/db";
 import {
@@ -58,9 +59,58 @@ function TopicTree({ topics, parent, all }: { topics: AuthorTopic[]; parent: { c
   );
 }
 
+const runTime = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+
+/** The last week of daily runs (design 6), so a failed 8am run is easy to spot. */
+function RecentRuns({ runs }: { runs: JobRun[] }) {
+  return (
+    <Card aria-labelledby="runs-heading">
+      <h2 id="runs-heading" className="mb-3 text-[22px]">
+        Daily runs
+      </h2>
+      {runs.length === 0 ? (
+        <p className="text-text-muted">No daily runs yet. The first one goes out at 8am Eastern after the site is live.</p>
+      ) : (
+        <table className="w-full text-left text-[15px]">
+          <caption className="sr-only">The last {runs.length} daily runs, newest first</caption>
+          <thead className="text-text-muted">
+            <tr>
+              <th scope="col" className="py-1 pr-4 font-medium">Ran (Eastern)</th>
+              <th scope="col" className="py-1 pr-4 font-medium">Delivered</th>
+              <th scope="col" className="py-1 pr-4 font-medium">Reminders</th>
+              <th scope="col" className="py-1 pr-4 font-medium">Skipped</th>
+              <th scope="col" className="py-1 font-medium">Problems</th>
+            </tr>
+          </thead>
+          <tbody>
+            {runs.map((r) => (
+              <tr key={r.startedAt} className="border-t border-hairline align-top">
+                <td className="py-2 pr-4">{runTime.format(new Date(r.startedAt))}</td>
+                <td className="py-2 pr-4">{r.delivered}</td>
+                <td className="py-2 pr-4">{r.reminders}</td>
+                <td className="py-2 pr-4">{r.skipped}</td>
+                <td className="py-2">
+                  {r.failed || r.firstError ? (
+                    <span className="font-medium text-danger">
+                      {r.failed ? `${r.failed} failed` : "Run stopped"}
+                      {r.firstError && <span className="block font-normal text-text">{r.firstError}</span>}
+                    </span>
+                  ) : (
+                    "None"
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </Card>
+  );
+}
+
 export default async function AuthorHome() {
   const user = await requireAuthor();
-  const tree = await loadContentTree(db(), user.id);
+  const [tree, runs] = await Promise.all([loadContentTree(db(), user.id), loadRecentJobRuns(db())]);
   const categoryIds = tree.categories.map((c) => c.id);
 
   return (
@@ -127,6 +177,7 @@ export default async function AuthorHome() {
             </label>
           </ActionForm>
         </Card>
+        <RecentRuns runs={runs} />
       </div>
     </>
   );

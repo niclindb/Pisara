@@ -4,11 +4,18 @@
 /** Unread lessons the inbox holds before picking stops (B6). */
 export const INBOX_LIMIT = 3;
 
-/** Days between the first and second "lessons waiting" email (B6). */
-export const WAITING_REMINDER_GAP_DAYS = 7;
+/**
+ * Days to wait after each "lessons waiting" email before the next one (B6):
+ * the second goes 7 days after the first, and a last "still here" note 30 days
+ * after the second. Then nothing more until a lesson is read.
+ */
+export const WAITING_REMINDER_GAPS_DAYS = [7, 30] as const;
 
-/** "Lessons waiting" emails sent per full inbox before going quiet (B6). */
-export const WAITING_REMINDER_MAX = 2;
+/** "Lessons waiting" emails sent per full inbox before going quiet for good (B6). */
+export const WAITING_REMINDER_MAX = WAITING_REMINDER_GAPS_DAYS.length + 1;
+
+/** Extra lessons (Start and "Surprise me" together) a learner can take per local day (B7). */
+export const EXTRA_LESSONS_PER_DAY = 2;
 
 /** Learners with emails off still get lessons if active this recently (design 6). */
 export const ACTIVE_WITHOUT_EMAIL_DAYS = 14;

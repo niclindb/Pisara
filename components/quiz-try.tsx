@@ -3,6 +3,7 @@
 // A quiz that grades in the browser. Only for author previews, where the
 // answers are already known; learners' quizzes are graded on the server.
 
+import { NotQuiteMark, optionClass, RightMark } from "./answer-mark";
 import { useState } from "react";
 import { Button } from "./ui";
 
@@ -33,13 +34,14 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
             </p>
             <div className="space-y-2">
               {q.options.map((o, j) => {
-                const right = checked && j === q.correctIndex;
+                // Green only when they picked it; a miss never lights up the right answer.
+                const right = checked && chosen[q.id] === j && j === q.correctIndex;
                 const wrong = checked && chosen[q.id] === j && j !== q.correctIndex;
                 return (
                   <label
                     key={j}
                     className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-control border px-3 py-2 ${
-                      right ? "border-success bg-success-bg" : wrong ? "border-danger bg-danger-bg" : "border-border"
+                      optionClass(right, wrong)
                     }`}
                   >
                     <input
@@ -51,12 +53,17 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
                       className="h-5 w-5"
                     />
                     <span>{o}</span>
-                    {right && <span className="ml-auto text-[15px] font-medium text-success">Right answer</span>}
-                    {wrong && <span className="ml-auto text-[15px] font-medium text-danger">Your answer</span>}
+                    {right && <RightMark chosen />}
+                    {wrong && <NotQuiteMark />}
                   </label>
                 );
               })}
             </div>
+            {checked && chosen[q.id] !== q.correctIndex && (
+              <p className="mt-3 text-[15px]">
+                The answer: <span className="font-medium">{q.options[q.correctIndex]}</span>
+              </p>
+            )}
             {checked && q.explanation && <p className="mt-3 text-[15px]">{q.explanation}</p>}
           </fieldset>
         ))}
