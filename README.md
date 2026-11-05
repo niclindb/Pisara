@@ -33,6 +33,8 @@ npm run build
 
 `npm run test:db` also runs the delivery job against a real Postgres database. Set `TEST_DATABASE_URL` to an **empty test database** with the schema loaded (see supabase/README.md). It deletes all data in that database.
 
+`npm run lint` checks the code, including accessibility rules. `npm run test:pages` opens every page in a real browser as a visitor, a learner and an author, checks it with axe, and runs sign-in, onboarding and a quiz with the keyboard only. Set `E2E_DATABASE_URL` to another **empty test database** with the schema loaded; the tests replace its data with a small sample.
+
 Every pull request runs all of these (`.github/workflows/test.yml`).
 
 ### Trying the pages locally

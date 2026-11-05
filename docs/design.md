@@ -402,10 +402,10 @@ Real text (not images of text), a heading, readable link text instead of "click 
 | Check | Catches | Runs |
 |---|---|---|
 | Color contrast test (`lib/a11y/`) | Any token pair below AA | Every PR (Vitest) |
-| `eslint-plugin-jsx-a11y` (strict) | Missing alt text, unlabeled controls, bad ARIA | Every PR and in the editor |
-| axe in component tests (`vitest-axe`) | Problems in each component and its states | Every PR |
-| Playwright + axe on every page, signed out, as a learner and as an author | WCAG 2.2 AA failures on real pages, plus keyboard-only runs of sign-in, onboarding and a quiz | Every PR |
-| Lighthouse CI | Accessibility score must be 100 | Every PR |
+| `eslint-plugin-jsx-a11y` (strict), `npm run lint` | Missing alt text, unlabeled controls, bad ARIA | Every PR and in the editor |
+| axe in component tests (`vitest-axe`) | Problems in each component and its states | Not set up yet. The page tests cover each page's main state |
+| Playwright + axe on every page, signed out, as a learner and as an author, light on desktop and dark on a phone (`npm run test:pages`, in `e2e/`) | WCAG 2.2 AA failures on real pages, sideways scrolling, plus keyboard-only runs of sign-in, onboarding and a quiz | Every PR |
+| Lighthouse CI | Accessibility score must be 100 | Not set up yet |
 | Manual checklist ([accessibility-checklist.md](accessibility-checklist.md)) | What tools can't judge: focus order, screen reader experience, clear wording | Every PR that changes UI, and in full before each release |
 
 Automated tools find only a third to a half of real problems, so the manual checklist isn't optional.
