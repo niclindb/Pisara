@@ -1,6 +1,6 @@
 // What the daily delivery job needs from the database and from email. The
-// Postgres store (lib/jobs/postgres-store.ts) and the Resend mailer
-// (lib/email/resend.ts) implement these; tests use in-memory fakes.
+// Postgres store (lib/jobs/postgres-store.ts) and the mailers in lib/email
+// (SMTP, Resend) implement these; tests use in-memory fakes.
 
 import type { LocalDate } from "../rules/dates";
 import type { RecapInput } from "../rules/review";

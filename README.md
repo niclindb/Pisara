@@ -15,7 +15,7 @@ The backend, plus the first pages: sign-in and the author tools. The learner pag
 | `supabase/` | The database schema, access rules and their tests. See [supabase/README.md](supabase/README.md). |
 | `lib/rules/` | The core rules from the design doc: topic picking, the inbox and "lessons waiting" reminders, review timing, the weekly recap, progress and prerequisites, milestones. Plain functions with no database access. Every tunable number is in `lib/rules/constants.ts`. |
 | `lib/jobs/` | Server-side work on the database: the daily delivery job (`deliver.ts`), opening a lesson and its practice problems (`lessons.ts`), the Home, lesson, history and progress pages (`learner.ts`), settings, email preferences and account deletion (`settings.ts`), extra lessons and the first lesson after onboarding (`extra.ts`), quizzes, review and the weekly recap (`quiz.ts`), choosing topics and onboarding (`topics.ts`), and the author tools (`author.ts`). |
-| `lib/email/` | The daily lesson and "lessons waiting" emails, signed unsubscribe links, and sending through Resend. |
+| `lib/email/` | The daily lesson and "lessons waiting" emails, signed unsubscribe links, and sending through Gmail (SMTP) or Resend. |
 | `lib/server/` | Server-only helpers: settings from environment variables, the database connection, and sign-in with Supabase Auth (`auth.ts`). |
 | `app/author/` | The author tools: categories and topic trees (`/author`), the topic editor, and the lesson editor with live preview, practice problems and quiz. Only authors can open them; everyone else gets the not-found page. |
 | `app/sign-in/` | Sign in with an email link. |
@@ -44,7 +44,13 @@ Every pull request runs all of these (`.github/workflows/test.yml`).
 ## Going live (one time)
 
 1. **Supabase:** follow "Setting up" in [supabase/README.md](supabase/README.md).
-2. **Resend:** create an account, add and verify your sending domain (for example getpisara.com), and create an API key.
+2. **Email from Gmail** (no domain needed):
+   1. Make a Gmail account for Pisara (or use your own) and turn on 2-Step Verification.
+   2. Google Account → Security → App passwords: create one called "Pisara" and copy the 16 letters.
+   3. In Vercel set `SMTP_USER` to the Gmail address, `SMTP_PASSWORD` to the app password, and `EMAIL_FROM` to `Pisara <that address>`.
+   4. Put the same address and app password in Supabase's SMTP settings, so sign-in links go out too (see [supabase/README.md](supabase/README.md)).
+
+   Gmail allows about 500 emails a day, so this covers roughly 400 learners (lessons, reminders and sign-in links share it). Past that, buy a domain and switch to Resend: set `RESEND_API_KEY`, verify the domain in Resend, and clear `SMTP_USER`.
 3. **Vercel:** import the GitHub repo. Under Settings → Environment Variables, add every variable in [.env.example](.env.example). The daily job is registered automatically from `vercel.json`, and Vercel sends `CRON_SECRET` with each call.
 
-Without `RESEND_API_KEY`, emails are printed to the Vercel log instead of sent, which is handy for a first test.
+Without `SMTP_USER` or `RESEND_API_KEY`, emails are printed to the Vercel log instead of sent, which is handy for a first test.

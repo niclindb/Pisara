@@ -7,7 +7,7 @@ import { runDailyDelivery } from "@/lib/jobs/deliver";
 import { isDeliveryHour } from "@/lib/rules/delivery-time";
 import { jobRunFrom, recordJobRun, type RunResult } from "@/lib/jobs/job-runs";
 import { postgresStore } from "@/lib/jobs/postgres-store";
-import { consoleMailer, resendMailer } from "@/lib/email/resend";
+import { pickMailer } from "@/lib/email/mailer";
 import { db } from "@/lib/server/db";
 import { env } from "@/lib/server/env";
 
@@ -25,8 +25,14 @@ export async function GET(request: Request) {
   const now = new Date();
   if (!isDeliveryHour(now)) return Response.json({ skipped: "Not 8am in New York; the other scheduled call runs today" });
 
-  const apiKey = env.resendApiKey();
-  const mailer = apiKey ? resendMailer({ apiKey, from: env.emailFrom() }) : consoleMailer();
+  const mailer = pickMailer({
+    smtpHost: env.smtpHost(),
+    smtpPort: env.smtpPort(),
+    smtpUser: env.smtpUser(),
+    smtpPassword: env.smtpPassword(),
+    resendApiKey: env.resendApiKey(),
+    from: env.emailFrom(),
+  });
   const log = (message: string, detail: unknown) => console.error(message, detail);
   let result: RunResult;
   try {

@@ -448,7 +448,7 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 ## 14. Decisions in this doc
 
 - **Accessibility:** WCAG 2.2 AA is a release requirement, checked automatically on every PR and by hand before release (section 10).
-- **Email provider:** Resend.
+- **Email provider:** a Gmail account over SMTP while Pisara stays on the vercel.app address (decided Nov 6, 2026); Resend once there is a domain. The app uses SMTP when `SMTP_USER` is set.
 - **Tech stack:** Next.js (React) + TypeScript, Supabase (database, sign-in), Vercel (hosting, daily scheduled job).
 - **Weekly recap delivery:** in the inbox, with a mention in that day's lesson email. No separate email.
 - **Lesson levels:** Beginner, Intermediate and Advanced, stored as 1–3 (decided Nov 5, 2026). The same words show a learner's standing in a topic. _Draft 2 had open-ended numbered levels._
@@ -462,6 +462,6 @@ A simple author-only `/author/stats` page can show these later. For the MVP, sav
 
 ## 15. Open questions
 
-1. **Domain:** the first deploy uses the free vercel.app address (decided Nov 4, 2026). Sending lesson emails to anyone but the founder needs a domain of our own, because Resend only sends from verified domains.
+1. **Domain:** Pisara stays on the free vercel.app address (decided Nov 4, confirmed Nov 6, 2026). Email goes out from a Gmail account, which caps sending at about 500 a day; a domain and Resend become necessary past roughly 400 learners.
 2. **Look and feel:** colors and fonts are decided in [design-scheme.md](design-scheme.md). The logo is still open; the wordmark is the stand-in.
 3. **Lesson images:** text only for the MVP, or allow images in lessons? Images need file storage (Supabase Storage can do it).

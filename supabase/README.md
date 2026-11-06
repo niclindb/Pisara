@@ -38,7 +38,7 @@ The database is defined entirely in `migrations/`. Don't change tables or access
    - Authentication → Emails → Magic link (and Confirm signup): change the link to
      `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`.
      This makes the link work on any device. Supabase's default link only works in the browser that asked for it, which breaks when someone asks on a laptop and opens the email on a phone.
-   - Optional, before opening sign-up: Authentication → Emails → SMTP settings, send through Resend so sign-in emails come from your domain.
+   - Before anyone outside the team signs in: Authentication → Emails → SMTP settings. Supabase's built-in sender only mails your team members. Turn on custom SMTP and use the same Gmail account as the lesson emails: host `smtp.gmail.com`, port `465`, username the Gmail address, password the app password, sender email the Gmail address, sender name `Pisara`. Then raise Authentication → Rate Limits → "emails sent per hour" to about 30. If you later buy a domain, switch these to Resend.
 
 For local development with Docker running, `supabase start` runs a full local copy and applies the migrations.
 
