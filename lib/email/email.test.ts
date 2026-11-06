@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { dailyLessonEmail, lessonsWaitingEmail, type EmailContext } from "./templates";
 import { emailSettingsToken, readEmailSettingsToken, settingsPageFor, unsubscribeUrl, verifyUnsubscribe } from "./unsubscribe";
 import { resendMailer } from "./resend";
+import { smtpMailer, type SmtpTransport } from "./smtp";
+import { pickMailer, type MailSettings } from "./mailer";
 
 const secret = "test-secret";
 const userId = "6f1c1b7a-1111-4222-8333-944455556666";
@@ -90,6 +92,36 @@ describe("resendMailer", () => {
   it("throws when Resend refuses", async () => {
     const fakeFetch = (async () => new Response("bad key", { status: 401 })) as unknown as typeof fetch;
     await expect(resendMailer({ apiKey: "x", from: "x", fetch: fakeFetch }).send(lessonsWaitingEmail(ctx, 3))).rejects.toThrow("401");
+  });
+});
+
+describe("smtpMailer", () => {
+  it("hands the message, with its unsubscribe headers, to the SMTP transport", async () => {
+    const sent: Parameters<SmtpTransport["sendMail"]>[0][] = [];
+    const transport: SmtpTransport = { sendMail: async (m) => void sent.push(m) };
+    const mailer = smtpMailer({ host: "smtp.gmail.com", port: 465, user: "p@gmail.com", password: "x", from: "Pisara <p@gmail.com>", transport });
+    await mailer.send(lessonsWaitingEmail(ctx, 3));
+    expect(sent[0]!.from).toBe("Pisara <p@gmail.com>");
+    expect(sent[0]!.to).toBe("a@example.com");
+    expect(sent[0]!.headers["List-Unsubscribe-Post"]).toBe("List-Unsubscribe=One-Click");
+  });
+
+  it("passes sending failures on", async () => {
+    const transport: SmtpTransport = { sendMail: async () => { throw new Error("535 bad credentials"); } };
+    const mailer = smtpMailer({ host: "h", port: 465, user: "u", password: "p", from: "f", transport });
+    await expect(mailer.send(lessonsWaitingEmail(ctx, 3))).rejects.toThrow("535");
+  });
+});
+
+describe("pickMailer", () => {
+  const base: MailSettings = { smtpHost: "smtp.gmail.com", smtpPort: 465, smtpUser: null, smtpPassword: null, resendApiKey: null, from: "f" };
+  it("refuses an SMTP user without a password, so a typo fails loudly", () => {
+    expect(() => pickMailer({ ...base, smtpUser: "p@gmail.com" })).toThrow("SMTP_PASSWORD");
+  });
+  it("builds a mailer for each setup", () => {
+    expect(pickMailer({ ...base, smtpUser: "p@gmail.com", smtpPassword: "x", resendApiKey: "re" })).toHaveProperty("send");
+    expect(pickMailer({ ...base, resendApiKey: "re" })).toHaveProperty("send");
+    expect(pickMailer(base)).toHaveProperty("send");
   });
 });
 

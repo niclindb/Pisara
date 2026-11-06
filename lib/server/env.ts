@@ -19,7 +19,12 @@ export const env = {
   /** Supabase → Project Settings → API. The URL and anon key are public by design. */
   supabaseUrl: () => required("NEXT_PUBLIC_SUPABASE_URL"),
   supabaseAnonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-  /** Without these, emails are printed to the log instead of sent. */
+  /** Gmail (or any SMTP server). Takes priority over Resend when SMTP_USER is set. */
+  smtpHost: () => process.env.SMTP_HOST?.trim() || "smtp.gmail.com",
+  smtpPort: () => Number(process.env.SMTP_PORT?.trim() || 465),
+  smtpUser: () => process.env.SMTP_USER?.trim() || null,
+  smtpPassword: () => process.env.SMTP_PASSWORD?.replace(/\s/g, "") || null,
+  /** Without SMTP or Resend settings, emails are printed to the log instead of sent. */
   resendApiKey: () => process.env.RESEND_API_KEY ?? null,
   /** Shown on the privacy and terms pages; null until the domain is set up. */
   contactEmail: () => process.env.CONTACT_EMAIL?.trim() || null,
