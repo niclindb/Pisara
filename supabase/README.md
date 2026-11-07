@@ -34,7 +34,7 @@ The full walkthrough, including Vercel and email, is [docs/going-live.md](../doc
 1. Create a project at [supabase.com](https://supabase.com). Save the database password.
 2. Install the CLI: `brew install supabase/tap/supabase`
 3. In this repo: `supabase init` (keeps the existing `migrations/` folder), then `supabase link --project-ref <your project ref>`
-4. Apply the schema: `supabase db push`
+4. Apply the schema: `supabase db push --remote` (newer CLI versions aim at a local copy without `--remote`)
 5. Sign-in by email link (A1):
    - Authentication → Providers → Email: keep it on, and set the email link expiry to 900 seconds (15 minutes).
    - Authentication → URL Configuration: set the Site URL to your site (for example https://pisara.vercel.app), and add `https://pisara.vercel.app/auth/confirm` (and `http://localhost:3000/auth/confirm` for local runs) to the redirect URLs.

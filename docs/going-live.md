@@ -14,7 +14,7 @@ Below, `https://pisara.vercel.app` stands for your site's address. Vercel shows 
    brew install supabase/tap/supabase
    supabase login
    supabase link --project-ref <your project ref>   # the ref is in the project's URL
-   supabase db push
+   supabase db push --remote   # without --remote, newer versions aim at a local copy
    ```
 3. Copy three values for later:
    - Project Settings → Database → Connection string → **Transaction pooler** (port 6543), with your password filled in. This is `DATABASE_URL`.
@@ -91,4 +91,4 @@ Once that all works, share the link.
 ## Later
 
 - **More than ~400 learners:** buy a domain, then switch email to Resend (set `RESEND_API_KEY`, verify the domain there, clear `SMTP_USER`) and point Supabase's SMTP settings at it. Set `SITE_URL` and the Supabase URLs to the new address.
-- **New database changes:** when a pull request adds a file to `supabase/migrations/`, run `supabase db push` again after merging it. The Setup check on `/author` shows if one is missing.
+- **New database changes:** when a pull request adds a file to `supabase/migrations/`, run `supabase db push --remote` again after merging it. The Setup check on `/author` shows if one is missing.

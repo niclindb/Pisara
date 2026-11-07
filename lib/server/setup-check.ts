@@ -107,7 +107,7 @@ export function setupChecks({ env, migrations }: SetupInput): SetupCheck[] {
   const missing = MIGRATIONS.filter((m) => !migrations[m]);
   checks.push(
     missing.length
-      ? { label: "Database", state: "problem", detail: `Not applied yet: ${missing.join(", ")}. Run \`supabase db push\` (see supabase/README.md).` }
+      ? { label: "Database", state: "problem", detail: `Not applied yet: ${missing.join(", ")}. Run \`supabase db push --remote\` (see supabase/README.md).` }
       : { label: "Database", state: "ok", detail: "Every migration is applied." },
   );
 
