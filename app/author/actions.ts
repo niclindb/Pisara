@@ -146,3 +146,36 @@ export async function deleteLessonAction(lessonId: string, topicId: string) {
   if (result.ok) redirect(`/author/topics/${topicId}`);
   return result;
 }
+
+// Setup check --------------------------------------------------------------
+
+/** Sends a short email to the signed-in author, to prove the email settings work. */
+export async function sendTestEmailAction(): Promise<ActionResult> {
+  const user = await requireAuthor();
+  const { pickMailer } = await import("@/lib/email/mailer");
+  const { env } = await import("@/lib/server/env");
+  const smtpUser = env.smtpUser();
+  const resend = env.resendApiKey();
+  try {
+    const mailer = pickMailer({
+      smtpHost: env.smtpHost(),
+      smtpPort: env.smtpPort(),
+      smtpUser,
+      smtpPassword: env.smtpPassword(),
+      resendApiKey: resend,
+      from: env.emailFrom(),
+    });
+    await mailer.send({
+      to: user.email,
+      subject: "Pisara test email",
+      text: "This is a test from Pisara's setup check. If you can read it, lesson emails will reach you too.",
+      html: "<p>This is a test from Pisara's setup check. If you can read it, lesson emails will reach you too.</p>",
+      headers: {},
+    });
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    return { ok: false, problems: [`The test email didn't send: ${reason}`] };
+  }
+  if (!smtpUser && !resend) return { ok: true, message: "Email isn't set up yet, so the test went to the Vercel log." };
+  return { ok: true, message: `Sent to ${user.email}. Check your inbox, and spam if it isn't there in a minute.` };
+}

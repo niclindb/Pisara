@@ -7,6 +7,7 @@ import { loadContentTree, type AuthorTopic } from "@/lib/jobs/author";
 import { loadRecentJobRuns, type JobRun } from "@/lib/jobs/job-runs";
 import { MIN_PUBLISHED_LESSONS } from "@/lib/rules/constants";
 import { db } from "@/lib/server/db";
+import { MIGRATION_MARKERS_SQL, setupChecks, type MigrationName, type SetupCheck } from "@/lib/server/setup-check";
 import {
   createCategoryAction,
   createTopicAction,
@@ -14,6 +15,7 @@ import {
   renameCategoryAction,
   reorderCategoriesAction,
   reorderTopicsAction,
+  sendTestEmailAction,
 } from "./actions";
 import { requireAuthor } from "./guard";
 
@@ -108,9 +110,42 @@ function RecentRuns({ runs }: { runs: JobRun[] }) {
   );
 }
 
+const STATE_TEXT: Record<SetupCheck["state"], string> = { ok: "Done", todo: "To do", problem: "Fix" };
+const STATE_CLASS: Record<SetupCheck["state"], string> = { ok: "text-success", todo: "text-text-muted", problem: "text-danger" };
+
+async function loadSetupChecks(): Promise<SetupCheck[]> {
+  const [markers] = await db().unsafe<Record<MigrationName, boolean>[]>(MIGRATION_MARKERS_SQL);
+  if (!markers) throw new Error("migration check returned no row");
+  return setupChecks({ env: process.env, migrations: markers });
+}
+
+/** What a live site still needs: settings in Vercel and database changes in Supabase. */
+function SetupStatus({ checks }: { checks: SetupCheck[] }) {
+  const left = checks.filter((c) => c.state !== "ok").length;
+  return (
+    <Card aria-labelledby="setup-heading">
+      <h2 id="setup-heading" className="mb-1 text-[22px]">
+        Setup check
+      </h2>
+      <p className="mb-3 text-text-muted">{left === 0 ? "Everything is set up." : `${left} ${left === 1 ? "thing" : "things"} left before others can sign up.`}</p>
+      <ul className="mb-4">
+        {checks.map((c) => (
+          <li key={c.label} className="flex flex-wrap gap-x-3 border-t border-hairline py-2 text-[15px]">
+            <span className={`w-14 shrink-0 font-medium ${STATE_CLASS[c.state]}`}>{STATE_TEXT[c.state]}</span>
+            <span className="min-w-0 flex-1">
+              <span className="font-medium">{c.label}:</span> {c.detail}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <ActionForm action={sendTestEmailAction} submit="Send me a test email" pendingLabel="Sending…" variant="secondary" />
+    </Card>
+  );
+}
+
 export default async function AuthorHome() {
   const user = await requireAuthor();
-  const [tree, runs] = await Promise.all([loadContentTree(db(), user.id), loadRecentJobRuns(db())]);
+  const [tree, runs, checks] = await Promise.all([loadContentTree(db(), user.id), loadRecentJobRuns(db()), loadSetupChecks()]);
   const categoryIds = tree.categories.map((c) => c.id);
 
   return (
@@ -178,6 +213,7 @@ export default async function AuthorHome() {
           </ActionForm>
         </Card>
         <RecentRuns runs={runs} />
+        <SetupStatus checks={checks} />
       </div>
     </>
   );
