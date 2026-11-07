@@ -10,7 +10,7 @@ import { SignInForm } from "./sign-in/sign-in-form";
 const STEPS = [
   { title: "Pick your topics", text: "Turn on the topics you're curious about, and choose which come up more often." },
   { title: "Get one lesson a day", text: "A short lesson arrives each morning at 8am Eastern, by email and on Home. Each takes a few minutes." },
-  { title: "Keep what you learn", text: "A quick quiz follows each lesson. Questions you miss come back days later, so they stick." },
+  { title: "Check what you learned", text: "A quick quiz follows each lesson, and Progress shows how far along each topic you are." },
 ];
 
 // The landing page (A1, A9): what Pisara is, sign-up, and a way to look around first.
@@ -34,7 +34,7 @@ export default async function Landing() {
               One short lesson a day, on <em className="font-normal">topics you choose</em>.
             </h1>
             <p className="mt-5 max-w-xl text-[18px] text-hero-muted">
-              A few minutes of reading, a quick quiz, and the questions you missed come back later. Drop by drop, it adds up.
+              A few minutes of reading and a quick quiz each morning. Drop by drop, it adds up.
             </p>
             <p className="mt-6">
               <LinkButton href="/explore" variant="bright">

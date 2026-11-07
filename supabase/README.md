@@ -28,13 +28,16 @@ The database is defined entirely in `migrations/`. Don't change tables or access
 
 ## Setting up (one time)
 
+The full walkthrough, including Vercel and email, is [docs/going-live.md](../docs/going-live.md).
+
+
 1. Create a project at [supabase.com](https://supabase.com). Save the database password.
 2. Install the CLI: `brew install supabase/tap/supabase`
 3. In this repo: `supabase init` (keeps the existing `migrations/` folder), then `supabase link --project-ref <your project ref>`
 4. Apply the schema: `supabase db push`
 5. Sign-in by email link (A1):
    - Authentication → Providers → Email: keep it on, and set the email link expiry to 900 seconds (15 minutes).
-   - Authentication → URL Configuration: set the Site URL to your site (for example https://getpisara.com), and add `https://getpisara.com/auth/confirm` (and `http://localhost:3000/auth/confirm` for local runs) to the redirect URLs.
+   - Authentication → URL Configuration: set the Site URL to your site (for example https://pisara.vercel.app), and add `https://pisara.vercel.app/auth/confirm` (and `http://localhost:3000/auth/confirm` for local runs) to the redirect URLs.
    - Authentication → Emails → Magic link (and Confirm signup): change the link to
      `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`.
      This makes the link work on any device. Supabase's default link only works in the browser that asked for it, which breaks when someone asks on a laptop and opens the email on a phone.

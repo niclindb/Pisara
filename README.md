@@ -41,16 +41,8 @@ Every pull request runs all of these (`.github/workflows/test.yml`).
 
 `npm run dev` needs a database with the schema loaded. Without a Supabase project, you can pretend to be signed in: set `DEV_SIGNED_IN_USER_ID` in `.env.local` to the id of a user in that database (give them `role = 'author'` to see the author tools; a new learner starts at onboarding). This only works in `npm run dev`, never in a production build.
 
-## Going live (one time)
+## Going live
 
-1. **Supabase:** follow "Setting up" in [supabase/README.md](supabase/README.md).
-2. **Email from Gmail** (no domain needed):
-   1. Make a Gmail account for Pisara (or use your own) and turn on 2-Step Verification.
-   2. Google Account → Security → App passwords: create one called "Pisara" and copy the 16 letters.
-   3. In Vercel set `SMTP_USER` to the Gmail address, `SMTP_PASSWORD` to the app password, and `EMAIL_FROM` to `Pisara <that address>`.
-   4. Put the same address and app password in Supabase's SMTP settings, so sign-in links go out too (see [supabase/README.md](supabase/README.md)).
-
-   Gmail allows about 500 emails a day, so this covers roughly 400 learners (lessons, reminders and sign-in links share it). Past that, buy a domain and switch to Resend: set `RESEND_API_KEY`, verify the domain in Resend, and clear `SMTP_USER`.
-3. **Vercel:** import the GitHub repo. Under Settings → Environment Variables, add every variable in [.env.example](.env.example). The daily job is registered automatically from `vercel.json`, and Vercel sends `CRON_SECRET` with each call.
+Follow [docs/going-live.md](docs/going-live.md): Supabase, Gmail, Vercel, then making yourself the author and adding lessons. Once the site is up, the **Setup check** at the bottom of `/author` shows anything still missing and can send you a test email.
 
 Without `SMTP_USER` or `RESEND_API_KEY`, emails are printed to the Vercel log instead of sent, which is handy for a first test.
