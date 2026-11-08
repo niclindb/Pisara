@@ -39,14 +39,14 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
   return (
     <div className="mx-auto max-w-3xl">
       <nav aria-label="Breadcrumb" className="mb-4 text-[15px] text-text-muted">
-        <Link href="/explore" className="hover:underline">
+        <Link href="/explore" className="hover:underline hover:text-accent">
           Explore
         </Link>
         {category && <> / {category.name}</>}
         {parent && (
           <>
             {" / "}
-            <Link href={`/explore/${parent.id}`} className="hover:underline">
+            <Link href={`/explore/${parent.id}`} className="hover:underline hover:text-accent">
               {parent.name}
             </Link>
           </>
@@ -108,7 +108,7 @@ export default async function TopicPage({ params }: { params: Promise<{ topic: s
           <ul className="divide-y divide-hairline rounded-card border border-hairline bg-surface">
             {children.map((c) => (
               <li key={c.id} className="px-5 py-4">
-                <Link href={`/explore/${c.id}`} className="font-heading text-[18px] font-bold hover:underline">
+                <Link href={`/explore/${c.id}`} className="font-heading text-[18px] font-bold hover:underline hover:text-accent">
                   {c.name}
                 </Link>
                 {c.goal && <p className="mt-1">{c.goal}</p>}

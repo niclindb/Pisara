@@ -42,7 +42,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ topic:
     <LessonPageFrame>
       <p className="mb-6 text-[15px] text-text-muted">
         Free lesson from{" "}
-        <Link href={`/explore/${topic}`} className="font-medium text-primary hover:underline">
+        <Link href={`/explore/${topic}`} className="font-medium text-primary hover:underline hover:text-accent">
           {lesson.topic.name}
         </Link>
       </p>

@@ -20,7 +20,7 @@ export default async function LessonPreview({ params }: { params: Promise<{ id: 
     <LessonPageFrame>
       <p className="mb-6 rounded-card-sm border border-border bg-surface px-4 py-3 text-[15px]">
         Preview as a learner sees it, from the last save.{" "}
-        <Link href={`/author/lessons/${id}`} className="font-medium text-primary hover:underline">
+        <Link href={`/author/lessons/${id}`} className="font-medium text-primary hover:underline hover:text-accent">
           Back to editing
         </Link>
       </p>

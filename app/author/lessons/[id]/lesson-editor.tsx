@@ -78,7 +78,7 @@ export function LessonEditor({ lesson, topicName }: { lesson: LessonForEditing; 
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
         <p className="text-[15px]">
-          <Link href={`/author/topics/${lesson.topicId}`} className="text-primary hover:underline">
+          <Link href={`/author/topics/${lesson.topicId}`} className="text-primary hover:underline hover:text-accent">
             ← {topicName}
           </Link>
         </p>
@@ -300,7 +300,7 @@ export function LessonEditor({ lesson, topicName }: { lesson: LessonForEditing; 
               Unpublish
             </Button>
           )}
-          <Link href={`/author/lessons/${lesson.id}/preview`} className="py-2 font-medium text-primary hover:underline">
+          <Link href={`/author/lessons/${lesson.id}/preview`} className="py-2 font-medium text-primary hover:underline hover:text-accent">
             Preview as learner
           </Link>
           <p role="status" className="basis-full text-[15px] text-success sm:basis-auto">

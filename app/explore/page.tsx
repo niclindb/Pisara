@@ -39,7 +39,7 @@ function TopicTree({ choices, signedIn }: { choices: TopicChoices; signedIn: boo
               {topics.map((t) => (
                 <li key={t.id} className="py-4 pr-5" style={{ paddingLeft: `${1.25 + t.depth * 1.5}rem` }}>
                   <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                    <Link href={`/explore/${t.id}`} className="font-heading text-[18px] font-bold hover:underline">
+                    <Link href={`/explore/${t.id}`} className="font-heading text-[18px] font-bold hover:underline hover:text-accent">
                       {t.name}
                     </Link>
                     <span className="text-[15px] text-text-muted">
