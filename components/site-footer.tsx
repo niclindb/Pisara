@@ -16,7 +16,12 @@ export function SiteFooter() {
             Terms
           </Link>
         </nav>
-        <p className="py-1">© {new Date().getFullYear()} Lindberg Dev</p>
+        <p className="py-1">
+          © {new Date().getFullYear()}{" "}
+          <a href="https://niclindb.github.io" className="hover:underline">
+            Lindberg Dev
+          </a>
+        </p>
       </div>
     </footer>
   );
