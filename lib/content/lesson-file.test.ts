@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { LessonFileError, parseLessonFile } from "./lesson-file";
+import { isTopicFile, LessonFileError, parseLessonFile, parseTopicFile } from "./lesson-file";
 
 const file = (over: { header?: string; body?: string; tail?: string } = {}) =>
   `---
@@ -104,6 +104,22 @@ Solve it.
   });
 });
 
+describe("parseTopicFile", () => {
+  it("reads the goal, description and outline", () => {
+    const t = parseTopicFile("---\ncategory: Technology\ntopic: AI\ngoal: Understand AI.\n---\n\nWhat it covers.\n\n<!-- outline -->\n\n1. One\n2. Two\n");
+    expect(t).toEqual({ category: "Technology", topicPath: ["AI"], goal: "Understand AI.", description: "What it covers.", outline: "1. One\n2. Two" });
+  });
+
+  it("needs a goal", () => {
+    expect(() => parseTopicFile("---\ncategory: T\ntopic: AI\nlevel: Beginner\n---\n")).toThrow(/unknown line "level: Beginner"[\s\S]*add the topic's goal/);
+  });
+
+  it("is told apart from lessons by its name", () => {
+    expect(isTopicFile("content/lessons/ai/topic.md")).toBe(true);
+    expect(isTopicFile("content/lessons/ai/01-topic.md")).toBe(false);
+  });
+});
+
 describe("content/lessons", () => {
   const all = (dir: string): string[] =>
     readdirSync(dir).flatMap((n) => {
@@ -111,7 +127,9 @@ describe("content/lessons", () => {
       return statSync(p).isDirectory() ? all(p) : n.endsWith(".md") && n !== "README.md" ? [p] : [];
     });
 
-  it.each(all("content/lessons"))("%s is a valid lesson", (path) => {
-    expect(problemsOf(readFileSync(path, "utf8"))).toEqual([]);
+  it.each(all("content/lessons"))("%s is valid", (path) => {
+    const text = readFileSync(path, "utf8");
+    if (isTopicFile(path)) expect(() => parseTopicFile(text, path)).not.toThrow();
+    else expect(problemsOf(text)).toEqual([]);
   });
 });

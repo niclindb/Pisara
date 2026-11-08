@@ -1,4 +1,4 @@
-// Loads lesson files from content/lessons into the database.
+// Loads lesson files (and topic.md files) from content/lessons into the database.
 //
 //   npm run lessons:check                 check every file, no database needed
 //   npm run lessons:import                load every file
@@ -9,8 +9,8 @@
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
-import { findAuthor, importLesson } from "../lib/content/import";
-import { LessonFileError, parseLessonFile, type LessonFile } from "../lib/content/lesson-file";
+import { findAuthor, importLesson, importTopic } from "../lib/content/import";
+import { isTopicFile, LessonFileError, parseLessonFile, parseTopicFile, type LessonFile, type TopicFile } from "../lib/content/lesson-file";
 import { connect } from "../lib/jobs/postgres-store";
 
 const ROOT = "content/lessons";
@@ -34,10 +34,13 @@ async function main() {
   const paths = named.length ? named : lessonFiles(ROOT);
 
   const parsed: { path: string; lesson: LessonFile }[] = [];
+  const topics: { path: string; topic: TopicFile }[] = [];
   const errors: string[] = [];
   for (const path of paths) {
     try {
-      parsed.push({ path, lesson: parseLessonFile(readFileSync(path, "utf8"), relative(".", path)) });
+      const text = readFileSync(path, "utf8");
+      if (isTopicFile(path)) topics.push({ path, topic: parseTopicFile(text, relative(".", path)) });
+      else parsed.push({ path, lesson: parseLessonFile(text, relative(".", path)) });
     } catch (err) {
       errors.push(err instanceof LessonFileError ? err.message : `${path}: ${(err as Error).message}`);
     }
@@ -47,7 +50,7 @@ async function main() {
     process.exit(1);
   }
   if (checkOnly) {
-    console.log(`All ${parsed.length} lesson files look good.`);
+    console.log(`All ${parsed.length} lesson files and ${topics.length} topic files look good.`);
     return;
   }
 
@@ -56,6 +59,12 @@ async function main() {
   const sql = connect(url);
   try {
     const authorId = await findAuthor(sql, authorEmail);
+    // Topics first, so their goals are set before lessons land in them.
+    for (const { path, topic } of topics) {
+      const r = await importTopic(sql, authorId, topic);
+      for (const m of r.made) console.log(`  made ${m}`);
+      console.log(`${(r.outcome === "unchanged" ? "unchanged" : "topic").padEnd(9)} ${path}`);
+    }
     const counts = { created: 0, updated: 0, unchanged: 0 };
     for (const { path, lesson } of parsed) {
       const r = await importLesson(sql, authorId, lesson);

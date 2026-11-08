@@ -10,12 +10,31 @@ npm run lessons:import    # loads every file, using DATABASE_URL from .env.local
 npm run lessons:import -- content/lessons/mental-math/01-doomsday-algorithm.md
 ```
 
-- Categories and topics named in a file are created if they don't exist. Fill in a new topic's goal and description on the author pages.
+- Categories and topics named in a file are created if they don't exist. Give a new topic its goal and description with a `topic.md` (below) or on the author pages.
 - A lesson is matched to an existing one by **topic and title**. A new one is added at the end of its topic's path as a **draft**: look it over in the app's preview, then publish it there.
 - Running the import again updates lessons whose file changed and leaves the rest alone. An updated lesson keeps its status, so a published lesson stays published.
 - Changing a lesson's title in its file makes a new lesson. Rename it in the app as well, or the old one stays.
 - Quiz questions are matched by position, so fixing a question's wording keeps learners' answers and review. Deleting a question from the file deletes it, along with those answers.
 - If there's more than one author account, add `-- --author you@example.com`.
+
+## Topic files
+
+A file named `topic.md` sets a topic's goal (shown when learners pick topics), its description (shown on the topic's page) and the path outline. The import loads topic files before lessons.
+
+```markdown
+---
+category: Technology
+topic: Artificial intelligence
+goal: Understand how today's AI learns, how chatbots work, and how to use them well.
+---
+
+The description, in Markdown.
+
+<!-- outline -->
+
+1. What counts as AI (Beginner)
+2. ...
+```
 
 ## File format
 
