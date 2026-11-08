@@ -24,6 +24,43 @@ export class LessonFileError extends Error {
 const QUIZ_MARK = /^<!--\s*quiz\s*-->\s*$/im;
 const PRACTICE_MARK = /^<!--\s*practice\s*-->\s*$/im;
 const HEADER_KEYS = ["category", "topic", "title", "level", "reading_minutes"] as const;
+const TOPIC_KEYS = ["category", "topic", "goal"] as const;
+const OUTLINE_MARK = /^<!--\s*outline\s*-->\s*$/im;
+
+/** A topic.md file: the goal, description and outline of the topic its header names. */
+export interface TopicFile {
+  category: string;
+  topicPath: string[];
+  goal: string;
+  /** Markdown, shown on the topic's page. */
+  description: string;
+  /** Markdown, the author's plan for the path (E2). */
+  outline: string;
+}
+
+/** Topic files are named topic.md; every other .md file (but README.md) is a lesson. */
+export const isTopicFile = (path: string) => /(^|[\\/])topic\.md$/i.test(path);
+
+/** Reads one topic.md file. Throws LessonFileError listing everything to fix. */
+export function parseTopicFile(text: string, file = "topic.md"): TopicFile {
+  const problems: string[] = [];
+  const src = text.replace(/\r\n?/g, "\n");
+  const m = /^---\n([\s\S]*?)\n---\n?/.exec(src);
+  if (!m) throw new LessonFileError(file, ["Start the file with a header between two --- lines."]);
+  const header = parseHeader(m[1]!, problems, TOPIC_KEYS);
+  const rest = src.slice(m[0].length);
+  const at = rest.search(OUTLINE_MARK);
+  const description = (at < 0 ? rest : rest.slice(0, at)).trim();
+  const outline = at < 0 ? "" : rest.slice(rest.indexOf("\n", at) + 1).trim();
+
+  const category = (header.category ?? "").trim();
+  const topicPath = (header.topic ?? "").split("/").map((s) => s.trim()).filter(Boolean);
+  if (!category) problems.push("Header: add a category.");
+  if (topicPath.length === 0) problems.push("Header: add a topic (use / for a sub-topic, e.g. Mental math / Calendars).");
+  if (!header.goal?.trim()) problems.push("Header: add the topic's goal, e.g. goal: Understand how today's AI works.");
+  if (problems.length) throw new LessonFileError(file, problems);
+  return { category, topicPath, goal: header.goal!.trim(), description, outline };
+}
 
 /** Reads one lesson file. Throws LessonFileError listing everything to fix. */
 export function parseLessonFile(text: string, file = "lesson"): LessonFile {
@@ -32,7 +69,7 @@ export function parseLessonFile(text: string, file = "lesson"): LessonFile {
 
   const m = /^---\n([\s\S]*?)\n---\n?/.exec(src);
   if (!m) throw new LessonFileError(file, ["Start the file with a header between two --- lines."]);
-  const header = parseHeader(m[1]!, problems);
+  const header = parseHeader(m[1]!, problems, HEADER_KEYS);
   // Split off the quiz and practice sections, in either order.
   const sections = splitSections(src.slice(m[0].length), problems);
 
@@ -67,18 +104,18 @@ export function parseLessonFile(text: string, file = "lesson"): LessonFile {
   return { category: category.trim(), topicPath, draft };
 }
 
-function parseHeader(text: string, problems: string[]): Partial<Record<(typeof HEADER_KEYS)[number], string>> {
-  const out: Partial<Record<(typeof HEADER_KEYS)[number], string>> = {};
+function parseHeader<K extends string>(text: string, problems: string[], keys: readonly K[]): Partial<Record<K, string>> {
+  const out: Partial<Record<K, string>> = {};
   for (const raw of text.split("\n")) {
     const line = raw.replace(/\s+#.*$/, "").trim(); // allow trailing # comments
     if (!line || line.startsWith("#")) continue;
     const i = line.indexOf(":");
     const key = (i < 0 ? line : line.slice(0, i)).trim().toLowerCase();
-    if (!(HEADER_KEYS as readonly string[]).includes(key)) {
-      problems.push(`Header: unknown line "${raw.trim()}". Use ${HEADER_KEYS.join(", ")}.`);
+    if (!(keys as readonly string[]).includes(key)) {
+      problems.push(`Header: unknown line "${raw.trim()}". Use ${keys.join(", ")}.`);
       continue;
     }
-    out[key as (typeof HEADER_KEYS)[number]] = unquote(line.slice(i + 1).trim());
+    out[key as K] = unquote(line.slice(i + 1).trim());
   }
   return out;
 }

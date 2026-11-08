@@ -4,8 +4,8 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { publishLesson, loadLessonForEditing } from "../jobs/author";
 import { connect } from "../jobs/postgres-store";
-import { findAuthor, importLesson } from "./import";
-import { parseLessonFile } from "./lesson-file";
+import { findAuthor, importLesson, importTopic } from "./import";
+import { parseLessonFile, parseTopicFile } from "./lesson-file";
 
 const url = process.env.TEST_DATABASE_URL;
 const sql = url ? connect(url) : (null as never);
@@ -61,19 +61,19 @@ describe.skipIf(!url)("importing lesson files", () => {
     expect(first.outcome).toBe("created");
     expect(first.made).toEqual(["category Math", "topic Math / Mental math", "topic Math / Mental math / Calendars"]);
 
-    const l = (await loadLessonForEditing(sql, AUTHOR, first.lessonId))!;
+    const l = (await loadLessonForEditing(sql, AUTHOR, first.id))!;
     expect(l).toMatchObject({ title: "Doomsday", status: "draft", level: 1, body: "Every year has a doomsday." });
     expect(l.questions).toHaveLength(1);
     expect(l.problems).toEqual([expect.objectContaining({ prompt: "Jan 1, 2000?", solution: "Saturday." })]);
 
     const again = await importLesson(sql, AUTHOR, parseLessonFile(lessonText()));
-    expect(again).toEqual({ outcome: "unchanged", lessonId: first.lessonId, made: [] });
+    expect(again).toEqual({ outcome: "unchanged", id: first.id, made: [] });
     const [row] = await sql`select count(*)::int as n from public.lessons`;
     expect(row!.n).toBe(1);
   });
 
   it("updates a published lesson in place and keeps its status and question ids", async () => {
-    const { lessonId } = await importLesson(sql, AUTHOR, parseLessonFile(lessonText()));
+    const { id: lessonId } = await importLesson(sql, AUTHOR, parseLessonFile(lessonText()));
     await publishLesson(sql, AUTHOR, lessonId);
     const before = (await loadLessonForEditing(sql, AUTHOR, lessonId))!;
 
@@ -90,5 +90,21 @@ describe.skipIf(!url)("importing lesson files", () => {
     await importLesson(sql, AUTHOR, parseLessonFile(lessonText({ title: "Leap years" })));
     const rows = await sql`select title, position from public.lessons order by position`;
     expect(rows.map((r) => r.title)).toEqual(["Doomsday", "Leap years"]);
+  });
+
+  it("sets a topic's goal, description and outline from topic.md, and lessons land in the same topic", async () => {
+    const topicText = (goal: string) => `---\ncategory: math\ntopic: Mental math / Calendars\ngoal: ${goal}\n---\n\nAbout **calendars**.\n\n<!-- outline -->\n\n1. Doomsday\n`;
+    const r = await importTopic(sql, AUTHOR, parseTopicFile(topicText("Name any weekday.")));
+    expect(r.outcome).toBe("created");
+    const [t] = await sql`select goal, description, outline from public.topics where id = ${r.id}`;
+    expect(t).toEqual({ goal: "Name any weekday.", description: "About **calendars**.", outline: "1. Doomsday" });
+
+    expect((await importTopic(sql, AUTHOR, parseTopicFile(topicText("Name any weekday.")))).outcome).toBe("unchanged");
+    expect((await importTopic(sql, AUTHOR, parseTopicFile(topicText("Name any weekday fast.")))).outcome).toBe("updated");
+
+    const l = await importLesson(sql, AUTHOR, parseLessonFile(lessonText()));
+    expect(l.made).toEqual([]);
+    const [row] = await sql`select topic_id from public.lessons where id = ${l.id}`;
+    expect(row!.topic_id).toBe(r.id);
   });
 });
