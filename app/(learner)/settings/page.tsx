@@ -97,7 +97,7 @@ export default async function SettingsPage() {
           Account
         </h2>
         <form action="/auth/sign-out" method="post" className="mb-6">
-          <button className="font-medium text-primary underline underline-offset-4 hover:no-underline">Sign out</button>
+          <button className="font-medium text-primary underline underline-offset-4 hover:no-underline hover:text-accent">Sign out</button>
         </form>
         <p className="mb-3 text-text-muted">Deleting your account removes your topics, lessons, answers and progress for good.</p>
         <ActionForm

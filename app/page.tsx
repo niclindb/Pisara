@@ -24,7 +24,7 @@ export default async function Landing() {
       <div className="bg-hero-bg text-hero-text">
         <header className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <Wordmark onDark />
-          <Link href="/sign-in" className="py-2 font-medium text-hero-text hover:underline">
+          <Link href="/sign-in" className="py-2 font-medium text-hero-text hover:underline hover:text-bright">
             Sign in
           </Link>
         </header>

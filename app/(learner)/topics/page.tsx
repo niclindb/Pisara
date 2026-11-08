@@ -40,7 +40,7 @@ export default async function MyTopicsPage() {
                   <li key={t.id} className="py-4 pr-5" style={{ paddingLeft: `${1.25 + t.depth * 1.5}rem` }}>
                     <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
                       <div className="min-w-0 flex-1 basis-56">
-                        <Link href={`/explore/${t.id}`} className="font-heading text-[18px] font-bold hover:underline">
+                        <Link href={`/explore/${t.id}`} className="font-heading text-[18px] font-bold hover:underline hover:text-accent">
                           {t.name}
                         </Link>
                         {t.progress && t.pickable && (

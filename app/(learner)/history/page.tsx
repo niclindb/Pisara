@@ -55,7 +55,7 @@ export default async function HistoryPage({ searchParams }: { searchParams: Prom
           {history.items.map((l) => (
             <li key={l.lessonId} className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-5 py-4">
               <div className="min-w-0">
-                <Link href={`/lessons/${l.lessonId}`} className="font-heading text-[18px] font-bold hover:underline">
+                <Link href={`/lessons/${l.lessonId}`} className="font-heading text-[18px] font-bold hover:underline hover:text-accent">
                   {l.title}
                 </Link>
                 <p className="text-[15px] text-text-muted">

@@ -143,7 +143,7 @@ export function LessonQuiz({
           </p>
           {result.suggestReread && (
             <p>
-              <a href="#lesson-title" className="font-medium text-primary underline underline-offset-4 hover:no-underline">
+              <a href="#lesson-title" className="font-medium text-primary underline underline-offset-4 hover:no-underline hover:text-accent">
                 Read the lesson again
               </a>{" "}
               to go over it.
@@ -161,7 +161,7 @@ export function LessonQuiz({
               <ul className="space-y-1">
                 {result.goDeeper.map((t) => (
                   <li key={t.id}>
-                    <Link href={`/explore/${t.id}`} className="font-medium text-primary underline underline-offset-4 hover:no-underline">
+                    <Link href={`/explore/${t.id}`} className="font-medium text-primary underline underline-offset-4 hover:no-underline hover:text-accent">
                       {t.name}
                     </Link>
                   </li>

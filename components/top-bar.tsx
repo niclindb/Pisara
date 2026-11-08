@@ -23,7 +23,7 @@ export function learnerLinks(user: CurrentUser) {
 export function TopBar({ user, links }: { user: CurrentUser | null; links: { href: string; label: string }[] }) {
   const signOut = user ? (
     <form action="/auth/sign-out" method="post">
-      <button className="py-2 text-text-muted hover:underline">Sign out</button>
+      <button className="py-2 text-text-muted hover:underline hover:text-accent">Sign out</button>
     </form>
   ) : (
     <LinkButton href="/sign-in" variant="secondary">
@@ -36,7 +36,7 @@ export function TopBar({ user, links }: { user: CurrentUser | null; links: { hre
         <Wordmark href={user ? "/home" : "/"} />
         <nav aria-label="Main" className="hidden flex-1 flex-wrap items-center gap-x-5 gap-y-1 md:flex">
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="py-2 font-medium hover:underline">
+            <Link key={l.href} href={l.href} className="py-2 font-medium hover:underline hover:text-accent">
               {l.label}
             </Link>
           ))}

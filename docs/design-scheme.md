@@ -28,7 +28,7 @@ Use these names in code (Tailwind theme and CSS variables). The same values are 
 | `hairline` | `#B8C0C7` | `#293646` | Decorative dividers only (not for controls) |
 | `primary` | `#0B2545` | `#00C2FF` | Primary buttons and links |
 | `primaryText` | `#FFFFFF` | `#040F1C` | Text on primary buttons |
-| `accent` | `#6B1040` | `#D7527F` | Topic labels, step numbers (black cherry) |
+| `accent` | `#6B1040` | `#D7527F` | Topic labels, step numbers, links on hover (black cherry) |
 | `accentFill` | `#6B1040` | `#3F1B37` | Milestone card and other cherry fills |
 | `accentFillText` | `#FFFFFF` | `#F3F5F6` | Text on cherry fills |
 | `bright` | `#00C2FF` | `#00C2FF` | Highlighted words, "lessons waiting" badge, progress, home page buttons |
@@ -41,6 +41,8 @@ Use these names in code (Tailwind theme and CSS variables). The same values are 
 | `heroBg` | `#0B2545` | `#061528` | Home page hero band |
 | `heroText` | `#FFFFFF` | `#F3F5F6` | Hero headline and navigation |
 | `heroMuted` | `#D0D7DC` | `#D0D7DC` | Hero intro text |
+
+**Links on hover** turn cherry (`accent`) and gain an underline; links that are underlined at rest lose it instead. In the navy home page header they turn `bright`. Hover never looks like a resting link.
 
 Dark mode follows the device setting, with a manual switch later.
 

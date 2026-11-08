@@ -65,13 +65,13 @@ export default async function TopicEditor({ params }: { params: Promise<{ id: st
   return (
     <>
       <p className="mb-2 text-[15px]">
-        <Link href="/author" className="text-primary hover:underline">
+        <Link href="/author" className="text-primary hover:underline hover:text-accent">
           Author
         </Link>
         {parent && (
           <>
             {" / "}
-            <Link href={`/author/topics/${parent.id}`} className="text-primary hover:underline">
+            <Link href={`/author/topics/${parent.id}`} className="text-primary hover:underline hover:text-accent">
               {parent.name}
             </Link>
           </>
@@ -101,7 +101,7 @@ export default async function TopicEditor({ params }: { params: Promise<{ id: st
                     {i + 1}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <Link href={`/author/lessons/${l.id}`} className="font-medium text-primary hover:underline">
+                    <Link href={`/author/lessons/${l.id}`} className="font-medium text-primary hover:underline hover:text-accent">
                       {l.title}
                     </Link>
                     <p className="text-[15px] text-text-muted">
@@ -155,7 +155,7 @@ export default async function TopicEditor({ params }: { params: Promise<{ id: st
                 {children.map((c, i) => (
                   <li key={c.id} className="flex items-center gap-3">
                     <MoveButtons ids={childIds} index={i} label={c.name} reorder={reorderTopicsAction.bind(null, `topic:${id}`)} />
-                    <Link href={`/author/topics/${c.id}`} className="font-medium text-primary hover:underline">
+                    <Link href={`/author/topics/${c.id}`} className="font-medium text-primary hover:underline hover:text-accent">
                       {c.name}
                     </Link>
                   </li>

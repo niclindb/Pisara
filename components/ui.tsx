@@ -8,7 +8,7 @@ const base =
 const variants = {
   primary: "bg-primary text-primary-text hover:opacity-90",
   secondary: "border border-border bg-surface text-text hover:bg-page",
-  quiet: "px-1 text-primary underline underline-offset-4 hover:no-underline",
+  quiet: "px-1 text-primary underline underline-offset-4 hover:no-underline hover:text-accent",
   danger: "border border-danger bg-surface text-danger hover:bg-danger-bg",
   bright: "bg-bright text-bright-text hover:opacity-90",
 } as const;

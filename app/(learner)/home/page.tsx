@@ -89,7 +89,7 @@ export default async function HomePage() {
             {topicsOn.map((t) => (
               <li key={t.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-4">
                 <div className="min-w-0 flex-1">
-                  <Link href={`/explore/${t.id}`} className="font-medium hover:underline">
+                  <Link href={`/explore/${t.id}`} className="font-medium hover:underline hover:text-accent">
                     {t.name}
                   </Link>
                   {t.progress && (
