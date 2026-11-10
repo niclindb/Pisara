@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-/** The footer on public pages: landing, sign-in, Explore, privacy and terms. */
+/** The footer on every page; the root layout renders it once. */
 export function SiteFooter() {
   return (
     <footer className="border-t border-hairline">

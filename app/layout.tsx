@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Karla, Libre_Baskerville } from "next/font/google";
+import { SiteFooter } from "@/components/site-footer";
 import "./globals.css";
 
 const heading = Libre_Baskerville({
@@ -26,14 +27,15 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${heading.variable} ${body.variable}`}>
-      <body className="min-h-dvh bg-page text-text antialiased">
+      <body className="flex min-h-dvh flex-col bg-page text-text antialiased">
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-control focus:bg-surface focus:px-4 focus:py-2"
         >
           Skip to content
         </a>
-        {children}
+        <div className="flex flex-1 flex-col">{children}</div>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { SiteFooter } from "@/components/site-footer";
 import { Card, Wordmark } from "@/components/ui";
 import { afterSignIn, currentUser } from "@/lib/server/auth";
 import { safeNext } from "@/lib/server/paths";
@@ -17,7 +16,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
     <>
       <main
         id="main"
-        className="mx-auto flex min-h-[calc(100dvh-5rem)] max-w-md flex-col justify-center px-4 py-12"
+        className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center px-4 py-12"
       >
         <div className="mb-8 text-center">
           <Wordmark />
@@ -27,7 +26,6 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
           <SignInForm next={next} />
         </Card>
       </main>
-      <SiteFooter />
     </>
   );
 }
