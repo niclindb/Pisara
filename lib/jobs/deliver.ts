@@ -56,6 +56,7 @@ async function deliverOne(learner: Learner, now: Date, deps: DeliveryDeps): Prom
     userId: learner.id,
     to: learner.email,
     displayName: learner.displayName,
+    now,
   };
 
   if (action.kind === "skip") return { userId: learner.id, outcome: "skipped", reason: action.reason };

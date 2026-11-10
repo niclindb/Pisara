@@ -77,3 +77,34 @@ export function afterSignIn(user: CurrentUser | null, next: string | null): stri
 }
 
 export { loadUser };
+
+/**
+ * Signs in as a learner from the "Begin lesson" link in the daily email (lesson-link.ts),
+ * after the link's signature has been checked. Asks Supabase for a one-time
+ * sign-in token (no email is sent) and uses it straight away, so the session is
+ * the same as one from the sign-in email. False when it can't, e.g. without the
+ * service role key; the caller then sends them to sign in the usual way.
+ */
+export async function signInFromLessonLink(userId: string): Promise<boolean> {
+  const serviceKey = env.supabaseServiceRoleKey();
+  if (!serviceKey) return false;
+  const { createClient } = await import("@supabase/supabase-js");
+  const admin = createClient(env.supabaseUrl(), serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  // The address from Supabase Auth itself, so the token is for exactly this account.
+  const { data: found } = await admin.auth.admin.getUserById(userId);
+  const email = found.user?.email;
+  if (!email) return false;
+  const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email });
+  if (error || !data.properties?.hashed_token) {
+    console.error("lesson link: could not make a sign-in token", error?.message);
+    return false;
+  }
+  const supabase = await supabaseServer();
+  const { data: session, error: verifyError } = await supabase.auth.verifyOtp({ token_hash: data.properties.hashed_token, type: "email" });
+  if (verifyError || session.user?.id !== userId) {
+    console.error("lesson link: sign-in token was refused", verifyError?.message);
+    if (!verifyError) await supabase.auth.signOut();
+    return false;
+  }
+  return true;
+}

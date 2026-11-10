@@ -9,9 +9,10 @@ const live = {
   SMTP_USER: "pisara.lessons@gmail.com",
   SMTP_PASSWORD: "abcd efgh ijkl mnop",
   CONTACT_EMAIL: "pisara.lessons@gmail.com",
+  SUPABASE_SERVICE_ROLE_KEY: "service-role",
 };
 const check = (env: Record<string, string | undefined>, migrations = allApplied) =>
-  new Proxy({} as Record<"Site address" | "Secrets" | "Email" | "Contact address" | "Database", SetupCheck>, {
+  new Proxy({} as Record<"Site address" | "Secrets" | "Lesson email sign-in" | "Email" | "Contact address" | "Database", SetupCheck>, {
     get: (_, label) => {
       const found = setupChecks({ env, migrations }).find((c) => c.label === label);
       if (!found) throw new Error(`no check named ${String(label)}`);
@@ -65,6 +66,11 @@ describe("setupChecks", () => {
     expect(c["Email"].state).toBe("todo");
     expect(c["Contact address"].state).toBe("todo");
     expect(check({ ...live, SMTP_USER: "", RESEND_API_KEY: "re_x" })["Email"].state).toBe("ok");
+  });
+
+  it("treats a missing service role key as a to-do, without showing the key", () => {
+    expect(check({ ...live, SUPABASE_SERVICE_ROLE_KEY: undefined })["Lesson email sign-in"].state).toBe("todo");
+    expect(check(live)["Lesson email sign-in"].detail).not.toContain("service-role");
   });
 
   it("lists migrations that aren't applied", () => {

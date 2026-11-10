@@ -70,6 +70,13 @@ export function setupChecks({ env, migrations }: SetupInput): SetupCheck[] {
       : { label: "Secrets", state: "ok", detail: "CRON_SECRET and UNSUBSCRIBE_SECRET are set." },
   );
 
+  // The "Begin lesson" link in the daily email signs learners in with this key (lesson-link.ts).
+  checks.push(
+    set(env.SUPABASE_SERVICE_ROLE_KEY)
+      ? { label: "Lesson email sign-in", state: "ok", detail: "The link in the daily email signs learners in." }
+      : { label: "Lesson email sign-in", state: "todo", detail: "SUPABASE_SERVICE_ROLE_KEY isn't set, so the link in the daily email asks learners to sign in first. Copy the service_role key from Supabase → Project Settings → API." },
+  );
+
   // Email: Gmail (SMTP) wins over Resend; with neither, emails only go to the log.
   const smtpUser = env.SMTP_USER?.trim();
   const smtpHost = env.SMTP_HOST?.trim() || "smtp.gmail.com";

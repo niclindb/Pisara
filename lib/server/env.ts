@@ -12,13 +12,19 @@ export const env = {
   databaseUrl: () => required("DATABASE_URL"),
   /** Vercel sends this as "Authorization: Bearer <CRON_SECRET>" on scheduled calls. */
   cronSecret: () => required("CRON_SECRET"),
-  /** Signs unsubscribe links. Any long random string; changing it breaks old links. */
+  /** Signs unsubscribe and email settings links, and the daily email's sign-in link. Any long random string; changing it breaks old links. */
   unsubscribeSecret: () => required("UNSUBSCRIBE_SECRET"),
   /** Public site address used in email links, e.g. https://getpisara.com */
   siteUrl: () => required("SITE_URL"),
   /** Supabase → Project Settings → API. The URL and anon key are public by design. */
   supabaseUrl: () => required("NEXT_PUBLIC_SUPABASE_URL"),
   supabaseAnonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
+  /**
+   * Supabase → Project Settings → API → service_role key (the Supabase Vercel
+   * integration sets it). Server only. Lets the daily email's link sign learners
+   * in; without it the link asks them to sign in as before.
+   */
+  supabaseServiceRoleKey: () => process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || null,
   /** Gmail (or any SMTP server). Takes priority over Resend when SMTP_USER is set. */
   smtpHost: () => process.env.SMTP_HOST?.trim() || "smtp.gmail.com",
   smtpPort: () => Number(process.env.SMTP_PORT?.trim() || 465),
