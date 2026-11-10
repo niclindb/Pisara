@@ -55,10 +55,11 @@ The daily lesson run is set up automatically from `vercel.json`. On the free Hob
 
 In the Supabase dashboard:
 
-1. **Authentication → URL Configuration:** Site URL `https://pisara.vercel.app`. Redirect URLs: add `https://pisara.vercel.app/auth/confirm`.
+1. **Authentication → URL Configuration:** Site URL `https://pisara.vercel.app`. Redirect URLs: add `https://pisara.vercel.app/auth/confirm`. The redirect URL is the one that matters: the Supabase integration in Vercel can reset the Site URL to Vercel's long default address (`<project>-<team>.vercel.app`) after a deploy, so the sign-in emails don't use the Site URL (next steps).
 2. **Authentication → Providers → Email:** keep it on. Set the email link expiry to `900` seconds.
 3. **Authentication → Emails → Templates**, for both **Magic link** and **Confirm signup**: change the link to
-   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
+   `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=email`
+   `{{ .RedirectTo }}` is the address the app asks for (`SITE_URL` + `/auth/confirm`), so the link follows `SITE_URL` in Vercel even if the Site URL above changes.
 4. **Authentication → Emails → SMTP settings:** turn on custom SMTP. Host `smtp.gmail.com`, port `465`, username and sender email the Gmail address, password the app password, sender name `Pisara`.
 5. **Authentication → Rate Limits:** raise "emails sent per hour" to about `30`.
 

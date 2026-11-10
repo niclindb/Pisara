@@ -39,7 +39,8 @@ The full walkthrough, including Vercel and email, is [docs/going-live.md](../doc
    - Authentication → Providers → Email: keep it on, and set the email link expiry to 900 seconds (15 minutes).
    - Authentication → URL Configuration: set the Site URL to your site (for example https://pisara.vercel.app), and add `https://pisara.vercel.app/auth/confirm` (and `http://localhost:3000/auth/confirm` for local runs) to the redirect URLs.
    - Authentication → Emails → Magic link (and Confirm signup): change the link to
-     `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`.
+     `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=email`.
+     `{{ .RedirectTo }}` is the `SITE_URL` + `/auth/confirm` address the app sends, so links keep pointing at the live site even if the Supabase integration in Vercel resets the Site URL to Vercel's long default address. Supabase only honors it when it's in the redirect URLs list above; otherwise it falls back to the Site URL.
      This makes the link work on any device. Supabase's default link only works in the browser that asked for it, which breaks when someone asks on a laptop and opens the email on a phone.
    - Before anyone outside the team signs in: Authentication → Emails → SMTP settings. Supabase's built-in sender only mails your team members. Turn on custom SMTP and use the same Gmail account as the lesson emails: host `smtp.gmail.com`, port `465`, username the Gmail address, password the app password, sender email the Gmail address, sender name `Pisara`. Then raise Authentication → Rate Limits → "emails sent per hour" to about 30. If you later buy a domain, switch these to Resend.
 
