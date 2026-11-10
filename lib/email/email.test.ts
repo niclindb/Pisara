@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { dailyLessonEmail, lessonsWaitingEmail, type EmailContext } from "./templates";
+import { LESSON_LINK_HOURS, lessonLinkToken, readLessonLinkToken } from "./lesson-link";
 import { emailSettingsToken, readEmailSettingsToken, settingsPageFor, unsubscribeUrl, verifyUnsubscribe } from "./unsubscribe";
 import { resendMailer } from "./resend";
 import { smtpMailer, type SmtpTransport } from "./smtp";
@@ -7,7 +8,7 @@ import { pickMailer, type MailSettings } from "./mailer";
 
 const secret = "test-secret";
 const userId = "6f1c1b7a-1111-4222-8333-944455556666";
-const ctx: EmailContext = { baseUrl: "https://getpisara.com", unsubscribeSecret: secret, userId, to: "a@example.com", displayName: "Nick" };
+const ctx: EmailContext = { baseUrl: "https://getpisara.com", unsubscribeSecret: secret, userId, to: "a@example.com", displayName: "Nick", now: new Date("2026-11-10T13:00:00Z") };
 
 describe("unsubscribe links", () => {
   it("sends a clicked link to the email settings page instead of unsubscribing", () => {
@@ -28,15 +29,45 @@ describe("unsubscribe links", () => {
   });
 });
 
+describe("lesson sign-in links", () => {
+  const lessonId = "0b8f6a52-2222-4333-8444-a55566667777";
+  const now = new Date("2026-11-10T13:00:00Z");
+  const token = lessonLinkToken(userId, lessonId, now, secret);
+  const later = (hours: number) => new Date(now.getTime() + hours * 3600_000);
+
+  it("sign in the learner to that lesson until they expire", () => {
+    expect(readLessonLinkToken(token, secret, later(LESSON_LINK_HOURS - 1))).toEqual({ ok: true, userId, lessonId });
+    expect(readLessonLinkToken(token, secret, later(LESSON_LINK_HOURS + 1))).toEqual({ ok: false, lessonId });
+  });
+
+  it("refuse other secrets and edited tokens", () => {
+    expect(readLessonLinkToken(token, "other-secret", now)).toEqual({ ok: false, lessonId: null });
+    const otherUser = token.replace(userId, "00000000-0000-4000-8000-000000000000");
+    expect(readLessonLinkToken(otherUser, secret, now).ok).toBe(false);
+    const [u, l, , sig] = token.split(".");
+    expect(readLessonLinkToken(`${u}.${l}.9999999999.${sig}`, secret, now).ok).toBe(false);
+    expect(readLessonLinkToken("garbage", secret, now)).toEqual({ ok: false, lessonId: null });
+    expect(readLessonLinkToken(`${token}.extra`, secret, now).ok).toBe(false);
+  });
+
+  it("can't be used as an unsubscribe or email settings token", () => {
+    expect(readEmailSettingsToken(`${userId}.${token.split(".")[3]}`, secret)).toBeNull();
+  });
+});
+
 describe("daily lesson email", () => {
-  const lesson = { id: "lesson-1", title: "Why stars <twinkle>", readingMinutes: 4, topicName: "Astronomy" };
+  const lesson = { id: "0b8f6a52-2222-4333-8444-a55566667777", title: "Why stars <twinkle>", readingMinutes: 4, topicName: "Astronomy" };
 
   it("has the title, topic, reading time and a link to the lesson", () => {
     const m = dailyLessonEmail(ctx, lesson, false);
     expect(m.subject).toBe("Why stars <twinkle> (4 min)");
     expect(m.text).toContain("Good morning, Nick.");
     expect(m.text).toContain("Astronomy · 4 min");
-    expect(m.text).toContain("https://getpisara.com/lessons/lesson-1");
+    const link = m.text.match(/Begin lesson: (\S+)/)![1]!;
+    expect(link.startsWith("https://getpisara.com/auth/lesson/")).toBe(true);
+    const token = decodeURIComponent(link.split("/").pop()!);
+    expect(readLessonLinkToken(token, secret, ctx.now)).toEqual({ ok: true, userId, lessonId: lesson.id });
+    expect(m.html).toContain(link);
     expect(m.text).not.toContain("weekly recap");
   });
 

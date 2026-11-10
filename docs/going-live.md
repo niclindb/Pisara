@@ -39,8 +39,9 @@ Gmail allows about 500 emails a day, which covers roughly 400 learners. Lessons,
    | `DATABASE_URL` | the Transaction pooler string from step 1 |
    | `NEXT_PUBLIC_SUPABASE_URL` | the Project URL from step 1 |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | the anon public key from step 1 |
+   | `SUPABASE_SERVICE_ROLE_KEY` | the service_role key (Supabase → Project Settings → API). Server only, never `NEXT_PUBLIC_`. It lets the "Begin lesson" link in the daily email sign learners in. The Supabase integration in Vercel sets it for you. |
    | `CRON_SECRET` | a long random string (`openssl rand -base64 32` in Terminal) |
-   | `UNSUBSCRIBE_SECRET` | another, different long random string. Never change it later, or old unsubscribe links stop working. |
+   | `UNSUBSCRIBE_SECRET` | another, different long random string. It also signs the daily email's sign-in links. Never change it later, or old unsubscribe links stop working. |
    | `SITE_URL` | `https://pisara.vercel.app` (fix it after the first deploy if Vercel gives a different address; no slash at the end) |
    | `SMTP_USER` | the Gmail address |
    | `SMTP_PASSWORD` | the 16-letter app password |

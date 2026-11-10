@@ -2,6 +2,7 @@
 // is picked; the wording and links are what matter here.
 
 import type { EmailMessage } from "../jobs/types";
+import { lessonLinkUrl } from "./lesson-link";
 import { emailSettingsToken, unsubscribeUrl } from "./unsubscribe";
 
 export interface EmailContext {
@@ -10,6 +11,8 @@ export interface EmailContext {
   userId: string;
   to: string;
   displayName: string | null;
+  /** When the email is sent; the sign-in link in the daily email expires a day later. */
+  now: Date;
 }
 
 function escapeHtml(s: string): string {
@@ -50,7 +53,8 @@ export function dailyLessonEmail(
   lesson: { id: string; title: string; readingMinutes: number; topicName: string },
   hasRecap: boolean,
 ): EmailMessage {
-  const url = new URL(`/lessons/${lesson.id}`, ctx.baseUrl).toString();
+  // Signs the learner in and opens the lesson (lesson-link.ts); after a day it asks them to sign in first.
+  const url = lessonLinkUrl(ctx.baseUrl, ctx.userId, lesson.id, ctx.now, ctx.unsubscribeSecret);
   const minutes = `${lesson.readingMinutes} min`;
   const recapLine = "Your weekly recap is waiting on Home too: 5 quick questions on what you learned this week.";
   const html = `<p>${escapeHtml(greeting(ctx.displayName))} Today's lesson is in ${escapeHtml(lesson.topicName)}:</p>
