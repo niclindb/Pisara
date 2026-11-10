@@ -5,7 +5,6 @@ import { LinkButton, Wordmark } from "./ui";
 /** The learner's links, the same on every learner page and on Explore when signed in. */
 export function learnerLinks(user: CurrentUser) {
   const links = [
-    { href: "/home", label: "Home" },
     { href: "/topics", label: "My topics" },
     { href: "/explore", label: "Explore" },
     { href: "/progress", label: "Progress" },
