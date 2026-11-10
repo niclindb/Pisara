@@ -1,0 +1,41 @@
+name: Import lessons
+
+# When a merge to main changes lesson files, load them into the app's database.
+# New lessons arrive as drafts; publish them from the author pages.
+# One-time setup: add the repository secret DATABASE_URL (Settings → Secrets and
+# variables → Actions) with the Supabase "Transaction pooler" connection string.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/lessons/**"
+      - "lib/content/**"
+      - "scripts/import-lessons.ts"
+  workflow_dispatch:
+
+# One import at a time, and never cancel one halfway through.
+concurrency:
+  group: import-lessons
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    name: Import lessons into the database
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check the lesson files
+        run: npm run lessons:check
+      - name: Import
+        run: npm run lessons:import
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}

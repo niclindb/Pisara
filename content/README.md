@@ -4,6 +4,10 @@ Every lesson lives here as one Markdown file under `content/lessons/`. Folders a
 
 ## Loading lessons into the app
 
+**Automatic:** when a pull request that changes `content/lessons/` is merged to `main`, the **Import lessons** GitHub Action runs the import for you. New lessons arrive as drafts; publish them from the author pages. It needs one repository secret, set once: `DATABASE_URL` (GitHub → Settings → Secrets and variables → Actions) with the Supabase "Transaction pooler" connection string. You can also run it by hand from the Actions tab ("Run workflow").
+
+**By hand**, from your own machine:
+
 ```sh
 npm run lessons:check     # checks every file; no database needed (npm test checks them too)
 npm run lessons:import    # loads every file, using DATABASE_URL from .env.local
