@@ -6,7 +6,7 @@
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 import { afterSignIn, loadUser } from "@/lib/server/auth";
-import { paths, safeNext } from "@/lib/server/paths";
+import { NEXT_COOKIE, paths, safeNext } from "@/lib/server/paths";
 import { supabaseServer } from "@/lib/server/supabase";
 
 export async function GET(request: NextRequest) {
@@ -14,8 +14,13 @@ export async function GET(request: NextRequest) {
   const tokenHash = url.searchParams.get("token_hash");
   const type = (url.searchParams.get("type") ?? "email") as EmailOtpType;
   const code = url.searchParams.get("code");
-  const next = safeNext(url.searchParams.get("next"));
-  const to = (path: string) => NextResponse.redirect(new URL(path, url.origin));
+  // Where to go back to: from the link, or remembered when the link was asked for in this browser.
+  const next = safeNext(url.searchParams.get("next")) ?? safeNext(request.cookies.get(NEXT_COOKIE)?.value);
+  const to = (path: string) => {
+    const response = NextResponse.redirect(new URL(path, url.origin));
+    response.cookies.delete(NEXT_COOKIE);
+    return response;
+  };
 
   const supabase = await supabaseServer();
   let userId: string | null = null;

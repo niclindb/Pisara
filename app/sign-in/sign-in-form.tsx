@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import { Button, Field } from "@/components/ui";
 import { sendSignInLink, type SignInState } from "./actions";
 
-export function SignInForm() {
+export function SignInForm({ next = null }: { next?: string | null }) {
   const [state, action, pending] = useActionState<SignInState, FormData>(sendSignInLink, { status: "idle" });
 
   if (state.status === "sent") {
@@ -16,6 +16,7 @@ export function SignInForm() {
         </p>
         <form action={action}>
           <input type="hidden" name="email" value={state.email} />
+          {next && <input type="hidden" name="next" value={next} />}
           <Button variant="secondary" disabled={pending}>
             {pending ? "Sending…" : "Send again"}
           </Button>
@@ -26,6 +27,7 @@ export function SignInForm() {
 
   return (
     <form action={action} className="space-y-5" noValidate>
+      {next && <input type="hidden" name="next" value={next} />}
       <Field label="Email" error={state.status === "error" ? state.message : null}>
         {(p) => <input {...p} name="email" type="email" autoComplete="email" inputMode="email" required />}
       </Field>

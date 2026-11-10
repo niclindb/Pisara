@@ -1,11 +1,14 @@
 // Runs before each page request and keeps the Supabase session cookies fresh,
 // so server pages always see who is signed in. It doesn't block anything:
-// each page decides what a signed-out visitor sees.
+// each page decides what a signed-out visitor sees. It also tells pages which
+// address was asked for, so a sign-in redirect can come back to it.
 
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { REQUESTED_PATH_HEADER } from "@/lib/server/paths";
 
 export async function proxy(request: NextRequest) {
+  request.headers.set(REQUESTED_PATH_HEADER, request.nextUrl.pathname + request.nextUrl.search);
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   let response = NextResponse.next({ request });

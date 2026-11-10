@@ -341,7 +341,7 @@ Explore and the topic page are shared with signed-in learners, who see their own
 | `/settings` | Settings | Display name, email, time zone, recap day, emails on/off, pause, sign out, delete account (with confirmation). | A5, A10, B3, D6, D9 |
 
 ### Author (role = author only)
-Anyone else gets the not-found page. Categories are edited inline on `/author`.
+Signed-out visitors are sent to sign in and come back to the page afterwards; signed-in learners get the not-found page. Categories are edited inline on `/author`.
 
 | Path | Page | What it shows | Stories |
 |---|---|---|---|
