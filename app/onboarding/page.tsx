@@ -24,7 +24,7 @@ export default async function OnboardingPage() {
           <Wordmark href="/" />
         </div>
       </header>
-      <main id="main" className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+      <main id="main" className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
         <h1 className="text-[28px] leading-tight sm:text-[32px]">Pick what you want to learn</h1>
         <p className="mt-2 text-[18px] text-text-muted">
           Turn on a few topics. Each day you get one short lesson from them, and you can change this any time.

@@ -1,7 +1,7 @@
 // axe on every page, for each kind of visitor, in light mode on a desktop and in
-// dark mode on a phone (design 10).
+// dark mode on a phone (design 10). Every page also has the site footer, once.
 
-import { test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { emailSettingsToken } from "../lib/email/unsubscribe";
 import { expectAccessible, signInAs, type Persona } from "./helpers";
 import { IDS } from "./seed";
@@ -60,6 +60,8 @@ for (const [who, urls] of Object.entries(pages) as [Persona, string[]][]) {
           await signInAs(context, who);
           await page.goto(url);
           await expectAccessible(page);
+          await expect(page.getByRole("contentinfo")).toHaveCount(1);
+          await expect(page.getByRole("contentinfo").getByRole("link", { name: "Lindberg Dev" })).toBeVisible();
         });
       }
     });

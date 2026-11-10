@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { SiteFooter } from "@/components/site-footer";
 import { Card, LinkButton, Wordmark } from "@/components/ui";
 import { loadTopicChoices } from "@/lib/jobs/topics";
 import { afterSignIn, currentUser } from "@/lib/server/auth";
@@ -51,7 +50,7 @@ export default async function Landing() {
         </main>
       </div>
 
-      <section aria-labelledby="how-heading" className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
+      <section aria-labelledby="how-heading" className="mx-auto w-full max-w-5xl px-4 py-16 sm:px-6">
         <h2 id="how-heading" className="mb-8 text-[28px] sm:text-[32px]">
           How it works
         </h2>
@@ -67,7 +66,7 @@ export default async function Landing() {
       </section>
 
       {topics.length > 0 && (
-        <section aria-labelledby="topics-heading" className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
+        <section aria-labelledby="topics-heading" className="mx-auto w-full max-w-5xl px-4 pb-16 sm:px-6">
           <h2 id="topics-heading" className="mb-2 text-[28px] sm:text-[32px]">
             Try a lesson first
           </h2>
@@ -88,7 +87,6 @@ export default async function Landing() {
           </ul>
         </section>
       )}
-      <SiteFooter />
     </>
   );
 }

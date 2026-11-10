@@ -6,7 +6,7 @@ export default async function LearnerLayout({ children }: { children: React.Reac
   return (
     <>
       <TopBar user={user} links={learnerLinks(user)} />
-      <main id="main" className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <main id="main" className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6">
         {children}
       </main>
     </>
