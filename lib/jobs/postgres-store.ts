@@ -10,9 +10,9 @@ import type { DeliveryStore, Learner, LearnerDay, RecapData } from "./types";
 
 export type Sql = postgres.Sql;
 
-export function connect(databaseUrl: string): Sql {
+export function connect(databaseUrl: string, options: postgres.Options<Record<string, postgres.PostgresType>> = {}): Sql {
   // prepare: false is required by Supabase's transaction pooler.
-  return postgres(databaseUrl, { prepare: false, max: 1 });
+  return postgres(databaseUrl, { prepare: false, max: 1, ...options });
 }
 
 export function postgresStore(sql: Sql): DeliveryStore {
