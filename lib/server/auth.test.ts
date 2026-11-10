@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { afterSignIn, normalizeEmail } from "./auth";
-import { safeNext } from "./paths";
+import { safeNext, signInFor } from "./paths";
 
 describe("sign-in helpers", () => {
   it("tidies and checks email addresses", () => {
@@ -24,5 +24,11 @@ describe("sign-in helpers", () => {
     expect(safeNext("https://evil.com")).toBeNull();
     expect(safeNext("/\\evil.com")).toBeNull();
     expect(safeNext(null)).toBeNull();
+  });
+
+  it("builds a sign-in address that comes back to the page", () => {
+    expect(signInFor("/author/topics/abc")).toBe("/sign-in?next=%2Fauthor%2Ftopics%2Fabc");
+    expect(signInFor("https://evil.example")).toBe("/sign-in");
+    expect(signInFor(null)).toBe("/sign-in");
   });
 });

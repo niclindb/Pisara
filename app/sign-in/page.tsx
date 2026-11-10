@@ -3,13 +3,16 @@ import { redirect } from "next/navigation";
 import { SiteFooter } from "@/components/site-footer";
 import { Card, Wordmark } from "@/components/ui";
 import { afterSignIn, currentUser } from "@/lib/server/auth";
+import { safeNext } from "@/lib/server/paths";
 import { SignInForm } from "./sign-in-form";
 
 export const metadata: Metadata = { title: "Sign in" };
 
-export default async function SignInPage() {
+export default async function SignInPage({ searchParams }: { searchParams: Promise<{ next?: string | string[] }> }) {
+  const { next: raw } = await searchParams;
+  const next = safeNext(typeof raw === "string" ? raw : null);
   const user = await currentUser();
-  if (user) redirect(afterSignIn(user, null));
+  if (user) redirect(afterSignIn(user, next));
   return (
     <>
       <main
@@ -21,7 +24,7 @@ export default async function SignInPage() {
         </div>
         <Card>
           <h1 className="mb-5 text-[28px]">Sign in</h1>
-          <SignInForm />
+          <SignInForm next={next} />
         </Card>
       </main>
       <SiteFooter />
