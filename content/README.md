@@ -4,7 +4,7 @@ Every lesson lives here as one Markdown file under `content/lessons/`. Folders a
 
 ## Loading lessons into the app
 
-**Automatic:** when a pull request that changes `content/lessons/` is merged to `main`, the **Import lessons** GitHub Action runs the import for you. New lessons arrive as drafts; publish them from the author pages. It needs one repository secret, set once: `DATABASE_URL` (GitHub → Settings → Secrets and variables → Actions) with the Supabase "Transaction pooler" connection string. You can also run it by hand from the Actions tab ("Run workflow").
+**Automatic:** when a pull request that changes `content/lessons/` is merged to `main`, the **Import lessons** GitHub Action runs the import for you. New lessons arrive as drafts; publish them from the author pages. It reads the secret `DATABASE_URL` from the GitHub environment named `env` (GitHub → Settings → Environments → env), set once, with the Supabase "Transaction pooler" connection string. You can also run it by hand from the Actions tab ("Run workflow").
 
 **By hand**, from your own machine:
 

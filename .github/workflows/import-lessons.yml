@@ -2,8 +2,9 @@ name: Import lessons
 
 # When a merge to main changes lesson files, load them into the app's database.
 # New lessons arrive as drafts; publish them from the author pages.
-# One-time setup: add the repository secret DATABASE_URL (Settings → Secrets and
-# variables → Actions) with the Supabase "Transaction pooler" connection string.
+# One-time setup: add the secret DATABASE_URL to the GitHub environment named
+# "env" (Settings → Environments → env) with the Supabase "Transaction pooler"
+# connection string.
 
 on:
   push:
@@ -26,6 +27,7 @@ jobs:
   import:
     name: Import lessons into the database
     runs-on: ubuntu-latest
+    environment: env
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
