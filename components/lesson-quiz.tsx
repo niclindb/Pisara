@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, useTransition, type ReactNode } from "reac
 import type { QuizOutcome } from "@/app/(learner)/actions";
 import type { QuizQuestionView, QuizView } from "@/lib/jobs/quiz";
 import type { GradedAnswer, SubmittedAnswer } from "@/lib/rules/quiz";
+import { QuizHint } from "./quiz-hint";
 import { Button, ErrorList } from "./ui";
 
 type Done = Extract<QuizOutcome, { ok: true }>;
@@ -53,7 +54,8 @@ export function LessonQuiz({
 
   const questions = [...quiz.lessonQuestions, ...quiz.reviewQuestions];
   const graded = new Map<string, GradedAnswer>(result ? [...result.lessonAnswers, ...result.reviewAnswers].map((a) => [a.questionId, a]) : []);
-  const allAnswered = questions.every((q) => chosen[q.id] !== undefined);
+  const unanswered = questions.flatMap((q, i) => (chosen[q.id] === undefined ? [i + 1] : []));
+  const allAnswered = unanswered.length === 0;
   const right = [...graded.values()].filter((a) => a.correct).length;
 
   const submit = () =>
@@ -103,7 +105,7 @@ export function LessonQuiz({
                         disabled={Boolean(result) || pending}
                         checked={chosen[q.id] === j}
                         onChange={() => setChosen({ ...chosen, [q.id]: j })}
-                        className="h-5 w-5 shrink-0"
+                        className="radio"
                       />
                       <span>{o}</span>
                       {isRight && <RightMark chosen />}
@@ -127,13 +129,14 @@ export function LessonQuiz({
         <div className="mt-5 space-y-4">
           <ErrorList problems={problems} />
           <div className="flex flex-wrap items-center gap-3">
-            <Button disabled={!allAnswered || pending} onClick={submit}>
+            <Button disabled={!allAnswered || pending} onClick={submit} aria-describedby={allAnswered ? undefined : "quiz-hint"}>
               {pending ? "Checking…" : "Check answers"}
             </Button>
             <Button variant="quiet" disabled={pending} onClick={() => setSkipped(true)}>
               Skip quiz
             </Button>
           </div>
+          {!allAnswered && <QuizHint id="quiz-hint" unanswered={unanswered} total={questions.length} />}
         </div>
       ) : (
         <div ref={resultsRef} tabIndex={-1} role="status" className="mt-6 space-y-5 outline-none">
