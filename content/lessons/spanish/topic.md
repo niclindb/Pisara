@@ -6,7 +6,7 @@ goal: Get through everyday moments in Spanish, from saying hello and ordering di
 
 A practical start in Spanish for travel and everyday life. Each lesson gives you a handful of phrases you can use the same day, how to say them, and the one or two grammar points that make them work. No long verb tables: just enough to greet people, order food, find your way, handle numbers and times, and keep a short conversation going.
 
-The second half builds the verbs underneath those phrases: ser and estar, the present tense, the handful of irregular verbs you'll use most, and the two past tenses, so you can make plans, sort out problems and tell people what you did. From lesson 6 on, each lesson opens with a quick recall question from an earlier one, so what you learned keeps coming back.
+The second half builds the verbs underneath those phrases: ser and estar, the present tense, the handful of irregular verbs you'll use most, and the two past tenses, so you can make plans, sort out problems and tell people what you did. Lessons 14 to 18 then put it to work on the road: transport, hotels, shopping, following instructions and a night out. From lesson 6 on, each lesson opens with a quick recall question from an earlier one, so what you learned keeps coming back.
 
 The phrases work across Spain and Latin America. Where a country says something differently, the lesson points it out.
 
@@ -25,3 +25,8 @@ The phrases work across Spain and Latin America. Where a country says something 
 11. Telling the story of your trip (Intermediate): fui, estuve, tuve, hice and the other irregular past forms
 12. When something goes wrong (Intermediate): hotel problems, lost things, feeling unwell
 13. Setting the scene (Intermediate): the imperfect, and when to use it instead of the preterite
+14. Getting around (Intermediate): tickets, departure times and platforms, buses and taxis
+15. At the hotel (Intermediate): checking in and out, ¿se puede…? and hay que
+16. Shopping and markets (Intermediate): sizes, bargaining, and lo, la, los, las for "it" and "them"
+17. Following instructions (Intermediate): understanding commands like siga, gire and tome, and signs
+18. A night out (Intermediate): booking a table, special requests, fixing the bill and who pays
