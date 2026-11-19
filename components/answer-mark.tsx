@@ -40,5 +40,9 @@ export function NotQuiteMark({ className = "ml-auto" }: { className?: string }) 
 
 /** Option row styles: the learner's pick in green when right, crimson when not. The right answer is never lit up after a miss. */
 export function optionClass(right: boolean, wrong: boolean): string {
-  return right ? "border-success bg-success-bg" : wrong ? "border-danger bg-danger-bg" : "border-border";
+  return right
+    ? "border-success bg-success-bg [--radio-color:var(--success)]"
+    : wrong
+      ? "border-danger bg-danger-bg [--radio-color:var(--danger)]"
+      : "border-border";
 }

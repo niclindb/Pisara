@@ -91,6 +91,11 @@ export const pairs: ColorPair[] = [
   { fg: "focusRing", bg: "page", use: "ui", where: "Keyboard focus ring" },
   { fg: "focusRing", bg: "surface", use: "ui", where: "Focus ring on cards" },
   { fg: "primary", bg: "page", use: "ui", where: "Primary button against the page" },
+  { fg: "primary", bg: "surface", use: "ui", where: "Picked radio button on cards" },
+  { fg: "success", bg: "surface", use: "ui", where: "Picked radio in a right answer" },
+  { fg: "danger", bg: "surface", use: "ui", where: "Picked radio in a missed answer" },
+  { fg: "border", bg: "successBg", use: "ui", where: "Radio ring in a graded right answer row" },
+  { fg: "border", bg: "dangerBg", use: "ui", where: "Radio ring in a graded missed answer row" },
   { fg: "success", bg: "successBg", use: "ui", where: "Right answer box border" },
   { fg: "danger", bg: "dangerBg", use: "ui", where: "Missed quiz answer and error summary box borders" },
 ];
