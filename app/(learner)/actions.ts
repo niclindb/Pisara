@@ -24,7 +24,7 @@ const extraProblems = {
   nothing_left: "You've read every lesson in your topics so far. Turn on another topic to keep going.",
 } as const;
 
-/** "Start" on a topic, or "Surprise me" without a topic (B7). Opens the new lesson. */
+/** "Start a lesson" on a topic, or "Surprise me" without a topic (B7). Opens the new lesson. */
 export async function extraLessonAction(_: ActionResult | null, form: FormData): Promise<ActionResult> {
   const user = await requireLearner();
   const topicId = String(form.get("topicId") ?? "") || undefined;
