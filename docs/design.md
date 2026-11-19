@@ -93,7 +93,7 @@ erDiagram
 | description | text | Short blurb for the topic picker |
 | outline | text | Author's path outline, Markdown (E2) |
 
-A topic is shown to learners when it has at least 3 published lessons (E4). A parent with too few lessons is still shown as a heading if any of its sub-topics are shown. Every topic in the tree can be picked, not just the deepest ones.
+A topic is shown to learners when it has at least one published lesson (E4). A parent with no published lessons is still shown as a heading if any of its sub-topics are shown. Every topic in the tree can be picked, not just the deepest ones.
 
 **lessons**
 | Column | Type | Notes |

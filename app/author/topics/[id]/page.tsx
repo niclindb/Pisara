@@ -5,7 +5,6 @@ import { ActionForm } from "@/components/action-form";
 import { MoveButtons } from "@/components/move-buttons";
 import { Card, Field, PageTitle, StatusBadge } from "@/components/ui";
 import { loadContentTree, loadTopicLessons, type AuthorTopic } from "@/lib/jobs/author";
-import { MIN_PUBLISHED_LESSONS } from "@/lib/rules/constants";
 import { db } from "@/lib/server/db";
 import {
   createLessonAction,
@@ -81,7 +80,7 @@ export default async function TopicEditor({ params }: { params: Promise<{ id: st
       <p className="-mt-4 mb-6 text-text-muted">
         {topic.pickable
           ? "Learners can see and pick this topic."
-          : `Learners can't see this topic until ${MIN_PUBLISHED_LESSONS} lessons are published (${topic.lessons.published} so far).`}
+          : "Learners can't see this topic until a lesson is published."}
       </p>
 
       <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">

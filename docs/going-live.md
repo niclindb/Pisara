@@ -75,7 +75,7 @@ In the Supabase dashboard:
 
 ## 6. Add lessons
 
-A topic only shows up for learners once it has **3 published lessons**. Two ways to add them:
+A topic shows up for learners as soon as it has **one published lesson**. Two ways to add lessons:
 
 - **In the app:** `/author` → add a category and a topic → write lessons in the lesson editor → Publish.
 - **From files:** put Markdown files in `content/lessons/` (format in [content/README.md](../content/README.md)), put `DATABASE_URL=...` in a `.env.local` file in this repo on your Mac, and run `npm run lessons:import`. Imported lessons arrive as drafts: preview each one in `/author`, then publish.

@@ -152,7 +152,7 @@ Three layers, each one short:
 **Acceptance criteria**
 - E1: The app ships as an empty template with no built-in categories or topics. Everything learners see is added by an author.
 - E4: A lesson has a title, a body of any length, and a reading time. Optionally it has practice problems (each a Markdown prompt and a worked solution) and up to 3 multiple-choice questions (each with one correct answer and a one-line explanation). A lesson can be published with neither, but any problem or question it has must be complete. Drafts are never shown to learners.
-- E4/E5: Only lessons marked "Published" can be picked. A topic appears to learners once it has at least 3 published lessons.
+- E4/E5: Only lessons marked "Published" can be picked. A topic appears to learners once it has at least one published lesson.
 - E5: When a learner has read every published lesson in a topic, the topic stops being picked and shows "New lessons coming soon." When a new lesson is published, it becomes eligible again on the next pick.
 - E6: Each lesson's level is Beginner, Intermediate or Advanced. Reading time is estimated at about 200 words per minute and can be edited.
 - E7: An unpublished lesson stays on Home and in the history of learners who already got it, but is never picked again, and its questions leave review.

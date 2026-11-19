@@ -109,8 +109,17 @@ describe.skipIf(!url)("delivery job on Postgres", () => {
     expect(day4.outcomes[0]).toMatchObject({ outcome: "skipped", reason: "nothing_to_pick" });
   });
 
-  it("doesn't pick a topic with fewer than 3 published lessons", async () => {
-    await sql`update public.lessons set status = 'draft' where id = ${lesson(1, 3)}`;
+  it("picks a topic with only one published lesson", async () => {
+    await sql`update public.lessons set status = 'draft' where id in (${lesson(1, 2)}, ${lesson(1, 3)})`;
+    const { deps: d } = deps();
+    const summary = await runDailyDelivery(at("2026-11-09T11:00:00Z"), d);
+    expect(summary.outcomes[0]).toMatchObject({ outcome: "delivered" });
+    const delivered = await sql`select lesson_id from public.deliveries`;
+    expect(delivered.map((r) => r.lesson_id)).toEqual([lesson(1, 1)]);
+  });
+
+  it("doesn't pick a topic with no published lessons", async () => {
+    await sql`update public.lessons set status = 'draft' where topic_id = ${ASTRO}`;
     const { deps: d } = deps();
     const summary = await runDailyDelivery(at("2026-11-09T11:00:00Z"), d);
     expect(summary.outcomes[0]).toMatchObject({ outcome: "skipped", reason: "nothing_to_pick" });

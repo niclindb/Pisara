@@ -50,8 +50,8 @@ export const LESSON_MILESTONES = [1, 10, 25, 50, 100] as const;
 /** Topics turned on before the "each will move slowly" note (D4). */
 export const MANY_TOPICS = 8;
 
-/** Published lessons a topic needs before learners can pick it (E4). */
-export const MIN_PUBLISHED_LESSONS = 3;
+/** Published lessons a topic needs before learners can pick it (E4): any one will do. */
+export const MIN_PUBLISHED_LESSONS = 1;
 
 /** Words per minute used to estimate a lesson's reading time (E6). */
 export const READING_WORDS_PER_MINUTE = 200;

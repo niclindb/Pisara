@@ -52,7 +52,7 @@ export function postgresStore(sql: Sql): DeliveryStore {
         where d.user_id = ${learner.id} and d.kind = 'daily'
           and d.local_date between ${addDays(today, -2)} and ${addDays(today, -1)}`;
 
-      // Turned-on topics that learners can pick (enough published lessons).
+      // Turned-on topics that learners can pick (at least one published lesson).
       const topics = await sql`
         select t.id, t.name, ut.interest, ut.last_delivered_at
         from public.user_topics ut join public.topics t on t.id = ut.topic_id
