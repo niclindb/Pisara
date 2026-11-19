@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CategoryHeading, TopicTreeList } from "@/components/topic-tree";
 import { PageTitle } from "@/components/ui";
 import { loadTopicChoices, type TopicChoices } from "@/lib/jobs/topics";
 import { currentUser } from "@/lib/server/auth";
@@ -26,34 +27,48 @@ export default async function ExplorePage() {
 
 function TopicTree({ choices, signedIn }: { choices: TopicChoices; signedIn: boolean }) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {choices.categories.map((c) => {
         const topics = choices.topics.filter((t) => t.categoryId === c.id);
         if (!topics.length) return null;
         return (
           <section key={c.id} aria-labelledby={`cat-${c.id}`}>
-            <h2 id={`cat-${c.id}`} className="mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-accent">
-              {c.name}
-            </h2>
-            <ul className="divide-y divide-hairline rounded-card border border-hairline bg-surface">
-              {topics.map((t) => (
-                <li key={t.id} className="py-4 pr-5" style={{ paddingLeft: `${1.25 + t.depth * 1.5}rem` }}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <CategoryHeading id={`cat-${c.id}`}>{c.name}</CategoryHeading>
+            <TopicTreeList
+              topics={topics}
+              renderTopic={(t) => (
+                <>
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
                     <Link href={`/explore/${t.id}`} className="font-heading text-[18px] font-bold hover:underline hover:text-accent">
                       {t.name}
                     </Link>
-                    <span className="text-[15px] text-text-muted">
-                      {signedIn && t.interest > 0 ? "On · " : ""}
-                      {t.pickable ? `${t.lessonCount} lessons` : "Coming soon"}
+                    <span className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[15px]">
+                      {signedIn && t.pickable && <TopicStatus on={t.interest > 0} />}
+                      <span className="text-text-muted">{t.pickable ? `${t.lessonCount} lessons` : "Coming soon"}</span>
                     </span>
                   </div>
                   {t.goal && <p className="mt-1">{t.goal}</p>}
-                </li>
-              ))}
-            </ul>
+                </>
+              )}
+            />
           </section>
         );
       })}
     </div>
+  );
+}
+
+// Whether the topic is one the learner's daily lessons come from. A filled tag
+// with a check for yes, plain text for no, so the two never rely on color alone.
+function TopicStatus({ on }: { on: boolean }) {
+  return on ? (
+    <span className="inline-flex items-center gap-1.5 rounded-[4px] bg-success-bg px-2 py-0.5 font-bold text-success">
+      <svg aria-hidden viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.25">
+        <path d="M3 8.5l3.2 3L13 4.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      In your lessons
+    </span>
+  ) : (
+    <span className="text-text-muted">Not in your lessons</span>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { InterestControl } from "@/components/interest-control";
+import { CategoryHeading, TopicTreeList } from "@/components/topic-tree";
 import { Button, ErrorList, Field } from "@/components/ui";
 import type { TopicChoices } from "@/lib/jobs/topics";
 import { MANY_TOPICS } from "@/lib/rules/constants";
@@ -54,22 +55,25 @@ export function OnboardingForm({ choices, zones }: { choices: TopicChoices; zone
         <h2 id="topics-heading" className="mb-1 text-[22px]">
           Topics
         </h2>
-        <p className="mb-5 text-text-muted">Topics you turn up come up more often.</p>
-        <div className="space-y-8">
+        <p className="mb-5 max-w-2xl text-text-muted">
+          Your daily lesson comes from the topics you turn on. Set a topic higher, up to 5, to get its lessons more often than your
+          other topics. You can change this any time.
+        </p>
+        <div className="space-y-10">
           {choices.categories.map((c) => {
             const topics = choices.topics.filter((t) => t.categoryId === c.id);
             if (!topics.length) return null;
             return (
               <section key={c.id} aria-labelledby={`cat-${c.id}`}>
-                <h3 id={`cat-${c.id}`} className="mb-3 text-[13px] font-bold uppercase tracking-[0.08em] text-accent">
+                <CategoryHeading id={`cat-${c.id}`} level={3}>
                   {c.name}
-                </h3>
-                <ul className="divide-y divide-hairline rounded-card border border-hairline bg-surface">
-                  {topics.map((t) => {
-                    const d = t.depth;
+                </CategoryHeading>
+                <TopicTreeList
+                  topics={topics}
+                  renderTopic={(t) => {
                     const on = (interest[t.id] ?? 0) > 0;
                     return (
-                      <li key={t.id} className="px-5 py-4" style={{ paddingLeft: `${1.25 + d * 1.5}rem` }}>
+                      <>
                         <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
                           <div className="min-w-0 flex-1 basis-64">
                             <p className="font-heading text-[18px] font-bold">{t.name}</p>
@@ -92,10 +96,10 @@ export function OnboardingForm({ choices, zones }: { choices: TopicChoices; zone
                           )}
                         </div>
                         {on && t.prerequisiteNote && <p className="mt-2 text-[15px] text-text-muted">{t.prerequisiteNote}</p>}
-                      </li>
+                      </>
                     );
-                  })}
-                </ul>
+                  }}
+                />
               </section>
             );
           })}

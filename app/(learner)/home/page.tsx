@@ -107,7 +107,7 @@ export default async function HomePage() {
                   roomForExtra && (
                     <ActionForm
                       action={extraLessonAction}
-                      submit="Start"
+                      submit="Start a lesson"
                       submitLabel={`Start a lesson in ${t.name}`}
                       pendingLabel="Opening…"
                       variant="secondary"
