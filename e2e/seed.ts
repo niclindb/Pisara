@@ -1,6 +1,6 @@
 // Fills the page-test database with a small, known world: an author, a learner
-// with lessons waiting and a recap, a brand-new learner, and one topic with three
-// published lessons. Runs before the page tests. Deletes everything in that database.
+// with lessons waiting, a recap and a milestone, a brand-new learner, one topic
+// with three published lessons, and one more topic Home can suggest. Runs before the page tests. Deletes everything in that database.
 
 import postgres from "postgres";
 
@@ -11,6 +11,7 @@ export const IDS = {
   category: "10000000-0000-4000-8000-000000000001",
   astronomy: "20000000-0000-4000-8000-000000000001",
   stars: "20000000-0000-4000-8000-000000000002",
+  planets: "20000000-0000-4000-8000-000000000003",
   lessons: [1, 2, 3].map((n) => `30000000-0000-4000-8000-00000000000${n}`),
   questions: [1, 2, 3].map((n) => `40000000-0000-4000-8000-00000000000${n}`),
   recap: "50000000-0000-4000-8000-000000000001",
@@ -43,10 +44,17 @@ export default async function seed() {
         values (${IDS.questions[i]!}, ${id}, ${`What pulls the gas in? (${i + 1})`}, ${["Gravity", "Magnetism"]}, 0, 'Gravity pulls it together.')`;
       await sql`insert into public.practice_problems (lesson_id, prompt, solution) values (${id}, 'Why does it heat up?', 'Squeezing gas heats it.')`;
     }
+    await sql`insert into public.topics (id, category_id, position, name, goal, description)
+      values (${IDS.planets}, ${IDS.category}, 2, 'Planets', 'Tell the planets apart', 'What each planet is made of, and why.')`;
+    for (const n of [1, 2, 3]) {
+      await sql`insert into public.lessons (topic_id, position, level, title, body, reading_minutes, status)
+        values (${IDS.planets}, ${n}, 1, ${`Planets ${n}`}, 'Rock and gas.', 3, 'published')`;
+    }
     await sql`insert into public.user_topics (user_id, topic_id, interest) values (${IDS.learner}, ${IDS.stars}, 3)`;
     await sql`insert into public.deliveries (user_id, lesson_id, kind, local_date, delivered_at, read_at)
       values (${IDS.learner}, ${IDS.lessons[0]!}, 'daily', '2026-11-03', '2026-11-03T13:00:00Z', '2026-11-03T14:00:00Z'),
              (${IDS.learner}, ${IDS.lessons[1]!}, 'daily', '2026-11-04', '2026-11-04T13:00:00Z', null)`;
+    await sql`insert into public.milestones (user_id, kind, achieved_at) values (${IDS.learner}, 'lessons_1', '2026-11-03T14:05:00Z')`;
     await sql`insert into public.weekly_recaps (id, user_id, week_start, question_ids)
       values (${IDS.recap}, ${IDS.learner}, '2026-10-26', ${[IDS.questions[0]!]})`;
   } finally {

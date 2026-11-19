@@ -43,6 +43,8 @@ export interface HomeView {
   noTopicsOn: boolean;
   /** Extra lessons still allowed today (B7): 0 hides Start and "Surprise me" until tomorrow. */
   extrasLeftToday: number;
+  /** The newest milestone (D3), with the topic's name for topic milestones, and the learner's local date it came. */
+  latestMilestone: { kind: string; topicName: string | null; on: LocalDate } | null;
 }
 
 export async function loadHome(sql: Sql, userId: string, now: Date): Promise<HomeView | null> {
@@ -67,6 +69,13 @@ export async function loadHome(sql: Sql, userId: string, now: Date): Promise<Hom
            ))::int as with_lessons_left
     from public.user_topics ut where ut.user_id = ${userId} and ut.interest > 0`;
   const recap = await loadRecap(sql, userId);
+  const [milestone] = await sql`
+    select m.kind, m.achieved_at, t.name as topic_name
+    from public.milestones m
+    left join public.topics t on t.id::text = split_part(m.kind, ':', 2)
+    where m.user_id = ${userId}
+    order by m.achieved_at desc
+    limit 1`;
   const paused = p.paused_until && p.paused_until >= today ? (p.paused_until as LocalDate) : null;
 
   const state: HomeState = unread.length
@@ -92,6 +101,9 @@ export async function loadHome(sql: Sql, userId: string, now: Date): Promise<Hom
     pausedUntil: paused,
     noTopicsOn: topics!.on_count === 0,
     extrasLeftToday: Math.max(0, EXTRA_LESSONS_PER_DAY - (await extraLessonsToday(sql, userId, today))),
+    latestMilestone: milestone
+      ? { kind: milestone.kind, topicName: milestone.topic_name, on: localDate(milestone.achieved_at, p.time_zone) }
+      : null,
   };
 }
 

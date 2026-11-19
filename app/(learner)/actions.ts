@@ -12,6 +12,7 @@ import { ChoiceError, setTopicInterest } from "@/lib/jobs/topics";
 import type { SettingsChange } from "@/lib/rules/settings";
 import { supabaseServer } from "@/lib/server/supabase";
 import { milestoneMessage } from "@/lib/rules/milestones";
+import { DEFAULT_INTEREST } from "@/lib/rules/onboarding";
 import type { GradedAnswer, SubmittedAnswer } from "@/lib/rules/quiz";
 import { db } from "@/lib/server/db";
 import { requireLearner } from "./guard";
@@ -59,6 +60,19 @@ export async function submitQuizAction(
   }
   revalidatePath("/", "layout");
   return { ok: true, milestoneText, ...result };
+}
+
+/** "Add" on Home's suggested topic: turns it on at the usual interest (A4). */
+export async function addTopicAction(_: ActionResult | null, form: FormData): Promise<ActionResult> {
+  const user = await requireLearner();
+  try {
+    await setTopicInterest(db(), user.id, String(form.get("topicId") ?? ""), DEFAULT_INTEREST);
+  } catch (err) {
+    if (err instanceof ChoiceError) return { ok: false, problems: err.problems };
+    throw err;
+  }
+  revalidatePath("/", "layout");
+  return { ok: true, message: "Added." };
 }
 
 /** Turns a topic on or off, or sets how often it comes up (A4). Returns the prerequisite note, if any. */

@@ -6,15 +6,18 @@ import { loadHome, type HomeView, type LessonCard } from "@/lib/jobs/learner";
 import { loadTopicChoices } from "@/lib/jobs/topics";
 import { INBOX_LIMIT } from "@/lib/rules/constants";
 import { addDays, formatDate } from "@/lib/rules/dates";
+import { milestoneMessage } from "@/lib/rules/milestones";
+import { suggestTopic } from "@/lib/rules/progress";
 import { db } from "@/lib/server/db";
-import { extraLessonAction } from "../actions";
+import { addTopicAction, extraLessonAction } from "../actions";
 import { requireLearner } from "../guard";
 
 export const metadata: Metadata = { title: "Home" };
 
-// Home (B5, B6, B7, C7, D6): the current lesson on top, the other waiting
-// lessons, then the weekly recap, then the learner's topics with Start. It
-// never mentions how many lessons Home can hold.
+// Home (B5, B6, B7, C7, D3, D6): the current lesson on top, the other waiting
+// lessons, then the weekly recap, the latest milestone, the learner's topics
+// with Start, and one suggested topic to add. It never mentions how many
+// lessons Home can hold.
 
 export default async function HomePage() {
   const user = await requireLearner();
@@ -27,6 +30,8 @@ export default async function HomePage() {
   const roomForExtra = home.waiting.length < INBOX_LIMIT && home.extrasLeftToday > 0;
   const doneForToday = home.waiting.length < INBOX_LIMIT && home.extrasLeftToday === 0;
   const [current, ...others] = home.waiting;
+  const suggested = suggestTopic(choices.topics);
+  const suggestedParent = suggested?.parentId ? choices.topics.find((t) => t.id === suggested.parentId) : undefined;
 
   return (
     <div className="space-y-10">
@@ -74,6 +79,17 @@ export default async function HomePage() {
         </Card>
       )}
 
+      {home.latestMilestone && (
+        <section aria-labelledby="milestone-heading" className="border-t border-hairline pt-5">
+          <h2 id="milestone-heading" className="font-sans! text-[15px] font-medium text-text-muted">
+            Latest milestone · {formatDate(home.latestMilestone.on, now.getUTCFullYear())}
+          </h2>
+          <p className="mt-1 font-heading text-[22px] font-bold leading-snug">
+            {milestoneMessage(home.latestMilestone.kind, () => home.latestMilestone?.topicName ?? undefined)}
+          </p>
+        </section>
+      )}
+
       {topicsOn.length > 0 && (
         <section aria-labelledby="topics-heading">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -119,6 +135,38 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
+        </section>
+      )}
+
+      {suggested && (
+        <section aria-labelledby="suggested-heading" className="border-t border-hairline pt-5">
+          <h2 id="suggested-heading" className="font-sans! text-[15px] font-medium text-text-muted">
+            Suggested topic
+          </h2>
+          <div className="mt-1 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+            <div className="min-w-0 flex-1">
+              <Link href={`/explore/${suggested.id}`} className="font-heading text-[22px] font-bold hover:underline hover:text-accent">
+                {suggested.name}
+              </Link>
+              {(suggested.description || suggested.goal) && (
+                <p className="mt-1 max-w-xl">{suggested.description || suggested.goal}</p>
+              )}
+              <p className="mt-1 text-[15px] text-text-muted">
+                {suggested.progress?.total ?? suggested.lessonCount} lessons
+                {suggestedParent?.progress?.finished ? ` · Goes deeper into ${suggestedParent.name}, which you finished` : ""}
+              </p>
+            </div>
+            <ActionForm
+              key={suggested.id}
+              action={addTopicAction}
+              submit="Add"
+              submitLabel={`Add ${suggested.name} to your topics`}
+              pendingLabel="Adding…"
+              variant="secondary"
+            >
+              <input type="hidden" name="topicId" value={suggested.id} />
+            </ActionForm>
+          </div>
         </section>
       )}
     </div>
