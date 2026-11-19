@@ -55,7 +55,7 @@ begin
     raise exception 'two daily deliveries allowed';
   exception when unique_violation then null;
   end;
-  -- Visible topics: Stars (3 published) is pickable; Astronomy is shown as its heading only.
+  -- Visible topics: Stars (published lessons) is pickable; Astronomy is shown as its heading only.
   select count(*) into n from public.visible_topics where pickable; if n <> 1 then raise exception 'pickable: %', n; end if;
   select count(*) into n from public.visible_topics; if n <> 2 then raise exception 'visible: %', n; end if;
 end $$;

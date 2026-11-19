@@ -23,6 +23,7 @@ export const MIGRATIONS = [
   "three levels",
   "daily run log",
   "third waiting reminder",
+  "one lesson is enough",
 ] as const;
 export type MigrationName = (typeof MIGRATIONS)[number];
 
@@ -36,7 +37,8 @@ export const MIGRATION_MARKERS_SQL = `
             and pg_get_constraintdef(oid) like '%<= 3%') as "three levels",
     to_regclass('public.job_runs') is not null as "daily run log",
     exists (select 1 from pg_constraint where conname = 'profiles_waiting_reminders_sent_check'
-            and pg_get_constraintdef(oid) like '%<= 3%') as "third waiting reminder"
+            and pg_get_constraintdef(oid) like '%<= 3%') as "third waiting reminder",
+    position('>= 3' in pg_get_viewdef('public.visible_topics'::regclass)) = 0 as "one lesson is enough"
 `;
 
 const set = (v: string | undefined) => Boolean(v?.trim());

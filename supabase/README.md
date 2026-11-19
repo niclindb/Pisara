@@ -11,6 +11,7 @@ The database is defined entirely in `migrations/`. Don't change tables or access
 | `migrations/20261105020000_third_waiting_reminder.sql` | Lets `waiting_reminders_sent` reach 3, for the last "still here" email |
 | `migrations/20261105010000_job_runs.sql` | A record of each daily run (totals and first error), shown on the author page. Server only: no access through the public API |
 | `migrations/20261104010000_practice_problems.sql` | Optional practice problems per lesson (prompt + worked solution), readable by whoever can read the lesson |
+| `migrations/20261119000000_one_lesson_is_enough.sql` | A topic shows to learners once it has one published lesson (was 3) |
 | `migrations/20261105000000_three_levels.sql` | Lesson levels become 1 Beginner, 2 Intermediate, 3 Advanced |
 | `tests/load_schema.sh` | Loads the stand-in and every migration, in order, into a database |
 | `tests/stub_supabase.sql` | A tiny stand-in for Supabase's `auth` schema and roles, so the migration can be tested on plain Postgres |

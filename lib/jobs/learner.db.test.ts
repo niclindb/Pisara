@@ -102,7 +102,10 @@ describe.skipIf(!url)("learner pages on Postgres", () => {
     await expect(gradePreviewQuiz(sql, L(1, 2), [])).rejects.toThrow("isn't a preview");
     expect(await previewLessonId(sql, STARS)).toBe(L(1, 1));
     await sql`update public.lessons set status = 'unpublished' where id = ${L(1, 1)}`;
-    // Two published lessons left: learners can't pick Stars yet, so no preview either.
+    // One published lesson is enough: the next one becomes the preview.
+    expect(await previewLessonId(sql, STARS)).toBe(L(1, 2));
+    await sql`update public.lessons set status = 'unpublished' where topic_id = ${STARS}`;
+    // No published lessons left: learners can't pick Stars, so no preview either.
     expect(await previewLessonId(sql, STARS)).toBeNull();
   });
 

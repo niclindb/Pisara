@@ -12,7 +12,7 @@ const U = "00000000-0000-4000-8000-000000000001";
 const CAT = "10000000-0000-4000-8000-000000000001";
 const STARS = "20000000-0000-4000-8000-000000000001";
 const HOLES = "20000000-0000-4000-8000-000000000002"; // under Stars
-const ROME = "20000000-0000-4000-8000-000000000003"; // only 1 lesson: not shown yet
+const ROME = "20000000-0000-4000-8000-000000000003"; // only a draft lesson: not shown yet
 const L = (t: number, n: number) => `3000000${t}-0000-4000-8000-00000000000${n}`;
 
 async function reset() {
@@ -24,7 +24,7 @@ async function reset() {
   for (const [t, topic, count] of [[1, STARS, 3], [2, HOLES, 3], [3, ROME, 1]] as const) {
     for (let n = 1; n <= count; n++) {
       await sql`insert into public.lessons (id, topic_id, position, level, title, status)
-                values (${L(t, n)}, ${topic}, ${n}, ${n === 3 ? 2 : 1}, ${`Lesson ${t}.${n}`}, 'published')`;
+                values (${L(t, n)}, ${topic}, ${n}, ${n === 3 ? 2 : 1}, ${`Lesson ${t}.${n}`}, ${topic === ROME ? "draft" : "published"})`;
     }
   }
 }

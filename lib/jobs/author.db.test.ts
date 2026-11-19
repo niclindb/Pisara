@@ -166,6 +166,12 @@ describe.skipIf(!url)("author tools on Postgres", () => {
       await saveLesson(sql, AUTHOR, id, draft({ title: t }));
       await publishLesson(sql, AUTHOR, id);
       ids.push(id);
+      if (ids.length === 1) {
+        // One published lesson is enough for learners to see and pick the topic.
+        expect((await loadContentTree(sql, AUTHOR)).topics[0]).toMatchObject({ pickable: true, lessons: { published: 1 } });
+        const [v] = await sql`select pickable, lesson_count from public.visible_topics where id = ${topic}`;
+        expect(v).toMatchObject({ pickable: true, lesson_count: 1 });
+      }
     }
     expect((await loadContentTree(sql, AUTHOR)).topics[0]).toMatchObject({ pickable: true, lessons: { published: 3 } });
 

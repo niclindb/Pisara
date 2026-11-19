@@ -59,7 +59,7 @@ export interface AuthorTopic {
   description: string;
   outline: string;
   lessons: Record<LessonStatus, number>;
-  /** Learners can pick it once it has 3 published lessons (E4). */
+  /** Learners can pick it once it has a published lesson (E4). */
   pickable: boolean;
 }
 

@@ -5,7 +5,6 @@ import { MoveButtons } from "@/components/move-buttons";
 import { Card, PageTitle } from "@/components/ui";
 import { loadContentTree, type AuthorTopic } from "@/lib/jobs/author";
 import { loadRecentJobRuns, type JobRun } from "@/lib/jobs/job-runs";
-import { MIN_PUBLISHED_LESSONS } from "@/lib/rules/constants";
 import { db } from "@/lib/server/db";
 import { MIGRATION_MARKERS_SQL, setupChecks, type MigrationName, type SetupCheck } from "@/lib/server/setup-check";
 import {
@@ -44,7 +43,7 @@ function TopicTree({ topics, parent, all }: { topics: AuthorTopic[]; parent: { c
                   {t.pickable ? (
                     <span className="text-success">Learners can pick it</span>
                   ) : (
-                    <span>Hidden until {MIN_PUBLISHED_LESSONS} lessons are published</span>
+                    <span>Hidden until a lesson is published</span>
                   )}
                 </p>
               </div>
