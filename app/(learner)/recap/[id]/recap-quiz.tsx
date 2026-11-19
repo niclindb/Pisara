@@ -88,7 +88,7 @@ export function RecapQuiz({ questions, grade }: { questions: Question[]; grade: 
                 name={q.id}
                 checked={chosen[q.id] === j}
                 onChange={() => setChosen({ ...chosen, [q.id]: j })}
-                className="h-5 w-5 shrink-0"
+                className="radio"
               />
               <span>{o}</span>
             </label>
@@ -103,10 +103,19 @@ export function RecapQuiz({ questions, grade }: { questions: Question[]; grade: 
               Back
             </Button>
           )}
-          <Button disabled={chosen[q.id] === undefined || pending} onClick={next}>
+          <Button
+            disabled={chosen[q.id] === undefined || pending}
+            onClick={next}
+            aria-describedby={chosen[q.id] === undefined ? "recap-hint" : undefined}
+          >
             {last ? (pending ? "Checking…" : "See results") : "Next"}
           </Button>
         </div>
+        {chosen[q.id] === undefined && (
+          <p id="recap-hint" className="text-[15px] text-text-muted">
+            Pick an answer to {last ? "see your results" : "go on"}.
+          </p>
+        )}
       </div>
     </section>
   );

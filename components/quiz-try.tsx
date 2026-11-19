@@ -5,6 +5,7 @@
 
 import { NotQuiteMark, optionClass, RightMark } from "./answer-mark";
 import { useState } from "react";
+import { QuizHint } from "./quiz-hint";
 import { Button } from "./ui";
 
 export interface TryQuestion {
@@ -19,7 +20,8 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
   const [chosen, setChosen] = useState<Record<string, number>>({});
   const [checked, setChecked] = useState(false);
   if (!questions.length) return null;
-  const allAnswered = questions.every((q) => chosen[q.id] !== undefined);
+  const unanswered = questions.flatMap((q, i) => (chosen[q.id] === undefined ? [i + 1] : []));
+  const allAnswered = unanswered.length === 0;
   return (
     <section aria-labelledby="quiz-heading" className="mt-12">
       <h2 id="quiz-heading" className="mb-4 text-[22px]">
@@ -50,7 +52,7 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
                       disabled={checked}
                       checked={chosen[q.id] === j}
                       onChange={() => setChosen({ ...chosen, [q.id]: j })}
-                      className="h-5 w-5"
+                      className="radio"
                     />
                     <span>{o}</span>
                     {right && <RightMark chosen />}
@@ -70,7 +72,7 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
       </div>
       <div className="mt-5 flex gap-3" role="status">
         {!checked ? (
-          <Button disabled={!allAnswered} onClick={() => setChecked(true)}>
+          <Button disabled={!allAnswered} onClick={() => setChecked(true)} aria-describedby={allAnswered ? undefined : "quiz-hint"}>
             Check answers
           </Button>
         ) : (
@@ -90,6 +92,7 @@ export function QuizTry({ questions }: { questions: TryQuestion[] }) {
           </>
         )}
       </div>
+      {!checked && !allAnswered && <QuizHint id="quiz-hint" unanswered={unanswered} total={questions.length} className="mt-3" />}
     </section>
   );
 }
