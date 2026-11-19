@@ -15,8 +15,8 @@ import { requireLearner } from "../guard";
 export const metadata: Metadata = { title: "Home" };
 
 // Home (B5, B6, B7, C7, D3, D6): the current lesson on top, the other waiting
-// lessons, then the weekly recap, the latest milestone, the learner's topics
-// with Start, and one suggested topic to add. It never mentions how many
+// lessons, then the weekly recap, the latest milestone, one suggested topic to
+// add, and the learner's topics with Start. It never mentions how many
 // lessons Home can hold.
 
 export default async function HomePage() {
@@ -90,6 +90,38 @@ export default async function HomePage() {
         </section>
       )}
 
+      {suggested && (
+        <section aria-labelledby="suggested-heading" className="border-t border-hairline pt-5">
+          <h2 id="suggested-heading" className="font-sans! text-[15px] font-medium text-text-muted">
+            Suggested topic
+          </h2>
+          <div className="mt-1 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
+            <div className="min-w-0 flex-1">
+              <Link href={`/explore/${suggested.id}`} className="font-heading text-[22px] font-bold hover:underline hover:text-accent">
+                {suggested.name}
+              </Link>
+              {(suggested.description || suggested.goal) && (
+                <p className="mt-1 max-w-xl">{suggested.description || suggested.goal}</p>
+              )}
+              <p className="mt-1 text-[15px] text-text-muted">
+                {suggested.progress?.total ?? suggested.lessonCount} lessons
+                {suggestedParent?.progress?.finished ? ` · Goes deeper into ${suggestedParent.name}, which you finished` : ""}
+              </p>
+            </div>
+            <ActionForm
+              key={suggested.id}
+              action={addTopicAction}
+              submit="Add"
+              submitLabel={`Add ${suggested.name} to your topics`}
+              pendingLabel="Adding…"
+              variant="secondary"
+            >
+              <input type="hidden" name="topicId" value={suggested.id} />
+            </ActionForm>
+          </div>
+        </section>
+      )}
+
       {topicsOn.length > 0 && (
         <section aria-labelledby="topics-heading">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
@@ -135,38 +167,6 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
-        </section>
-      )}
-
-      {suggested && (
-        <section aria-labelledby="suggested-heading" className="border-t border-hairline pt-5">
-          <h2 id="suggested-heading" className="font-sans! text-[15px] font-medium text-text-muted">
-            Suggested topic
-          </h2>
-          <div className="mt-1 flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
-            <div className="min-w-0 flex-1">
-              <Link href={`/explore/${suggested.id}`} className="font-heading text-[22px] font-bold hover:underline hover:text-accent">
-                {suggested.name}
-              </Link>
-              {(suggested.description || suggested.goal) && (
-                <p className="mt-1 max-w-xl">{suggested.description || suggested.goal}</p>
-              )}
-              <p className="mt-1 text-[15px] text-text-muted">
-                {suggested.progress?.total ?? suggested.lessonCount} lessons
-                {suggestedParent?.progress?.finished ? ` · Goes deeper into ${suggestedParent.name}, which you finished` : ""}
-              </p>
-            </div>
-            <ActionForm
-              key={suggested.id}
-              action={addTopicAction}
-              submit="Add"
-              submitLabel={`Add ${suggested.name} to your topics`}
-              pendingLabel="Adding…"
-              variant="secondary"
-            >
-              <input type="hidden" name="topicId" value={suggested.id} />
-            </ActionForm>
-          </div>
         </section>
       )}
     </div>
