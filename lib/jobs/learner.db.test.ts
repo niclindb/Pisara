@@ -73,6 +73,15 @@ describe.skipIf(!url)("learner pages on Postgres", () => {
     expect((await loadHome(sql, U, now))!.recap).toMatchObject({ questionCount: 2 });
   });
 
+  it("shows the newest milestone on Home, with its topic's name and the learner's local date", async () => {
+    const now = at("2026-11-04T12:00:00Z");
+    expect((await loadHome(sql, U, now))!.latestMilestone).toBeNull();
+    await sql`insert into public.milestones (user_id, kind, achieved_at) values
+      (${U}, 'lessons_1', '2026-11-01T10:00:00Z'),
+      (${U}, ${`level_up:${STARS}:2`}, '2026-11-03T22:30:00Z')`;
+    expect((await loadHome(sql, U, now))!.latestMilestone).toEqual({ kind: `level_up:${STARS}:2`, topicName: "Stars", on: "2026-11-04" });
+  });
+
   it("opens a delivered lesson and marks it read, but never one from further along the path", async () => {
     const now = at("2026-11-04T12:00:00Z");
     expect(await openLessonPage(sql, U, L(1, 2), now)).toBeNull();
